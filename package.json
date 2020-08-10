@@ -4,7 +4,7 @@
   "description": "a software application which helps growers control and monitor their agromation PLC system.",
   "main": "index.js",
   "scripts": {
-    "setup":"npm run config",
+    "setup": "npm run config",
     "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
     "start:prod": "node index.js",
     "start:dev": "concurrently \"nodemon --ignore 'client/*'\" \"npm run client\"",

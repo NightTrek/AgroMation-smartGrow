@@ -1,0 +1,43 @@
+{
+  "name": "agromation-roomautomation",
+  "version": "1.0.0",
+  "description": "a software application which helps growers control and monitor their agromation PLC system.",
+  "main": "index.js",
+  "scripts": {
+    "setup":"npm run config",
+    "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
+    "start:prod": "node index.js",
+    "start:dev": "concurrently \"nodemon --ignore 'client/*'\" \"npm run client\"",
+    "client": "cd client && npm run start",
+    "install": "cd client && npm install",
+    "build": "cd client && npm run build",
+    "heroku-postbuild": "npm run build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@material-ui/core": "^4.6.1",
+    "@material-ui/icons": "^4.5.1",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "if-env": "^1.0.4",
+    "jwt-simple": "^0.5.6",
+    "moment": "^2.24.0",
+    "morgan": "^1.9.1",
+    "mysql2": "^2.0.0",
+    "nodemon": "^2.0.4",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0",
+    "validator": "^11.1.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.1"
+  }
+}

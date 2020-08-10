@@ -6,11 +6,11 @@ const authMiddleware = require('../../middlewares/authMiddlewares');
 
 // /api/c
 
-router.route('/')//uses Passport JWT as its auth method.
+router.route('/addroom')//uses Passport JWT as its auth method.
     .post(authMiddleware.requireAuth, GrowRoomController.addGrowRoom);
 
 //gets grow rooms and their statuses
-router.route('/getchillers')//uses Passport JWT as its auth method.
+router.route('/getgrowrooms')//uses Passport JWT as its auth method.
     .post(authMiddleware.requireAuth, GrowRoomController.getGrowRoomsForUser);
 
 router.route('/recent')

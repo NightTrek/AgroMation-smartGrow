@@ -47,18 +47,17 @@ body,
 /*=============== START SignIn/SignUp Modals Styles ===============*/
 .modal-block {
   transition: all 0.2s ease-in-out;
-  color: #3e3e3b;
   overflow: hidden;
   border-bottom-right-radius: 15px;
   border-bottom-left-radius: 15px;
-  background-color: #29b6f6;
+  background-color: #2D2F33;
   color: white;
   box-shadow: 8px 8px 20px #4c586f;
   height: fit-content;
   margin-left: auto;
   margin-right: auto;
   border: 1px solid #3e3e3b;
-  opacity: 0.85;
+  /* opacity: 0.85; */
 }
 
 .modal-block:hover {
@@ -95,7 +94,7 @@ body,
 #signupButtonT,
 #loginButton,
 #loginButtonT {
-  border: 1px solid #3e3e3b;
+  border: 1px solid #E2D83B;
 }
 
 #signupButton:hover,
@@ -174,15 +173,19 @@ p {
 
 .btn-radius:hover {
   border-radius: 5px;
-  border-color: #ebeced;
-  box-shadow: 0 0 0.3rem #ebeced;
+  border-color: #E2D83B;
+  box-shadow: 0 0 0.3rem #E2D83B;
+}
+
+.btn-primary{
+  border-color: #E2D83B;
 }
 
 .btn-primary,
 .btn-primary:focus,
 .btn-primary:hover,
 .btn-primary:active:focus {
-  background-color: #4c586f;
+  background-color: #2D2F33;
   color: white;
 }
 

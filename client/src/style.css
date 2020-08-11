@@ -1,0 +1,200 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  font-family: roboto;
+}
+
+/*  ============== Background color classes ==================*/
+
+.color-agro-Yellow{
+  background-color: #E2D83B !important;
+}
+
+.color-agro-grey{
+  background-color: #2D2F33 !important;
+}
+
+
+.color-agro-red{
+  background-color: #DC4346 !important;
+}
+
+.color-agro-fault{
+  background-color: #1F2124 !important;
+}
+
+.color-agro-veg{
+  background-color: #32B561 !important;
+}
+
+.color-agro-clone{
+  background-color: #3669AE !important;
+}
+
+.color-agro-flower{
+  background-color: #843FA0 !important;
+}
+
+
+/*=============== START SignIn/SignUp Modals Styles ===============*/
+.modal-block {
+  transition: all 0.2s ease-in-out;
+  overflow: hidden;
+  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 15px;
+  background-color: #2D2F33;
+  color: white;
+  box-shadow: 8px 8px 20px #4c586f;
+  height: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid #3e3e3b;
+  /* opacity: 0.85; */
+}
+
+.modal-block:hover {
+  opacity: 1;
+  transition: all 0.5s ease-in-out;
+}
+
+.modal-block > .modal-block-content {
+  background-color: inherit;
+  padding: 0px 20px;
+}
+/*=============== END SignIn/SignUp Modals Styles ===============*/
+
+/*=============== START Button Toggles Styles ===============*/
+
+
+#signupButton,
+#signupButtonT {
+  position: relative;
+  top: -150px;
+  left: 80px;
+  width: 150px;
+}
+
+#loginButton,
+#loginButtonT {
+  position: relative;
+  top: -250px;
+  left: 230px;
+  width: 150px;
+}
+#stylingButton,
+#signupButton,
+#signupButtonT,
+#loginButton,
+#loginButtonT {
+  border: 1px solid #E2D83B;
+}
+
+#signupButton:hover,
+#signupButton:active,
+#loginButton:active,
+#loginButton:hover {
+  background-color: inherit;
+  color: white;
+}
+
+/*=============== END Button Toggles Styles ===============*/
+
+/*=============== START Form Styles ===============*/
+.form-horizontal {
+  position: relative;
+  top: -40px;
+  margin-top: 0px;
+}
+
+.form-horizontal > .form-group {
+  text-align: center;
+}
+
+.form-horizontal > .form-group > .label {
+  font-size: 1em;
+  letter-spacing: 0.075em;
+  color: #a2aab0;
+  padding: 0;
+}
+
+.form-horizontal > .form-group > .submit {
+  position: relative;
+  width: 200px;
+  top: 10px;
+  margin: auto;
+}
+
+.input > input {
+  margin: auto;
+  text-align: center;
+  max-width: 300px;
+}
+
+.form-horizontal > .form-group > .disabled {
+  background: inherit;
+  color: #ebeced;
+}
+
+p {
+  font-size: 0.75em;
+  color: #687a92;
+}
+
+#labelColor {
+  color: #ebeced;
+}
+
+.settingsForm {
+  position: absolute;
+  top: 25px;
+}
+/*=============== END Form Styles ===============*/
+
+/*=============== START Button Styles ===============*/
+.btn {
+  font-weight: 420;
+  padding: 10px 24px;
+  -webkit-transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-radius {
+  -webkit-transition: border-radius 0.4s cubic-bezier(1, 0.885, 0.32, 1.275);
+  transition: border-radius 0.4s cubic-bezier(1, 0.885, 0.32, 1.275);
+}
+
+.btn-radius:hover {
+  border-radius: 5px;
+  border-color: #E2D83B;
+  box-shadow: 0 0 0.3rem #E2D83B;
+}
+
+.btn-primary{
+  border-color: #E2D83B;
+}
+
+.btn-primary,
+.btn-primary:focus,
+.btn-primary:hover,
+.btn-primary:active:focus {
+  background-color: #2D2F33;
+  color: white;
+}
+
+a {
+  color: white;
+}
+
+a:hover {
+  background-color: inherit;
+  color: white;
+}
+/*=============== END Button Styles ===============*/

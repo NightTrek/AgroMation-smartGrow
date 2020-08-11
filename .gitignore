@@ -9,3 +9,5 @@ error.log
 
 .idea/workspace.xml
 
+# security
+/config

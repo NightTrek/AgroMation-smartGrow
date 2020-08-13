@@ -8,6 +8,14 @@ import {addGrowRoom, fetchUserGrowRoomsAndStatus} from "../../actions";
 //auth
 import requireAuth from "../../hoc/requireAuth";
 
+//import components
+import {Container, Grid} from "@material-ui/core";
+import DashboardSummery from "../../components/DashboardSummery/DashboardSummry";
+
+
+
+//import styling
+import "./style.css"
 
 
 
@@ -16,15 +24,34 @@ class Dashboard2 extends Component {
     constructor(props){
         super(props);
         this.state = {
-            loading:true
+            loading:true,
+            offset:256
         }
+    }
+
+    checkOffset(){
+
     }
 
     render() {
         return (
-            <div>
-                <h1>This is the dashboard</h1>
-            </div>
+            <Container className={"dashboardMain"}>
+                <Grid 
+                    container
+                    direction="row"
+                    justify="center"
+                    alignItems="stretch"
+                    spacing={3}
+                    style={{top:"48px"}}>
+                    <Grid item xs={2} >
+                        <h2>Dashboard</h2>
+                    </Grid>
+                    <Grid item xs={10} ></Grid>
+                </Grid>
+                {/* <Grid item direction="row" justify="center" alignItems="stretch" xs={12} spacing={3}> */}
+                    {/* <DashboardSummery/> */}
+                {/* </Grid> */}
+            </Container>
         );
     }
 

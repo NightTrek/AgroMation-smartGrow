@@ -1,8 +1,5 @@
 .wrapper {
-  background-image: url("https://ak1.picdn.net/shutterstock/videos/27265981/thumb/1.jpg");
   background-color: #2D2F33;
-  background-position: 0px 0px;
-  background-repeat: repeat-y;
   height: 100%;
   display: relative;
   flex-flow: row wrap;
@@ -10,5 +7,20 @@
   align-content: flex-start;
   overflow: auto;
   overflow-x: hidden;
-  padding-bottom: 50px;
+  /* padding-bottom: 50px; */
+}
+
+.backgroundPattern{
+  position: absolute;
+  background-image: url("https://ak1.picdn.net/shutterstock/videos/27265981/thumb/1.jpg");
+  /* background-position: 0px 0px; */
+  background-size: cover;
+  /* background-repeat: no-repeat; */
+  /* background-repeat: repeat-y; */
+  height: 100vh;
+  width: 100vw;
+  overflow: auto;
+  overflow-x: hidden;
+  background-position: 75% 75%;
+  opacity: 0.5;
 }

@@ -1,0 +1,7 @@
+.dashboardSummery{
+    width: 800px;
+    height:512px;
+    display:flex;
+    flex-direction: row;
+
+}

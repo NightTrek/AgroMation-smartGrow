@@ -7,7 +7,7 @@ import reduxThunk from "redux-thunk";
 
 
 // Import Containers
-import App from "./containers/App";
+import Navbar from "./containers/NavBar/Navbar";
 // import Signup from "./containers/Authentication/Signup";
 // import Signin from "./containers/Authentication/Signin";
 import Signout from "./containers/Authentication/Signout";
@@ -41,7 +41,7 @@ ReactDOM.render(
   <Provider store={store}>
     <Router>
       <Wrapper>
-        <App>
+        <Navbar>
           <Route exact path="/" component={Welcome} />
           <Route exact path="/dashboard" component={Dashboard2} />
           <Route exact path="/settings" component={Settings} />
@@ -49,7 +49,7 @@ ReactDOM.render(
           <Route exact path="/signin" component={Signin} /> */}
           <Route exact path="/signout" component={Signout} />
           <Route exact path="/chart" component={TempChart} />
-        </App>
+        </Navbar>
       </Wrapper>
     </Router>
   </Provider>,

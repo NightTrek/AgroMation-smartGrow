@@ -23,4 +23,5 @@
   overflow-x: hidden;
   background-position: 75% 75%;
   opacity: 0.5;
+  align-items: flex-end;
 }

@@ -85,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
         },
     },
     toolbar: {
-        background: theme.palette.secondary.main,
+        // background: theme.palette.secondary.main,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-end',

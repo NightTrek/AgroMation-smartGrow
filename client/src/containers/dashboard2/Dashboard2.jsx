@@ -42,14 +42,11 @@ class Dashboard2 extends Component {
                     justify="center"
                     alignItems="stretch"
                     spacing={3}
-                    style={{top:"48px"}}>
-                    <Grid item xs={2} >
-                        <h2>Dashboard</h2>
-                    </Grid>
-                    <Grid item xs={10} ></Grid>
+                    style={{top:"24px"}}>
+                    <DashboardSummery/>
+                    
                 </Grid>
                 {/* <Grid item direction="row" justify="center" alignItems="stretch" xs={12} spacing={3}> */}
-                    {/* <DashboardSummery/> */}
                 {/* </Grid> */}
             </Container>
         );

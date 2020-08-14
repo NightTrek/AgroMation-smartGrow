@@ -17,11 +17,18 @@ const theme = createMuiTheme({
     roomStatus:{
         clone:'#3669AE',
         veg:'#32B561',
-        flower:'#843FA0'
+        flower:'#843FA0',
+        warning:'#DC4346'
+    },
+    text:{
+      main:"white",
+      deactive:"#656565"
     },
   },
 });
 
-const Wrapper = props => <div className="wrapper"><div className={"backgroundPattern"}></div><ThemeProvider theme={theme}>{props.children}</ThemeProvider></div>;
+//<div className={"backgroundPattern"}></div>
+
+const Wrapper = props => <div className="wrapper"><ThemeProvider theme={theme}>{props.children}</ThemeProvider></div>;
 
 export default Wrapper;

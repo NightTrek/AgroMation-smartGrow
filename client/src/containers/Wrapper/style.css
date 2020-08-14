@@ -1,5 +1,5 @@
 .wrapper {
-  background-color: #2D2F33;
+  background-color: #1A1C1E;
   height: 100%;
   display: relative;
   flex-flow: row wrap;
@@ -24,4 +24,6 @@
   background-position: 75% 75%;
   opacity: 0.5;
   align-items: flex-end;
+  
+;
 }

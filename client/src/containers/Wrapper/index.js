@@ -18,7 +18,8 @@ const theme = createMuiTheme({
         clone:'#3669AE',
         veg:'#32B561',
         flower:'#843FA0',
-        warning:'#DC4346'
+        warning:'#DC4346',
+        fault:"#121315"
     },
     text:{
       main:"white",

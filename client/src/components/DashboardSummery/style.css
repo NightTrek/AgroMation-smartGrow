@@ -3,3 +3,7 @@
     height:912px;
 
 }
+
+.MuiInputBase-input {
+    color:white !important;
+}

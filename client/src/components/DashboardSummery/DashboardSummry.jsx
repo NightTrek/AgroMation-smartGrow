@@ -2,34 +2,34 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import { VictoryPie, VictoryLabel } from "victory";
-import { Grid, Box, Typography, List, Divider } from "@material-ui/core"
+import { Grid, Typography, List } from "@material-ui/core"
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
+// import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import ListItem from '@material-ui/core/ListItem';
+import './style.css';
 
 
 
 
-
-const sampleTempData = [{ x: "Fault", y: 1, label: "Fault" },
-{ x: "Warning", y: 2, label: "Warning" },
-{ x: "Nominal", y: 5, label: "Nominal" }
+const sampleTempData = [{ x: "Fault", y: 1, catName: "Fault" },
+{ x: "Warning", y: 2, catName: "Warning" },
+{ x: "Nominal", y: 5, catName: "Nominal" }
 ];
-const sampleHumidityData = [{ x: 1, y: 1, label: "Fault" },
-{ x: 2, y: 1, label: "Warning" },
-{ x: 3, y: 6, label: "Nominal" }
+const sampleHumidityData = [{ x: 1, y: 1, catName: "Fault" },
+{ x: 2, y: 1, catName: "Warning" },
+{ x: 3, y: 6, catName: "Nominal" }
 ];
-const sampleProgressData = [{ x: 1, y: 1, label: "Clone" },
-{ x: 2, y: 3, label: "Veg" },
-{ x: 3, y: 4, label: "Flower" }
+const sampleProgressData = [{ x: 1, y: 1, catName: "Clone" },
+{ x: 2, y: 3, catName: "Veg" },
+{ x: 3, y: 4, catName: "Flower" }
 ];
-const sampleCO2Data = [{ x: 1, y: 1, label: "Fault" },
-{ x: 2, y: 1, label: "Warning" },
-{ x: 3, y: 6, label: "Nominal" }
+const sampleCO2Data = [{ x: 1, y: 1, catName: "Fault" },
+{ x: 2, y: 1, catName: "Warning" },
+{ x: 3, y: 6, catName: "Nominal" }
 ];
 
 
@@ -40,14 +40,16 @@ const useStyles = makeStyles((theme) => ({
         color: theme.palette.text.main
     },
     formControl: {
-        color: theme.palette.text.main
+        color: theme.palette.text.main,
+        minHeight: "32px",
+        maxHeight: "48px"
     },
     chartLabel: {
         // textAlign: 'center',
     },
     pieChart: {
-        width: "192px",
-        height: "192px"
+        width: "160px",
+        height: "160px"
     },
     legendList: {
         paddingTop: "2px",
@@ -75,7 +77,12 @@ const useStyles = makeStyles((theme) => ({
 
 const DashboardPieChart = (props) => {
     const classes = props.classes;
-    const theme = props.theme;
+    const labels = [];
+
+    props.dataSet.map((item) => {
+        labels.push(item.y);
+        return item.y
+    })
 
     return (
         // <Grid item xs={3}>
@@ -89,9 +96,12 @@ const DashboardPieChart = (props) => {
                     innerRadius={100}
                     colorScale={props.colorScale}
                     data={props.dataSet}
-                // labels={({ datum }) => datum.y}
-                // style={{ labels: { fill: "white", fontSize: "24px" } }}
-                // labelComponent={<VictoryLabel dy={30} />}
+                    labels={({ datum }) => datum.y.toString()}
+                    labelPlacement={({ index }) => index
+                        ? "parallel"
+                        : "vertical"}
+                    style={{ labels: { fill: "white", fontSize: "32px" } }}
+                    labelComponent={<VictoryLabel />}
                 />
             </Grid>
             <Grid item xs>
@@ -100,7 +110,7 @@ const DashboardPieChart = (props) => {
                         // console.log(props.colorScale);
 
                         return (<ListItem key={index} className={classes.legendItem}>
-                            <div className={classes.legendColor} style={{ background: props.colorScale[index] }}></div> <Typography variant={"body2"}>{item.label}</Typography>
+                            <div className={classes.legendColor} style={{ background: props.colorScale[index] }}></div> <Typography variant={"body2"}>{item.catName}</Typography>
                         </ListItem>);
                     }
                     )}
@@ -125,7 +135,7 @@ function DashboardSummry(props) {
     const progressColorScale = [theme.palette.roomStatus.clone, theme.palette.roomStatus.veg, theme.palette.roomStatus.flower];
 
     const [state, setState] = React.useState({
-        rooms: ["Green Gardens", "Desert Warhouse", "Hilltop Garden"],
+        rooms: ["Room Alpha", "Room beta", "clone Room", "flower one", "flower two", "veg room a"],
         pick: 0
     });
 
@@ -139,14 +149,16 @@ function DashboardSummry(props) {
     };
 
     return (
-        <Grid container direction="column" spacing={3} className={classes.dashboardSummery}>
+        <Grid container direction="column" justify={"center"} spacing={2} className={classes.dashboardSummery}>
             <Grid container item direction="row" xs>
+                <Grid item xs={1}>
+                </Grid>
                 <Grid item xs={2}>
                     <Typography variant={"h6"}>Summery</Typography>
                 </Grid>
                 <Grid item xs ></Grid>
                 <Grid item xs={2}>
-                    <FormControl variant={"filled"} className={classes.formControl}>
+                    <FormControl variant={"filled"} className={classes.formControl} color={'primary'} focused >
                         <InputLabel htmlFor="Room-Name">Room</InputLabel>
                         <Select
                             value={state.pick}
@@ -157,7 +169,6 @@ function DashboardSummry(props) {
                             }}
                             defaultValue={0}
                         >
-                            {console.log(state)}
                             {state.rooms.map((Item, Index) => (
                                 <MenuItem key={Index} value={Index}>{Item || Item.name}</MenuItem>
                             ))}
@@ -165,7 +176,7 @@ function DashboardSummry(props) {
                     </FormControl>
                 </Grid>
             </Grid>
-            
+
             {/* ========= charts start here =================================*/}
             <Grid container item direction="row" xs >
                 <DashboardPieChart chartName={"Temp"} classes={classes} theme={theme} dataSet={sampleTempData} colorScale={defaultColorScale} />

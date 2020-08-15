@@ -17,14 +17,18 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import BusinessIcon from '@material-ui/icons/Business';
+import SettingsIcon from '@material-ui/icons/Settings';
 import agroLogo from "./../../img/AgroMationLogosquare512.png";
+import GroupIcon from '@material-ui/icons/Group';
 import agroLogoCombined from '../../img/AgroMationCombined.png';
 import InputLabel from '@material-ui/core/InputLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
+// import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import NativeSelect from '@material-ui/core/NativeSelect';
-import Box from '@material-ui/core/Box';
+// import NativeSelect from '@material-ui/core/NativeSelect';
+// import Box from '@material-ui/core/Box';
 import "./style.css";
 import { Grid } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -144,6 +148,7 @@ export default function MiniDrawer(props) {
         locations: ["Green Gardens","Desert Warhouse", "Hilltop Garden"],
         pick:0
     });
+    const menuIcons = [<DashboardIcon color={"primary"}/>,<BusinessIcon color={"primary"}/>,<GroupIcon color={"primary"}/>,<SettingsIcon color={"primary"}/>]
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -227,7 +232,7 @@ export default function MiniDrawer(props) {
                         </Typography>
 
 
-                        <FormControl variant={"filled"} className={classes.formControl}>
+                        <FormControl variant={"filled"} className={classes.formControl} focused >
                             <InputLabel htmlFor="Location-Name">Locations</InputLabel>
                             <Select
                                 value={state.pick}
@@ -252,7 +257,7 @@ export default function MiniDrawer(props) {
                 <List>
                     {['Dashboard', 'Rooms', 'Users', 'Settings'].map((text, index) => (
                         <ListItem button key={text}>
-                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon color="primary" /> : <MailIcon color="primary" />}</ListItemIcon>
+                            <ListItemIcon>{menuIcons[index]}</ListItemIcon>
                             <ListItemText primary={text} />
                         </ListItem>
                     ))}

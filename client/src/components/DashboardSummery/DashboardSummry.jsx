@@ -141,11 +141,12 @@ function DashboardSummry(props) {
 
     const handleChange = (event) => {
         const name = event.target.name;
-        console.log(name);
+        // console.log(name);
         setState({
             ...state,
             [name]: event.target.value,
         });
+        props.setRoom(event.target.value);
     };
 
     return (

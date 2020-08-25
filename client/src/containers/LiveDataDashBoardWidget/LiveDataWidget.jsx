@@ -58,7 +58,7 @@ const colorPicker = () => {
 export const LiveDataWidget = (props) => {
     const theme = useTheme();
     const exampleLiveData = {
-        roomName: "Room Alpha",
+        roomName: props.roomName,
         Temp: 74,
         TempColor: theme.palette.roomStatus.warning,
         humidity: 32,

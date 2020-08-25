@@ -22,6 +22,8 @@ import { LiveDataWidget } from '../LiveDataDashBoardWidget/LiveDataWidget';
 
 
 
+
+
 class Dashboard2 extends Component {
 
     constructor(props) {
@@ -29,8 +31,18 @@ class Dashboard2 extends Component {
         this.state = {
             loading: true,
             offset: 256,
-            roomName:"Room Alpha"
+            rooms:["Room Alpha", "Room beta", "clone Room", "flower one", "flower two", "veg room a"],
+            roomIndex:0
         }
+
+        this.setRoom = this.setRoom.bind(this);
+    }
+
+    setRoom(index){
+        let cstate = this.state;
+        cstate.roomIndex = index
+        this.setState(cstate);
+        
     }
 
     checkOffset() {
@@ -44,17 +56,17 @@ class Dashboard2 extends Component {
                     <Grid
                         container item direction="row"  
                         spacing={3} xs>
-                        <DashboardSummery />
+                        <DashboardSummery setRoom={this.setRoom} roomName={this.state.rooms[this.state.roomIndex]}/>
                     </Grid>
                     <Grid container item direction="row"  
                         spacing={3} xs >
                         <SystemNotifications/> 
                         <Grid item></Grid>
-                        <HighestProgress/>
+                        <HighestProgress roomName={this.state.rooms[this.state.roomIndex]}/>
                     </Grid>
                     <Grid container item direction="row"  
                         spacing={3} xs >
-                        <LiveDataWidget roomName={this.state.roomName}/>
+                        <LiveDataWidget roomName={this.state.rooms[this.state.roomIndex]}/>
                     </Grid>
                     {/* <Grid item direction="row" justify="center" alignItems="stretch" xs={12} spacing={3}> */}
                 </Grid>

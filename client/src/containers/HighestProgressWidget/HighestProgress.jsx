@@ -104,7 +104,7 @@ export const HighestProgress = (props) => {
                         </VictoryPie>
                         <Typography className={classes.PieLabelPrimary}>{Progress.currentData}</Typography>
                         <Typography className={classes.PieLabel}>{Progress.currentData}/{Progress.stageCompletion} days</Typography>
-    <Typography className={classes.PieRoomLabel}>{Progress.roomName}</Typography>
+    <Typography className={classes.PieRoomLabel}>{props.roomName}</Typography>
                 </Grid>
             </Grid>
             <Grid container item xs direction={"row"} justify={"center"}>

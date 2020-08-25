@@ -17,6 +17,8 @@ import DashboardSummery from "../../components/DashboardSummery/DashboardSummry"
 //import styling
 import "./style.css"
 import { SystemNotifications } from '../SystemNotificationWidget/SystemNotifications';
+import { HighestProgress } from '../HighestProgressWidget/HighestProgress';
+import { LiveDataWidget } from '../LiveDataDashBoardWidget/LiveDataWidget';
 
 
 
@@ -26,7 +28,8 @@ class Dashboard2 extends Component {
         super(props);
         this.state = {
             loading: true,
-            offset: 256
+            offset: 256,
+            roomName:"Room Alpha"
         }
     }
 
@@ -46,7 +49,12 @@ class Dashboard2 extends Component {
                     <Grid container item direction="row"  
                         spacing={3} xs >
                         <SystemNotifications/> 
-                        
+                        <Grid item></Grid>
+                        <HighestProgress/>
+                    </Grid>
+                    <Grid container item direction="row"  
+                        spacing={3} xs >
+                        <LiveDataWidget roomName={this.state.roomName}/>
                     </Grid>
                     {/* <Grid item direction="row" justify="center" alignItems="stretch" xs={12} spacing={3}> */}
                 </Grid>

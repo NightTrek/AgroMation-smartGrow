@@ -6,3 +6,4 @@ export const ADD_GROWROOM = 'ADD_GROWROOM';
 export const GROWROOM_ERROR = 'GROWROOM_ERROR';
 export const FETCH_GROWROOMS = 'FETCH_GROWROOMS';
 export const FETCH_RECENT = 'FETCH_RECENT';
+export const SET_ROOM_NAME = 'SET_ROOM_NAME'

@@ -44,6 +44,10 @@ body,
 }
 
 
+.containerMain{
+  margin-top: 20px;
+}
+
 /*=============== START SignIn/SignUp Modals Styles ===============*/
 .modal-block {
   transition: all 0.2s ease-in-out;

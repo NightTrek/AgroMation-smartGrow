@@ -17,8 +17,8 @@ import DashboardSummery from "../../components/DashboardSummery/DashboardSummry"
 //import styling
 import "./style.css"
 import { SystemNotifications } from '../SystemNotificationWidget/SystemNotifications';
-import { HighestProgress } from '../HighestProgressWidget/HighestProgress';
-import { LiveDataWidget } from '../LiveDataDashBoardWidget/LiveDataWidget';
+import { HighestProgress } from '../../components/HighestProgressWidget/HighestProgress';
+import { LiveDataWidget } from '../../components/LiveDataDashBoardWidget/LiveDataWidget';
 
 
 
@@ -51,7 +51,7 @@ class Dashboard2 extends Component {
 
     render() {
         return (
-            <Container className={"dashboardMain"}>
+            <Container className={"containerMain"}>
                 <Grid container direction={'column'} spacing={6}>
                     <Grid
                         container item direction="row"  

@@ -25,6 +25,7 @@ import Settings from "./components/Settings";
 import Welcome from "./components/Welcome";
 
 import reducers from "./reducers";
+import IndividualRoom from "./containers/IndividualRoom/IndividualRoom";
 
 // configure redux dev tools
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -44,6 +45,7 @@ ReactDOM.render(
         <Navbar>
           <Route exact path="/" component={Welcome} />
           <Route exact path="/dashboard" component={Dashboard2} />
+          <Route exact path="/room" component={IndividualRoom} />
           <Route exact path="/settings" component={Settings} />
           {/* <Route exact path="/signup" component={Signup} />
           <Route exact path="/signin" component={Signin} /> */}

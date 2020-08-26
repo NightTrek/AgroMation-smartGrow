@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from "redux";
 import requireAuth from '../../hoc/requireAuth';
-import { Grid, Typography, ListItem, List, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Grid, Typography, ListItem, List, ListItemIcon, ListItemText, Menu, MenuItem } from '@material-ui/core';
 import { makeStyles, } from '@material-ui/core/styles'; //useTheme
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ErrorRoundedIcon from '@material-ui/icons/ErrorRounded';
@@ -19,9 +19,9 @@ const useStyles = makeStyles((theme) => ({
         background: theme.palette.secondary.main,
         color: theme.palette.text.main,
         minWidth: "256px",
-        maxWidth: "632px",
-        height: "360px",
-        marginTop: "12px",
+        maxWidth: "832px",
+        minHeight: "360px",
+        marginTop: "8px",
     },
     iconButton: {
         color: "white",
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: "12px",
         padding: "2px",
         marginLeft: "8px",
-        marginRight:"8px",
+        marginRight: "8px",
         paddingLeft: "8px",
         paddingRight: "8px",
     },
@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
         paddingLeft: "8px",
         paddingRight: "8px",
         marginLeft: "8px",
-        marginRight:"8px"
+        marginRight: "8px"
     },
     info: {
         // background:theme.palette.secondary.main,
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: "12px",
         padding: "2px",
         marginLeft: "8px",
-        marginRight:"8px",
+        marginRight: "8px",
         paddingLeft: "8px",
         paddingRight: "8px",
         // color: theme.palette.secondary.main
@@ -110,7 +110,6 @@ const NotificationsListItems = (props, style) => {
     return (
         state.notifications.map((item, index) => {
             const itemTime = moment.unix(item.timeStamp);
-            console.log(item);
             if (index > 3) {
                 return <div key={index}></div>
             }
@@ -129,7 +128,7 @@ const NotificationsListItems = (props, style) => {
                     )
                 default:
                     return (
-                        <ListItem button alignItems="flex-start" style={style} className={"info"} key={index}>
+                        <ListItem button alignItems="space-evenly" style={style} className={"info"} key={index}>
                             <ListItemIcon ><InfoIcon className={classes.info} /></ListItemIcon><ListItemText >{item.room + ": "}</ListItemText><ListItemText className={classes.infoText}>{item.room + ": " + item.msg + " "}</ListItemText><ListItemText >{itemTime.format('HH:mm, MM:DD:YYYY')}</ListItemText>
                         </ListItem>
                     )
@@ -147,6 +146,23 @@ export const SystemNotifications = () => {
         notifications: sampleNotifications,
         pick: 0
     });
+    const options = [
+        'warnings',
+        'Fault',
+        'All'];
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const ITEM_HEIGHT = 48;
+
     return (
         <Grid container item className={classes.notificationsWidget} xs justify={"center"} spacing={1} direction={"column"}>
             <Grid container item xs direction={"row"}>
@@ -157,7 +173,30 @@ export const SystemNotifications = () => {
 
                 </Grid>
                 <Grid container item xs={1}>
-                    <IconButton aria-label="Widget Settings" color="primary" className={classes.iconButton}><MoreVertIcon /></IconButton>
+                    <IconButton 
+                        aria-controls="long-menu"
+                        aria-haspopup="true"
+                        onClick={handleClick}
+                        aria-label="Widget Settings" color="primary" className={classes.iconButton}><MoreVertIcon /></IconButton>
+                    <Menu
+                        id="long-menu"
+                        anchorEl={anchorEl}
+                        keepMounted
+                        open={open}
+                        onClose={handleClose}
+                        PaperProps={{
+                            style: {
+                                maxHeight: ITEM_HEIGHT * 4.5,
+                                width: '20ch',
+                            },
+                        }}
+                    >
+                        {options.map((option) => (
+                            <MenuItem key={option} selected={option === 'Pyxis'} onClick={handleClose}>
+                                {option}
+                            </MenuItem>
+                        ))}
+                    </Menu>
                 </Grid>
             </Grid>
             <Grid container item xs direction={"row"}>

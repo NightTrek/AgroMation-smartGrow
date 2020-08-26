@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {VictoryChart, VictoryLine} from 'victory';
-
+import {Grid} from "@material-ui/core";
 import requireAuth from "../../hoc/requireAuth";
 import axios from "axios";
 import {connect} from "react-redux";
@@ -8,7 +8,7 @@ import moment from "moment";
 
 //styles
 import {
-    TableCell
+    TableCell, withTheme
 } from "@material-ui/core";
 
 
@@ -19,12 +19,12 @@ class TempChart extends Component {
             chillerID:props.chillerID,
             data:[
                 { x:1300, y:-40},
-                { x:1330, y:-40},
-                { x:1400, y:-40},
-                { x:1430, y:-40},
-                { x:1500, y:-40},
-                { x:1530, y:-40},
-                { x:1600, y:-40},
+                { x:1330, y:-39},
+                { x:1400, y:-38},
+                { x:1430, y:-37},
+                { x:1500, y:-36},
+                { x:1530, y:-35},
+                { x:1600, y:-34},
             ]
         };
         console.log(props.chillerID);
@@ -32,22 +32,22 @@ class TempChart extends Component {
 //,
 //                     chillerid:this.state.chillerID
     componentDidMount() {
-        axios.post("http://localhost:3001/api/c/recent", {},{
-            headers: {
-                authorization: localStorage.getItem("token"),
-                chillerid:this.state.chillerID
-            }
-        }).then( (response) => {
-                let rev = response.data.slice(0,128).reverse();
-                let dataArray = this.cleanData(rev);
-                console.log(dataArray);
-                let cstate = this.state;
-                cstate.data= dataArray;
-                this.setState(cstate);
+        // axios.post("http://localhost:3001/api/c/recent", {},{
+        //     headers: {
+        //         authorization: localStorage.getItem("token"),
+        //         chillerid:this.state.chillerID
+        //     }
+        // }).then( (response) => {
+        //         let rev = response.data.slice(0,128).reverse();
+        //         let dataArray = this.cleanData(rev);
+        //         console.log(dataArray);
+        //         let cstate = this.state;
+        //         cstate.data= dataArray;
+        //         this.setState(cstate);
 
-            }).catch((e)=>{
-                console.log(e);
-            });
+        //     }).catch((e)=>{
+        //         console.log(e);
+        //     });
 
     }
 
@@ -68,18 +68,19 @@ class TempChart extends Component {
 
 
     render() {
-        return (<TableCell>
+        return (
+        <Grid item container>
                 <VictoryChart>
                     <VictoryLine
                         data={this.state.data}
-                        style={{
-                            data: { fill: "tomato", opacity: 0.7 },
-                            labels: { fontSize: 12 },
-                            parent: { border: "1px solid #ccc" }
+                        style={{//fill: "tomato"
+                            data: { color:"white", opacity: 1 },
+                            labels: { color:"white", fontSize: 12 },
+                            parent: { border: "1px solid white" }
                         }}
                     />
                 </VictoryChart>
-        </TableCell>
+        </Grid>
         );
     }
 }

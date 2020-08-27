@@ -7,9 +7,6 @@ import {connect} from "react-redux";
 import moment from "moment";
 
 //styles
-import {
-    TableCell, withTheme
-} from "@material-ui/core";
 
 
 class TempChart extends Component {
@@ -18,13 +15,13 @@ class TempChart extends Component {
         this.state = {
             chillerID:props.chillerID,
             data:[
-                { x:1300, y:-40},
-                { x:1330, y:-39},
-                { x:1400, y:-38},
-                { x:1430, y:-37},
-                { x:1500, y:-36},
-                { x:1530, y:-35},
-                { x:1600, y:-34},
+                { x:1300, y:75},
+                { x:1330, y:75},
+                { x:1400, y:74},
+                { x:1430, y:75},
+                { x:1500, y:74},
+                { x:1530, y:75},
+                { x:1600, y:73},
             ]
         };
         console.log(props.chillerID);

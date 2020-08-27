@@ -23,9 +23,9 @@ const ExampleRoomData = [
         pressureSetPont: 1114,
         stage: "veg",
         dateStarted: 1597017600,
-        CloneTime: 864000,
-        VegTime: 3024000,
-        FlowerTime: 2419200,
+        CloneTime:864000,
+        VegTime:3024000,
+        FlowerTime:2419200,
     },
     {
         name: "Room beta",
@@ -35,9 +35,9 @@ const ExampleRoomData = [
         pressureSetPont: 1114,
         stage: "veg",
         dateStarted: 1597017600,
-        CloneTime: 864000,
-        VegTime: 3024000,
-        FlowerTime: 2419200,
+        CloneTime:864000,
+        VegTime:3024000,
+        FlowerTime:2419200,
     }, {
         name: "clone Room",
         tempSetPoint: 72,
@@ -46,9 +46,9 @@ const ExampleRoomData = [
         pressureSetPont: 1114,
         stage: "veg",
         dateStarted: 1597017600,
-        CloneTime: 864000,
-        VegTime: 3024000,
-        FlowerTime: 2419200,
+        CloneTime:864000,
+        VegTime:3024000,
+        FlowerTime:2419200,
     }, {
         name: "flower one",
         tempSetPoint: 83,
@@ -57,9 +57,9 @@ const ExampleRoomData = [
         pressureSetPont: 1114,
         stage: "veg",
         dateStarted: 1597017600,
-        CloneTime: 864000,
-        VegTime: 3024000,
-        FlowerTime: 2419200,
+        CloneTime:864000,
+        VegTime:3024000,
+        FlowerTime:2419200,
     }, {
         name: "flower two",
         tempSetPoint: 44,
@@ -68,9 +68,9 @@ const ExampleRoomData = [
         pressureSetPont: 1114,
         stage: "veg",
         dateStarted: 1597017600,
-        CloneTime: 864000,
-        VegTime: 3024000,
-        FlowerTime: 2419200,
+        CloneTime:864000,
+        VegTime:3024000,
+        FlowerTime:2419200,
     }, {
         name: "veg room a",
         tempSetPoint: 21,
@@ -79,9 +79,9 @@ const ExampleRoomData = [
         pressureSetPont: 1114,
         stage: "veg",
         dateStarted: 1597017600,
-        CloneTime: 864000,
-        VegTime: 3024000,
-        FlowerTime: 2419200,
+        CloneTime:864000,
+        VegTime:3024000,
+        FlowerTime:2419200,
     }]
 
 const useStyles = makeStyles((theme) => ({
@@ -248,26 +248,26 @@ function CO2LevelMeter(props) {
     const theme = props.theme;
     return (
         <Grid container item xs direction={'column'} justify={'center'}>
-            <Typography variant={"h6"} align={'center'}>CO2 Level</Typography>
-            <Grid item xs className={classes.meterContainer}>
-                <ReactSpeedometer
-                    width={256}
-                    forceRender
-                    needleTransitionDuration={2000}
-                    needleTransition="easeElastic"
-                    needleHeightRatio={0.7}
-                    value={state.liveData.CO2level}
-                    currentValueText={`${state.liveData.CO2level} ppm`}
-                    minValue={state.rooms[state.pick].CO2SetPoint - 2000}
-                    maxValue={state.rooms[state.pick].CO2SetPoint + 2000}
-                    segments={5}
-                    customSegmentStops={[state.rooms[state.pick].CO2SetPoint - 2000, state.rooms[state.pick].CO2SetPoint - 1000, state.rooms[state.pick].CO2SetPoint - 200, state.rooms[state.pick].CO2SetPoint + 200, state.rooms[state.pick].CO2SetPoint + 1000, state.rooms[state.pick].CO2SetPoint + 2000]}
-                    segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]} />
+                    <Typography variant={"h6"} align={'center'}>CO2 Level</Typography>
+                    <Grid item xs className={classes.meterContainer}>
+                        <ReactSpeedometer
+                            width={256}
+                            forceRender
+                            needleTransitionDuration={2000}
+                            needleTransition="easeElastic"
+                            needleHeightRatio={0.7}
+                            value={state.liveData.CO2level}
+                            currentValueText={`${state.liveData.CO2level} ppm`}
+                            minValue={state.rooms[state.pick].CO2SetPoint - 2000}
+                            maxValue={state.rooms[state.pick].CO2SetPoint + 2000}
+                            segments={5}
+                            customSegmentStops={[state.rooms[state.pick].CO2SetPoint - 2000, state.rooms[state.pick].CO2SetPoint - 1000, state.rooms[state.pick].CO2SetPoint - 200, state.rooms[state.pick].CO2SetPoint + 200, state.rooms[state.pick].CO2SetPoint + 1000, state.rooms[state.pick].CO2SetPoint + 2000]}
+                            segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]} />
 
-                <DiagnosticColorBar datapoint={state.liveData.CO2level} min={state.rooms[state.pick].CO2SetPoint - 200} superMin={state.rooms[state.pick].CO2SetPoint - 1000}
-                    max={state.rooms[state.pick].CO2SetPoint + 200} superMax={state.rooms[state.pick].CO2SetPoint + 1000} setPoint={state.rooms[state.pick].CO2SetPoint + " ppm"} />
-            </Grid>
-        </Grid>
+                        <DiagnosticColorBar datapoint={state.liveData.CO2level} min={state.rooms[state.pick].CO2SetPoint - 200} superMin={state.rooms[state.pick].CO2SetPoint - 1000}
+                            max={state.rooms[state.pick].CO2SetPoint + 200} superMax={state.rooms[state.pick].CO2SetPoint + 1000} setPoint={state.rooms[state.pick].CO2SetPoint + " ppm"} />
+                    </Grid>
+                </Grid>
     );
 };
 
@@ -278,25 +278,25 @@ function PressureMeter(props) {
     const theme = props.theme;
     return (
         <Grid container item xs direction={'column'} justify={'center'}>
-            <Typography variant={"h6"} align={'center'}>Pressure level</Typography>
-            <Grid item xs className={classes.meterContainer}>
-                <ReactSpeedometer
-                    forceRender
-                    width={256}
-                    needleTransitionDuration={2000}
-                    needleTransition="easeElastic"
-                    needleHeightRatio={0.7}
-                    value={state.liveData.pressure}
-                    minValue={state.rooms[state.pick].pressureSetPont - 300}
-                    maxValue={state.rooms[state.pick].pressureSetPont + 300}
-                    segments={5}
-                    currentValueText={`${state.liveData.pressure} mbar`}
-                    customSegmentStops={[state.rooms[state.pick].pressureSetPont - 300, state.rooms[state.pick].pressureSetPont - 100, state.rooms[state.pick].pressureSetPont - 20, state.rooms[state.pick].pressureSetPont + 20, state.rooms[state.pick].pressureSetPont + 100, state.rooms[state.pick].pressureSetPont + 300]}
-                    segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]} />
-                <DiagnosticColorBar datapoint={state.liveData.pressure} min={state.rooms[state.pick].pressureSetPont - 20} superMin={state.rooms[state.pick].pressureSetPont - 100}
-                    max={state.rooms[state.pick].pressureSetPont + 20} superMax={state.rooms[state.pick].pressureSetPont + 100} setPoint={state.rooms[state.pick].pressureSetPont + " mbar"} />
-            </Grid>
-        </Grid>
+                    <Typography variant={"h6"} align={'center'}>Pressure level</Typography>
+                    <Grid item xs className={classes.meterContainer}>
+                        <ReactSpeedometer
+                            forceRender
+                            width={256}
+                            needleTransitionDuration={2000}
+                            needleTransition="easeElastic"
+                            needleHeightRatio={0.7}
+                            value={state.liveData.pressure}
+                            minValue={state.rooms[state.pick].pressureSetPont - 300}
+                            maxValue={state.rooms[state.pick].pressureSetPont + 300}
+                            segments={5}
+                            currentValueText={`${state.liveData.pressure} mbar`}
+                            customSegmentStops={[state.rooms[state.pick].pressureSetPont - 300, state.rooms[state.pick].pressureSetPont - 100, state.rooms[state.pick].pressureSetPont - 20, state.rooms[state.pick].pressureSetPont + 20, state.rooms[state.pick].pressureSetPont + 100, state.rooms[state.pick].pressureSetPont + 300]}
+                            segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]} />
+                        <DiagnosticColorBar datapoint={state.liveData.pressure} min={state.rooms[state.pick].pressureSetPont - 20} superMin={state.rooms[state.pick].pressureSetPont - 100}
+                            max={state.rooms[state.pick].pressureSetPont + 20} superMax={state.rooms[state.pick].pressureSetPont + 100} setPoint={state.rooms[state.pick].pressureSetPont + " mbar"} />
+                    </Grid>
+                </Grid>
     );
 };
 
@@ -305,48 +305,48 @@ function StageMeter(props) {
     const state = props.state;
     const classes = props.classes;
     const theme = props.theme;
-    const cloneHours = (state.rooms[state.pick].CloneTime / 60) / 60;
-    const vegHours = (state.rooms[state.pick].VegTime / 60) / 60;
-    const flowerHours = (state.rooms[state.pick].FlowerTime / 60) / 60;
-    const TotalDays = (cloneHours) / 24 + (vegHours) / 24 + (flowerHours) / 24
-    console.log(` ${cloneHours} ${vegHours} ${flowerHours} ${TotalDays}`)
+    const cloneHours = (state.rooms[state.pick].CloneTime/60)/60;
+    const vegHours = (state.rooms[state.pick].VegTime/60)/60;
+    const flowerHours = (state.rooms[state.pick].FlowerTime/60)/60;
+    const TotalDays = (cloneHours)/24+(vegHours)/24+(flowerHours)/24
+    // console.log(` ${cloneHours} ${vegHours} ${flowerHours} ${TotalDays}`)
     return (
         <Grid container item xs direction={'column'} justify={'center'}>
-            <Typography variant={"h6"} align={'center'}>Pressure level</Typography>
-            <Grid item xs className={classes.meterContainer}>
-                <ReactSpeedometer
-                    forceRender
-                    width={256}
-                    needleTransitionDuration={2000}
-                    needleTransition="easeElastic"
-                    needleHeightRatio={0.7}
-                    value={26}
-                    minValue={0}
-                    maxValue={TotalDays}//state.rooms[state.pick].CloneTime +state.rooms[state.pick].VegTime+state.rooms[state.pick].FlowerTime
-                    segments={5}
-                    currentValueText={`${32} days`}
-                    customSegmentStops={[0, (cloneHours) / 24, (vegHours) / 24, TotalDays]}
-                    segmentColors={[theme.palette.roomStatus.clone, theme.palette.roomStatus.veg, theme.palette.roomStatus.flower]} />
-                <DiagnosticColorBar datapoint={2} min={1} superMin={0}
-                    max={3} superMax={4} setPoint={state.rooms[state.pick].stage + " left in"} />
-            </Grid>
-        </Grid>
+                    <Typography variant={"h6"} align={'center'}>Life Stage</Typography>
+                    <Grid item xs className={classes.meterContainer}>
+                        <ReactSpeedometer
+                            forceRender
+                            width={256}
+                            needleTransitionDuration={2000}
+                            needleTransition="easeElastic"
+                            needleHeightRatio={0.7}
+                            value={26}
+                            minValue={0}
+                            maxValue={TotalDays}//state.rooms[state.pick].CloneTime +state.rooms[state.pick].VegTime+state.rooms[state.pick].FlowerTime
+                            segments={5}
+                            currentValueText={`${32} days`}
+                            customSegmentStops={[0, (cloneHours)/24, (vegHours)/24 , TotalDays]}
+                            segmentColors={[theme.palette.roomStatus.clone, theme.palette.roomStatus.veg, theme.palette.roomStatus.flower]} />
+                        <DiagnosticColorBar datapoint={2} min={1} superMin={0}
+                            max={3} superMax={4} setPoint={state.rooms[state.pick].stage + " left in"} />
+                    </Grid>
+                </Grid>
     );
 };
 
 const LeftRightButton = withStyles({
     root: {
-        width: "48px",
-        height: "128px",
-        boxShadow: 'none',
-        textTransform: 'none',
-        marginLeft: "24px",
-        marginRight: "24px",
-        fontSize: 64,
-        lineHeight: 1.5,
+        width:"48px",
+        height:"128px",
+      boxShadow: 'none',
+      textTransform: 'none',
+      marginLeft:"24px",
+      marginRight:"24px",
+      fontSize: 64,
+      lineHeight: 1.5,
 
-    },
-})(Button);
+      },
+  })(Button);
 
 function RoomSummery(props) {
     const classes = useStyles();
@@ -360,7 +360,7 @@ function RoomSummery(props) {
     if (!F) {
         tempUnitString = cLogo;
     }
-
+    
     const [state, setState] = React.useState({ //setState
         liveData: {
             temp: 74,
@@ -369,16 +369,16 @@ function RoomSummery(props) {
             pressure: 1114
         },
         rooms: ExampleRoomData,
-        meterArray: [
-            <TempMeter state={state} theme={theme} classes={classes} tempUnitString={tempUnitString} key={0} />,
-            <HumidityMeter state={state} theme={theme} classes={classes} key={1} />,
-            <CO2LevelMeter state={state} theme={theme} classes={classes} key={2} />,
-            <PressureMeter state={state} theme={theme} classes={classes} key={3} />,
-            <StageMeter state={state} theme={theme} classes={classes} key={4} />],
-        pick: 0
+        pick: 0,
+        MeterArrayIndexStart:0
     });
 
-
+    let MeterArray = [ 
+        <TempMeter state={state} theme={theme} classes={classes} tempUnitString={tempUnitString} key={0}/>,
+        <HumidityMeter state={state} theme={theme} classes={classes} key={10}/>,
+        <CO2LevelMeter state={state} theme={theme} classes={classes}  key={20}/>,
+        <StageMeter state={state} theme={theme} classes={classes} key={40}/>,
+        <PressureMeter state={state} theme={theme} classes={classes} key={30}/> ];
 
     const handleChange = (event) => {
         console.log(state.pick)
@@ -392,15 +392,19 @@ function RoomSummery(props) {
     };
 
     const handleRightShift = () => {
-        // let lastItem = [state.meterArray.pop()];
-        // let newstate.meterArray = lastItem.concat(state.meterArray);
-        // state.meterArray = newstate.meterArray;
+        if(state.MeterArrayIndexStart===1){
+            setState({
+                ...state,
+                MeterArrayIndexStart:0
+            });
+        }else{
+            setState({
+                ...state,
+                MeterArrayIndexStart:1
+            });
+        }
     }
 
-    const handleLeftShift = () => {
-        // let firstItem = [state.meterArray.unshift()];
-        // state.meterArray.push(firstItem);
-    }
 
     return (
         <Grid item container direction={"column"} className={classes.roomSummeryWidget} spacing={3}>
@@ -408,7 +412,7 @@ function RoomSummery(props) {
                 <Grid item xs={1}>
                 </Grid>
                 <Grid item xs={2}>
-                    <Typography variant={"h6"}>Room</Typography>
+                    <Typography variant={"h4"}>Room</Typography>
                 </Grid>
                 <Grid item xs ></Grid>
                 <Grid item xs={2}>
@@ -432,20 +436,29 @@ function RoomSummery(props) {
             </Grid>
             <Grid item container direction={'row'}>
                 <Grid item container direction={'column'} justify={"center"} lg={1}>
-                    <LeftRightButton color={"primary"} onClick={handleRightShift}><KeyboardArrowLeftIcon style={{ fontSize: 48 }} /></LeftRightButton>
+                    <LeftRightButton color={"primary"} onClick={handleRightShift}><KeyboardArrowLeftIcon style={{ fontSize: 48 }}/></LeftRightButton>
                 </Grid>
                 <Grid item container direction={'row'} lg>
-                    {state.meterArray.map((Component, index) => {
-                        if (index < 4) {
-                            return (
-                                Component
-                            );
+                    {MeterArray.map((Component, index) => {
+                        if(state.MeterArrayIndexStart === 1){
+                            if(index>0){
+                                return(
+                                    Component 
+                                );
+                            }
+                            return(<div key={index}></div>);
+                        }else{
+                            if(index<MeterArray.length-1){
+                                return(
+                                    Component 
+                                );
+                            }
+                            return(<div key={index}></div>);
                         }
-                        return (<div></div>);
                     })}
                 </Grid>
                 <Grid item container direction={'column'} justify={"center"} lg={1}>
-                    <LeftRightButton color={"primary"} onClick={handleLeftShift}><KeyboardArrowRightIcon style={{ fontSize: 48 }} /></LeftRightButton>
+                    <LeftRightButton color={"primary"} onClick={handleRightShift}><KeyboardArrowRightIcon style={{ fontSize: 48 }}/></LeftRightButton>
                 </Grid>
             </Grid>
         </Grid>

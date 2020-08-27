@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { Container, Grid, makeStyles, useTheme, withStyles, Tab, Tabs, Box, Typography } from '@material-ui/core'
 import RoomSummery from '../RoomSummery/RoomSummery'
 import TempChart from "../TempChart/TempChart";
+import { PrimaryLineChart } from '../../components/PrimaryLineChart/PrimaryLineChart';
 
 
 
@@ -15,6 +16,7 @@ import TempChart from "../TempChart/TempChart";
     //   fontWeight: theme.typography.fontWeightRegular,
     //   fontSize: theme.typography.pxToRem(15),
     //   marginRight: theme.spacing(1),
+        // border:"solid 2px yellow",
       '&:focus': {
         backgroundColor: '#2D2F33',
       },
@@ -39,9 +41,9 @@ function TabPanel(props) {
             {...other}
         >
             {value === index && (
-                <Box>
+                <Grid container item direction={"column"} >
                     {children}
-                </Box>
+                </Grid>
             )}
         </div>
     );
@@ -54,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
         background: theme.palette.secondary.main,
         color: theme.palette.text.main,
         minWidth: "256px",
-        minHeight: "360px",
+        minHeight: "442px",
         marginTop: "8px",
     },
     backgroundTab: {
@@ -116,7 +118,7 @@ export default function IndividualRoom() {
                     </Grid>
                     <Grid item container direction={"row"}>
                         <TabPanel value={state.pick} index={0}>
-                            <TempChart/>
+                            <PrimaryLineChart/>
                     </TabPanel>
                         <TabPanel value={state.pick} index={1}>
                             Item Two

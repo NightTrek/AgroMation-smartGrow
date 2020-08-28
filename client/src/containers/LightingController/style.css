@@ -1,0 +1,7 @@
+.MuiSlider-vertical .MuiSlider-rail{
+    width: 24px;
+}
+
+.MuiSlider-vertical .MuiSlider-track{
+    width: 32px;
+}

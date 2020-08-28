@@ -84,25 +84,7 @@ const ExampleRoomData = [
         FlowerTime:2419200,
     }]
 
-const useStyles = makeStyles((theme) => ({
-    roomSummeryWidget: {
-        background: theme.palette.secondary.main,
-        color: theme.palette.text.main,
-        minWidth: "256px",
-        minHeight: "360px",
-    },
-    iconButton: {
-        color: "white",
-    },
-    meterContainer: {
-        // background:theme.palette.roomStatus.warning,
-        minWidth: "128px",
-        maxWidth: "256px",
-        maxHeight: "256px",
-        position: "relative",
-    },
 
-}));
 
 
 
@@ -347,6 +329,26 @@ const LeftRightButton = withStyles({
 
       },
   })(Button);
+
+  const useStyles = makeStyles((theme) => ({
+    roomSummeryWidget: {
+        background: theme.palette.secondary.main,
+        color: theme.palette.text.main,
+        minWidth: "256px",
+        minHeight: "360px",
+    },
+    iconButton: {
+        color: "white",
+    },
+    meterContainer: {
+        // background:theme.palette.roomStatus.warning,
+        minWidth: "128px",
+        maxWidth: "256px",
+        maxHeight: "256px",
+        position: "relative",
+    },
+
+}));
 
 function RoomSummery(props) {
     const classes = useStyles();

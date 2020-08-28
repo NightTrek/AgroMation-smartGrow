@@ -157,7 +157,7 @@ export const PrimaryLineChart = (props) => {
         dataType:"temp",
         domain:tempDomain
     });
-    console.log(state.dataSet);
+    // console.log(state.dataSet);
     //react media queries that decide if the chart is responsive or static using a custom hook to get window size
 
     const [width, height] = useWindowSize();
@@ -189,17 +189,6 @@ export const PrimaryLineChart = (props) => {
         console.log("base case")
     }
             
-    const handleDataSetChange = (event) => {
-        console.log(event)
-        const value = event.target.value;
-        console.log(value);
-        // console.log(name);
-        // setState({
-        //     ...state,
-        //     [name]: event.target.value,
-        // });
-        // props.setRoom(event.target.value);
-    };
 
 
     console.log(`vw ${width}`);
@@ -277,10 +266,10 @@ export const PrimaryLineChart = (props) => {
                             <Button variant={"outlined"} color={"primary"} id={"Pressure"} onClick={e => {setState({...state, dataSet:pressureData,dataType:"Pressure Level",domain:pressureDomain,})}}>Pressure</Button>
                         </Grid>
                         <Grid item xs={2}>
-                            <Button variant={"outlined"} color={"primary"} id={"Lights"} disabled={true} onClick={handleDataSetChange}>Lights</Button>
+                            <Button variant={"outlined"} color={"primary"} id={"Lights"} disabled={true} >Lights</Button>
                         </Grid>
                         <Grid item xs={2}>
-                            <Button variant={"outlined"} color={"primary"} id={"Warnings"} disabled={true} onClick={handleDataSetChange}>Warnings</Button>
+                            <Button variant={"outlined"} color={"primary"} id={"Warnings"} disabled={true} >Warnings</Button>
                         </Grid>
             </Grid>
         </Grid>

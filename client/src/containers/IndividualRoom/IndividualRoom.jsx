@@ -3,28 +3,31 @@ import React, { Component } from 'react'
 import { Container, Grid, makeStyles, useTheme, withStyles, Tab, Tabs, Box, Typography } from '@material-ui/core'
 import RoomSummery from '../RoomSummery/RoomSummery'
 import TempChart from "../TempChart/TempChart";
+import { PrimaryLineChart } from '../PrimaryLineChart/PrimaryLineChart';
+import { LightingController } from '../LightingController/LightingController';
 
 
 
-  
-  const StyledTab = withStyles((theme) => ({
+
+const StyledTab = withStyles((theme) => ({
 
     root: {
-    //   textTransform: 'none',
-    //   color: '#fff',
-    //   fontWeight: theme.typography.fontWeightRegular,
-    //   fontSize: theme.typography.pxToRem(15),
-    //   marginRight: theme.spacing(1),
-      '&:focus': {
-        backgroundColor: '#2D2F33',
-      },
-      '&:selected': {
-        backgroundColor: '#2D2F33',
-        color:"red",
-        fontWeight: theme.typography.fontWeightMedium,
-      },
+        //   textTransform: 'none',
+        //   color: '#fff',
+        //   fontWeight: theme.typography.fontWeightRegular,
+        //   fontSize: theme.typography.pxToRem(15),
+        //   marginRight: theme.spacing(1),
+        // border:"solid 2px yellow",
+        '&:focus': {
+            backgroundColor: '#2D2F33',
+        },
+        '&:selected': {
+            backgroundColor: '#2D2F33',
+            color: "red",
+            fontWeight: theme.typography.fontWeightMedium,
+        },
     },
-  }))((props) => <Tab {...props} />);
+}))((props) => <Tab {...props} />);
 
 
 
@@ -37,11 +40,12 @@ function TabPanel(props) {
             id={`simple-tabpanel-${index}`}
             aria-labelledby={`simple-tab-${index}`}
             {...other}
+            style={{ minWidth: "100%" }}
         >
             {value === index && (
-                <Box>
+                <Grid container item direction={"column"} >
                     {children}
-                </Box>
+                </Grid>
             )}
         </div>
     );
@@ -54,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
         background: theme.palette.secondary.main,
         color: theme.palette.text.main,
         minWidth: "256px",
-        minHeight: "360px",
+        minHeight: "442px",
         marginTop: "8px",
     },
     backgroundTab: {
@@ -77,7 +81,7 @@ export default function IndividualRoom() {
 
     const [state, setState] = React.useState({ //setState
         Tabs: ["Analytics", "Lights", "Alarms", "Logs"],
-        pick: 0,
+        pick: 1,
     });
 
     const handleChange = (event) => {
@@ -110,23 +114,23 @@ export default function IndividualRoom() {
                             {state.Tabs.map((item, index) => {
                                 return (
                                     <StyledTab label={item} key={index} id={`simple-tab-${index}`}
-                                        aria-controls={`simple-tabpanel-${index}`}/>);
+                                        aria-controls={`simple-tabpanel-${index}`} />);
                             })}
                         </Tabs>
                     </Grid>
                     <Grid item container direction={"row"}>
                         <TabPanel value={state.pick} index={0}>
-                            <TempChart/>
-                    </TabPanel>
+                            <PrimaryLineChart />
+                        </TabPanel>
                         <TabPanel value={state.pick} index={1}>
-                            Item Two
-                     </TabPanel>
+                            <LightingController />
+                        </TabPanel>
                         <TabPanel value={state.pick} index={2}>
-                            Item Three
-                    </TabPanel>
+                            Alarms Are currently in development. You will be able to set the alert levels for each datapoint monitored.
+                        </TabPanel>
                         <TabPanel value={state.pick} index={3}>
-                            Item Four
-                    </TabPanel>
+                            Logs is currently in development. You will be able to view a list of alarts and alarms for this room.
+                        </TabPanel>
                     </Grid>
                 </Grid>
             </Grid>

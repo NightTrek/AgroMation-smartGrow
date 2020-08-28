@@ -165,6 +165,10 @@ export default function MiniDrawer(props) {
         setOpen(false);
     };
 
+    const handleLinkClick = (event) => {
+        
+    }
+
     return (
         <div className={classes.root}>
             <CssBaseline />

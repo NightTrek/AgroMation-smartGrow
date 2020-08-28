@@ -1,9 +1,9 @@
 import React, { useState, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { Grid, FormControl, InputLabel, Select, MenuItem, makeStyles, useTheme, withStyles, Slider, Typography, Tooltip } from '@material-ui/core'
+import { Grid, FormControl, InputLabel, Select, MenuItem, makeStyles, useTheme, withStyles, Slider, Typography, Button, Divider, IconButton, Box } from '@material-ui/core'
+import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
 
 
-import "./style.css";
 
 const exampleLightZoneArray = [
     {
@@ -163,7 +163,7 @@ const PowerIntensitySlider = withStyles({
             background: 'linear-gradient(white, black)',
         },
         "& .MuiSlider-markLabel": {
-            left: '48px',
+            left: '64px',
             color: "white",
         }
     }
@@ -209,7 +209,7 @@ const RedIntensitySlider = withStyles({
             background: 'linear-gradient(red, black)',
         },
         "& .MuiSlider-markLabel": {
-            left: '48px',
+            left: '64px',
             color: "white",
         }
     }
@@ -254,7 +254,7 @@ const YellowIntensitySlider = withStyles({
             background: 'linear-gradient(yellow, black)',
         },
         "& .MuiSlider-markLabel": {
-            left: '48px',
+            left: '64px',
             color: "white",
         }
     }
@@ -299,11 +299,23 @@ const GreenIntensitySlider = withStyles({
             background: 'linear-gradient(green, black)',
         },
         "& .MuiSlider-markLabel": {
-            left: '48px',
+            left: '64px',
             color: "white",
         }
     }
 })(Slider);
+
+
+const ZoneIconButton = withStyles({
+    root: {
+        borderRadius: "30%",
+        position: "absolute",
+        top: "-4px",
+        left: "-4px",
+    },
+
+})(IconButton);
+
 
 const useStyles = makeStyles((theme) => ({
     roomSummeryWidget: {
@@ -333,11 +345,28 @@ const useStyles = makeStyles((theme) => ({
     },
     SliderBottomLabel: {
         background: theme.palette.secondary.dark,
-        minWidth: "64px",
-        maxWidth: "128px",
+        minWidth: "128px",
         minHeight: "48px",
         borderRadius: "24px",
         marginTop: "24px"
+    },
+    topCaption: {
+        height: "24px",
+        marginTop: "8px"
+    },
+    lightZoneWidget: {
+        background: theme.palette.secondary.dark,
+        color: theme.palette.text.main,
+        minWidth: "256px",
+        maxWidth: "320px",
+        maxHeight: "348px",
+    },
+    lightZoneButtonBox: {
+        border: "solid white 2px",
+        borderRadius: "50%",
+        width: "56px",
+        height: "56px",
+        position: "relative",
     }
 
 }));
@@ -353,7 +382,7 @@ const PowerIntensity = (props) => {
     const type = props.type || 0;
     const bottomHeading = props.bottomHeading || "Intensity";
     const color = props.color || "white";
-    
+
     const handleSliderChange = (event, newValue) => {
         setValue(newValue);
     };
@@ -395,31 +424,35 @@ const PowerIntensity = (props) => {
             onChange={handleSliderChange}
         />,
         <GreenIntensitySlider
-                            orientation="vertical"
-                            defaultValue={defaultValue}
-                            aria-labelledby="vertical-slider"
-                            getAriaValueText={valuetext}
-                            marks={marks}
-                            ThumbComponent={ThumbComponent}
-                            onChange={handleSliderChange}
-                        />
+            orientation="vertical"
+            defaultValue={defaultValue}
+            aria-labelledby="vertical-slider"
+            getAriaValueText={valuetext}
+            marks={marks}
+            ThumbComponent={ThumbComponent}
+            onChange={handleSliderChange}
+        />
     ]
 
     return (
         <Grid item container direction={"column"} xs>
-            <Grid item>
-                <Typography variant={"caption"}>{topCaption}</Typography>
+            <Grid item className={classes.topCaption}>
+                <Typography variant={"caption"} >{topCaption}</Typography>
             </Grid>
-            <Grid item container className={classes.sliderBackround} direction={"row"} justify={"center"}>
+            <Grid item container className={classes.sliderBackround} direction={"row"} align={"center"}>
                 <Grid item style={{ minHeight: "192px", marginTop: "24px" }}>
                     <div style={{ minHeight: "192px" }}>
                         {typeOptions[type]}
                     </div>
                 </Grid>
             </Grid>
-            <Grid item className={classes.SliderBottomLabel}>
-                <Typography variant={"h6"} align={"center"} style={{color:color}}>{bottomHeading}</Typography>
+            <Grid item container direction={"row"} justify={"center"}>
+                <Grid item className={classes.SliderBottomLabel}>
+
+                    <Button style={{ color: color }}><Typography variant={"button"} align={"right"} >set {bottomHeading}</Typography></Button>
+                </Grid>
             </Grid>
+
         </Grid>
     );
 }
@@ -427,9 +460,11 @@ const PowerIntensity = (props) => {
 const RGBInensities = (props) => {
     return (
         <Grid item container direction={"row"} xs={5}>
-            <PowerIntensity type={1} topCaption={"Color Spectrum"} bottomHeading={"Red"} color={"red"}/>
-            <PowerIntensity type={2} topCaption={"Define your spectrum"} bottomHeading={"Yellow"} color={"yellow"}/>
-            <PowerIntensity type={3} topCaption={"0% to 100%"} bottomHeading={"Green"} color={"green"}/>
+            <PowerIntensity type={1} topCaption={"Color Spectrum"} bottomHeading={"Red"} color={"red"} />
+            <Divider orientation={"vertical"} flexItem></Divider>
+            <PowerIntensity type={2} topCaption={" "} bottomHeading={"Yellow"} color={"yellow"} />
+            <Divider orientation={"vertical"} flexItem></Divider>
+            <PowerIntensity type={3} topCaption={" "} bottomHeading={"Green"} color={"green"} />
         </Grid>
     );
 };
@@ -437,7 +472,7 @@ const RGBInensities = (props) => {
 
 export const LightingController = (props) => {
     const classes = useStyles();
-    // const theme = useTheme();
+    const theme = useTheme();
     const lightZoneArray = props.lightZoneArray || exampleLightZoneArray;
 
     const [state, setState] = useState({
@@ -487,13 +522,38 @@ export const LightingController = (props) => {
             </Grid>
             {/*this is the main bar  */}
             <Grid item container direction={"row"} spacing={5}>
+                <Divider orientation={"vertical"} variant={"middle"} flexItem></Divider>
                 <PowerIntensity />
                 <RGBInensities />
-                <Grid item xs={4}>
-
+                <Grid container item xs={4} direction={"column"} className={classes.lightZoneWidget}>
+                    {state.lightZoneArray.map((item, index) => {
+                        let color= "black";
+                        let textColor="red";
+                        let active="inactive";
+                        if(item.activeCount===6){
+                            color=theme.palette.primary.main;
+                            active="active"
+                            textColor=theme.palette.roomStatus.veg;
+                        }
+                        return (
+                            <Grid item container direction={"column"} xs={4} spacing={0} key={index} className={classes.LightZoneButtonOuterBox}>
+                                <Grid item>
+                                    <Typography variant={"subtitle2"}>{item.name}</Typography>
+                                </Grid>
+                                <Grid item className={classes.lightZoneButtonBox} style={{positon:"relative",background: color,}}>
+                                    <ZoneIconButton><EmojiObjectsIcon style={{ fontSize: "36px", color: "white" }} /></ZoneIconButton>
+                                </Grid>
+                                <Grid item>
+                                    <Typography variant={"caption"} align={"right"} style={{color:textColor}}>{active}</Typography>
+                                    
+                                </Grid>
+                            </Grid>
+                        );
+                    })}
                 </Grid>
-            </Grid>
+            <Grid item xs={1}></Grid>
         </Grid>
+        </Grid >
     )
 }
 

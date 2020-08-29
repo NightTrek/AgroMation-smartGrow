@@ -1,5 +1,9 @@
 .wrapper {
   background-color: #1A1C1E;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5),
+  rgba(0, 0, 0, 0.5)), url("https://ak1.picdn.net/shutterstock/videos/27265981/thumb/1.jpg");
+  background-size: cover;
+  
   height: 100%;
   display: relative;
   flex-flow: row wrap;
@@ -12,10 +16,10 @@
 
 .backgroundPattern{
   position: absolute;
-  background-image: url("https://ak1.picdn.net/shutterstock/videos/27265981/thumb/1.jpg");
+  background: url("https://ak1.picdn.net/shutterstock/videos/27265981/thumb/1.jpg") left bottom no-repeat;
   /* background-position: 0px 0px; */
-  background-size: cover;
-  /* background-repeat: no-repeat; */
+  /* background-size: cover; */
+  background-repeat: no-repeat;
   /* background-repeat: repeat-y; */
   height: 100vh;
   width: 100vw;

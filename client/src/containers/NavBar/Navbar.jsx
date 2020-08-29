@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -128,8 +129,8 @@ const useStyles = makeStyles((theme) => ({
     // selectEmpty: {
     //     marginTop: theme.spacing(2),
     // },
-    locationName:{
-        color:theme.palette.roomStatus.veg
+    locationName: {
+        color: theme.palette.roomStatus.veg
     },
     content: {
         flexGrow: 1,
@@ -143,10 +144,9 @@ export default function MiniDrawer(props) {
     const [open, setOpen] = React.useState(false);
 
     const [state, setState] = React.useState({
-        locations: ["Green Gardens","Desert Warhouse", "Hilltop Garden"],
-        pick:0
+        locations: ["Green Gardens", "Desert Warhouse", "Hilltop Garden"],
+        pick: 0
     });
-    const menuIcons = [<DashboardIcon color={"primary"}/>,<BusinessIcon color={"primary"}/>,<GroupIcon color={"primary"}/>,<SettingsIcon color={"primary"}/>]
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -165,9 +165,10 @@ export default function MiniDrawer(props) {
         setOpen(false);
     };
 
-    const handleLinkClick = (event) => {
-        
-    }
+
+
+    const menuIcons = [<DashboardIcon data-index={"dashboard"} color={"primary"} />, <BusinessIcon data-index={"rooms"} color={"primary"} />, <GroupIcon data-index={"users"} color={"primary"} />, <SettingsIcon data-index={"settings"} color={"primary"} />]
+
 
     return (
         <div className={classes.root}>
@@ -223,11 +224,11 @@ export default function MiniDrawer(props) {
                     </div> : <div></div>}
                 {open ?
                     <Grid container
-                    direction="column"
-                    justify="center"
-                    alignItems="center"
-                    spacing={3}
-                    className={classes.bottomdrawerBox}>
+                        direction="column"
+                        justify="center"
+                        alignItems="center"
+                        spacing={3}
+                        className={classes.bottomdrawerBox}>
 
                         <Typography variant={"h5"} className={classes.locationName}>
                             {state.locations[state.pick] || "Green Gardens"}
@@ -247,8 +248,8 @@ export default function MiniDrawer(props) {
                             >
                                 {console.log(state)}
                                 {state.locations.map((Item, Index) => (
-                                <MenuItem key={Index} value={Index}>{Item || Item.name}</MenuItem>
-                                )) }
+                                    <MenuItem key={Index} value={Index}>{Item || Item.name}</MenuItem>
+                                ))}
                             </Select>
                         </FormControl>
                         <Typography variant={"subtitle2"}>
@@ -258,10 +259,14 @@ export default function MiniDrawer(props) {
                 <Divider />
                 <List>
                     {['Dashboard', 'Rooms', 'Users', 'Settings'].map((text, index) => (
-                        <ListItem button key={text}>
-                            <ListItemIcon>{menuIcons[index]}</ListItemIcon>
-                            <ListItemText primary={text} />
-                        </ListItem>
+                        <NavLink to={"/" + text} key={text}> 
+                            <ListItem button data-index={text} value={text}>
+
+                                <ListItemIcon data-index={text} >{menuIcons[index]}</ListItemIcon>
+                                <ListItemText data-index={text} primary={text} />
+
+                            </ListItem>
+                        </NavLink>
                     ))}
                 </List>
             </Drawer>

@@ -12,6 +12,7 @@ const theme = createMuiTheme({
     secondary: {
       main: '#2D2F33',
       dark: '#1F2124',
+      shadow:"#888888",
       contrastText: 'white',
     },
     roomStatus:{

@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route  } from "react-router-dom";
 import { Provider } from "react-redux";
 import { createStore, applyMiddleware, compose } from "redux";
 import reduxThunk from "redux-thunk";
@@ -26,6 +26,7 @@ import Welcome from "./components/Welcome";
 
 import reducers from "./reducers";
 import IndividualRoom from "./containers/IndividualRoom/IndividualRoom";
+import UsersPage from "./containers/UsersPage/UsersPage";
 
 // configure redux dev tools
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -38,19 +39,22 @@ const store = createStore(
   composeEnhancers(applyMiddleware(reduxThunk))
 );
 
+
+
+
 ReactDOM.render(
   <Provider store={store}>
     <Router>
       <Wrapper>
         <Navbar>
           <Route exact path="/" component={Welcome} />
-          <Route exact path="/dashboard" component={Dashboard2} />
-          <Route exact path="/room" component={IndividualRoom} />
-          <Route exact path="/settings" component={Settings} />
+          <Route exact path="/Dashboard" component={Dashboard2} />
+          <Route exact path="/Rooms" component={IndividualRoom} />
+          <Route exact path="/Settings" component={Settings} />
           {/* <Route exact path="/signup" component={Signup} />
           <Route exact path="/signin" component={Signin} /> */}
           <Route exact path="/signout" component={Signout} />
-          <Route exact path="/chart" component={TempChart} />
+          <Route exact path="/Users" component={UsersPage} />
         </Navbar>
       </Wrapper>
     </Router>

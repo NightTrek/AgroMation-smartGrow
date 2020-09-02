@@ -1,21 +1,31 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from "moment";
+// import moment from "moment";
 import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles'; //useTheme
-import { Grid, Typography, Select, FormControl, InputLabel, MenuItem, ListItemText, List, ListItem, ListItemIcon, Button, IconButton } from '@material-ui/core'
+import { Grid, Typography, Select, Divider, MenuItem, ListItemText, List, ListItem, ListItemIcon, Button, Modal, Backdrop, Fade, } from '@material-ui/core'
 import ReactSpeedometer from "react-d3-speedometer"
 import ErrorIcon from '@material-ui/icons/Error';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import HelpIcon from '@material-ui/icons/Help';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
-import {StandardRoundSelectForm} from "../../components/StandardSelect/StandardSelect.js";
-import {ExampleRoomData} from "../../exampleDataTypes/clientExamlpeDataTypes";
+import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect.js";
+import { ExampleRoomData } from "../../exampleDataTypes/clientExamlpeDataTypes";
+import { Console } from 'winston/lib/winston/transports';
 
 
 
 
+export const VerticleDividerStyled = withStyles((theme) => ({
 
+    root: {
+
+        "& .MuiDivider-vertical": {
+
+        }
+    },
+
+}))(Divider);
 
 
 
@@ -54,7 +64,7 @@ function DiagnosticColorBar(props) {
         }}>
             <ListItem key={1}>
                 <ListItemText variant={"button"}>SetPoint:</ListItemText>
-                <Button variant="outlined" color={"primary"} style={{ marginLeft: "12px" }}>
+                <Button variant="outlined" color={"primary"} onClick={props.handleOpen} style={{ marginLeft: "12px" }}>
 
                     {props.setPoint}
                 </Button>
@@ -89,6 +99,15 @@ function TempMeter(props) {
     const classes = props.classes;
     const theme = props.theme;
     const tempUnitString = props.tempUnitString;
+    const [open, setOpen] = React.useState(false);
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
     return (
         <Grid container item xs direction={'column'} justify={'center'}>
 
@@ -111,8 +130,27 @@ function TempMeter(props) {
                     segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning,
                     theme.palette.roomStatus.fault]} />
 
-                <DiagnosticColorBar datapoint={state.liveData.temp} min={state.rooms[state.pick].tempSetPoint - 5} superMin={state.rooms[state.pick].tempSetPoint - 20}
+                <DiagnosticColorBar handleOpen={handleOpen} datapoint={state.liveData.temp} min={state.rooms[state.pick].tempSetPoint - 5} superMin={state.rooms[state.pick].tempSetPoint - 20}
                     max={state.rooms[state.pick].tempSetPoint + 5} superMax={state.rooms[state.pick].tempSetPoint + 20} setPoint={`${state.rooms[state.pick].tempSetPoint}${tempUnitString}`} />
+                <Modal
+                    aria-labelledby="transition-modal-title"
+                    aria-describedby="transition-modal-description"
+                    className={classes.modal}
+                    open={open}
+                    onClose={handleClose}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                        timeout: 500,
+                    }}
+                >
+                    <Fade in={open}>
+                        <Grid item container direction={"column"} className={classes.paper}>
+                            <h2 id="transition-modal-title">Transition modal</h2>
+                            <p id="transition-modal-description">react-transition-group animates me.</p>
+                        </Grid>
+                    </Fade>
+                </Modal>
             </Grid>
         </Grid>
     );
@@ -122,6 +160,17 @@ function HumidityMeter(props) {
     const state = props.state;
     const classes = props.classes;
     const theme = props.theme;
+    const [open, setOpen] = React.useState(false);
+
+    const handleOpen = () => {
+
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     return (
         <Grid container item xs direction={'column'} justify={'center'}>
             <Typography variant={"h6"} align={'center'}>Humidty</Typography>
@@ -143,8 +192,27 @@ function HumidityMeter(props) {
                     state.rooms[state.pick].humiditySetPoint + 10, state.rooms[state.pick].humiditySetPoint + 30,
                     state.rooms[state.pick].humiditySetPoint + 50]}
                     segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]} />
-                <DiagnosticColorBar datapoint={state.liveData.humidty} min={state.rooms[state.pick].humiditySetPoint - 10} superMin={state.rooms[state.pick].humiditySetPoint - 30}
+                <DiagnosticColorBar handleOpen={handleOpen} datapoint={state.liveData.humidty} min={state.rooms[state.pick].humiditySetPoint - 10} superMin={state.rooms[state.pick].humiditySetPoint - 30}
                     max={state.rooms[state.pick].humiditySetPoint + 10} superMax={state.rooms[state.pick].humiditySetPoint + 30} setPoint={state.rooms[state.pick].humiditySetPoint + " %"} />
+                <Modal
+                    aria-labelledby="transition-modal-title"
+                    aria-describedby="transition-modal-description"
+                    className={classes.modal}
+                    open={open}
+                    onClose={handleClose}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                        timeout: 500,
+                    }}
+                >
+                    <Fade in={open}>
+                        <Grid item container direction={"column"} className={classes.paper}>
+                            <h2 id="transition-modal-title">Transition modal</h2>
+                            <p id="transition-modal-description">react-transition-group animates me.</p>
+                        </Grid>
+                    </Fade>
+                </Modal>
             </Grid>
 
         </Grid>
@@ -156,6 +224,16 @@ function CO2LevelMeter(props) {
     const state = props.state;
     const classes = props.classes;
     const theme = props.theme;
+    const [open, setOpen] = React.useState(false);
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     return (
         <Grid container item xs direction={'column'} justify={'center'}>
             <Typography variant={"h6"} align={'center'}>CO2 Level</Typography>
@@ -174,8 +252,27 @@ function CO2LevelMeter(props) {
                     customSegmentStops={[state.rooms[state.pick].CO2SetPoint - 2000, state.rooms[state.pick].CO2SetPoint - 1000, state.rooms[state.pick].CO2SetPoint - 200, state.rooms[state.pick].CO2SetPoint + 200, state.rooms[state.pick].CO2SetPoint + 1000, state.rooms[state.pick].CO2SetPoint + 2000]}
                     segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]} />
 
-                <DiagnosticColorBar datapoint={state.liveData.CO2level} min={state.rooms[state.pick].CO2SetPoint - 200} superMin={state.rooms[state.pick].CO2SetPoint - 1000}
+                <DiagnosticColorBar handleOpen={handleOpen}  datapoint={state.liveData.CO2level} min={state.rooms[state.pick].CO2SetPoint - 200} superMin={state.rooms[state.pick].CO2SetPoint - 1000}
                     max={state.rooms[state.pick].CO2SetPoint + 200} superMax={state.rooms[state.pick].CO2SetPoint + 1000} setPoint={state.rooms[state.pick].CO2SetPoint + " ppm"} />
+                <Modal
+                    aria-labelledby="transition-modal-title"
+                    aria-describedby="transition-modal-description"
+                    className={classes.modal}
+                    open={open}
+                    onClose={handleClose}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                        timeout: 500,
+                    }}
+                >
+                    <Fade in={open}>
+                        <Grid item container direction={"column"} className={classes.paper}>
+                            <h2 id="transition-modal-title">Transition modal</h2>
+                            <p id="transition-modal-description">react-transition-group animates me.</p>
+                        </Grid>
+                    </Fade>
+                </Modal>
             </Grid>
         </Grid>
     );
@@ -186,6 +283,15 @@ function PressureMeter(props) {
     const state = props.state;
     const classes = props.classes;
     const theme = props.theme;
+    const [open, setOpen] = React.useState(false);
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
     return (
         <Grid container item xs direction={'column'} justify={'center'}>
             <Typography variant={"h6"} align={'center'}>Pressure level</Typography>
@@ -203,8 +309,27 @@ function PressureMeter(props) {
                     currentValueText={`${state.liveData.pressure} mbar`}
                     customSegmentStops={[state.rooms[state.pick].pressureSetPont - 300, state.rooms[state.pick].pressureSetPont - 100, state.rooms[state.pick].pressureSetPont - 20, state.rooms[state.pick].pressureSetPont + 20, state.rooms[state.pick].pressureSetPont + 100, state.rooms[state.pick].pressureSetPont + 300]}
                     segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]} />
-                <DiagnosticColorBar datapoint={state.liveData.pressure} min={state.rooms[state.pick].pressureSetPont - 20} superMin={state.rooms[state.pick].pressureSetPont - 100}
+                <DiagnosticColorBar handleOpen={handleOpen}  datapoint={state.liveData.pressure} min={state.rooms[state.pick].pressureSetPont - 20} superMin={state.rooms[state.pick].pressureSetPont - 100}
                     max={state.rooms[state.pick].pressureSetPont + 20} superMax={state.rooms[state.pick].pressureSetPont + 100} setPoint={state.rooms[state.pick].pressureSetPont + " mbar"} />
+                <Modal
+                    aria-labelledby="transition-modal-title"
+                    aria-describedby="transition-modal-description"
+                    className={classes.modal}
+                    open={open}
+                    onClose={handleClose}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                        timeout: 500,
+                    }}
+                >
+                    <Fade in={open}>
+                        <Grid item container direction={"column"} className={classes.paper}>
+                            <h2 id="transition-modal-title">Transition modal</h2>
+                            <p id="transition-modal-description">react-transition-group animates me.</p>
+                        </Grid>
+                    </Fade>
+                </Modal>
             </Grid>
         </Grid>
     );
@@ -214,12 +339,23 @@ function PressureMeter(props) {
 function StageMeter(props) {
     const state = props.state;
     const classes = props.classes;
+
     const theme = props.theme;
     const cloneHours = (state.rooms[state.pick].CloneTime / 60) / 60;
     const vegHours = (state.rooms[state.pick].VegTime / 60) / 60;
     const flowerHours = (state.rooms[state.pick].FlowerTime / 60) / 60;
     const TotalDays = (cloneHours) / 24 + (vegHours) / 24 + (flowerHours) / 24
     // console.log(` ${cloneHours} ${vegHours} ${flowerHours} ${TotalDays}`)
+    const [open, setOpen] = React.useState(false);
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     return (
         <Grid container item xs direction={'column'} justify={'center'}>
             <Typography variant={"h6"} align={'center'}>Life Stage</Typography>
@@ -237,8 +373,27 @@ function StageMeter(props) {
                     currentValueText={`${32} days`}
                     customSegmentStops={[0, (cloneHours) / 24, (vegHours) / 24, TotalDays]}
                     segmentColors={[theme.palette.roomStatus.clone, theme.palette.roomStatus.veg, theme.palette.roomStatus.flower]} />
-                <DiagnosticColorBar datapoint={2} min={1} superMin={0}
+                <DiagnosticColorBar handleOpen={handleOpen}  datapoint={2} min={1} superMin={0}
                     max={3} superMax={4} setPoint={state.rooms[state.pick].stage + " left in"} />
+                <Modal
+                    aria-labelledby="transition-modal-title"
+                    aria-describedby="transition-modal-description"
+                    className={classes.modal}
+                    open={open}
+                    onClose={handleClose}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                        timeout: 500,
+                    }}
+                >
+                    <Fade in={open}>
+                        <Grid container direction={"column"} className={classes.paper}>
+                            <h2 id="transition-modal-title">Transition modal</h2>
+                            <p id="transition-modal-description">react-transition-group animates me.</p>
+                        </Grid>
+                    </Fade>
+                </Modal>
             </Grid>
         </Grid>
     );
@@ -274,6 +429,19 @@ const useStyles = makeStyles((theme) => ({
         maxWidth: "256px",
         maxHeight: "256px",
         position: "relative",
+    },
+    modal: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    paper: {
+        position:"absolute",
+        minWidth:"512px",
+        backgroundColor: theme.palette.background.paper,
+        border: '2px solid #000',
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing(2, 4, 3),
     },
 
 }));
@@ -336,18 +504,17 @@ function RoomSummery(props) {
     }
 
 
+
     return (
         <Grid item container direction={"column"} className={classes.roomSummeryWidget} spacing={3}>
             <Grid container item direction="row" xs>
-                <Grid item xs={1}>
-                </Grid>
-                <Grid item xs={2}>
+                <Grid item xs style={{ paddingLeft: "24px" }}>
                     <Typography variant={"h4"}>Room</Typography>
                 </Grid>
                 <Grid item xs ></Grid>
-                <Grid item xs={2}>
+                <Grid item>
                     <StandardRoundSelectForm className={classes.formControl} hiddenLabel >
-                        
+
                         <Select
                             value={state.pick}
                             onChange={handleChange}

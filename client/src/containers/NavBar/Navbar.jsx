@@ -1,5 +1,5 @@
 import React, {useDispatch, useEffect} from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { compose } from "redux";
 import { connect, useSelector, shallowEqual } from "react-redux";
 import { reduxForm } from "redux-form";
@@ -165,7 +165,7 @@ const useStyles = makeStyles((theme) => ({
  const MiniDrawer = (props) => {
     const classes = useStyles();
     const theme = useTheme();
-    
+    const PageName = useLocation();
     // const dispatch = useDispatch();
 
     let {user,pick, auth} = useSelector( state => ({
@@ -220,9 +220,11 @@ const useStyles = makeStyles((theme) => ({
     const handleDrawerClose = () => {
         setOpen(false);
     };
-
-
-
+    
+    const getPageNameFromAddress = () => {
+        const array = PageName.pathname.split('/');
+        return array[1];
+    }
 
     const menuIcons = [<DashboardIcon data-index={"dashboard"} color={"primary"} />, <BusinessIcon data-index={"rooms"} color={"primary"} />, <GroupIcon data-index={"users"} color={"primary"} />, <SettingsIcon data-index={"settings"} color={"primary"} />, <ExitToAppIcon data-index={'signout'} color={"primary"}/>]
 
@@ -247,7 +249,7 @@ const useStyles = makeStyles((theme) => ({
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap className={classes.title}>
-                        {props.currentPage || "AgroMation"}
+                        {getPageNameFromAddress() || "AgroMation"}
                     </Typography>
                     <img src={agroLogo} alt={"AgroMation logo"} className={"topbarLogoLeft"} />
                 </Toolbar>

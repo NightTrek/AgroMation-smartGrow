@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import { VictoryPie, VictoryLabel } from "victory";
-import { Grid, Typography, List,withStyles } from "@material-ui/core"
+import { Grid, Typography, List,withStyles, Divider } from "@material-ui/core"
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -15,7 +15,16 @@ import {sampleTempData,sampleHumidityData,sampleProgressData,sampleCO2Data} from
 import './style.css';
 
 
+export const VerticleDividerStyled = withStyles((theme) => ({
 
+    root: {
+        background:theme.palette.secondary.dark,
+        "& .MuiDivider-vertical": {
+            
+        }
+    },
+
+}))(Divider);
 
 
 
@@ -137,13 +146,11 @@ function DashboardSummry(props) {
     return (
         <Grid container direction="column" justify={"center"} spacing={2} className={classes.dashboardSummery}>
             <Grid container item direction="row" xs>
-                <Grid item xs={1}>
-                </Grid>
-                <Grid item xs={2}>
+                <Grid item xs={2} style={{paddingLeft:"24px"}}>
                     <Typography variant={"h6"}>Summery</Typography>
                 </Grid>
                 <Grid item xs ></Grid>
-                <Grid item xs={2}>
+                <Grid item >
                     <StandardRoundSelectForm className={classes.formControl} >
                         
                         <Select
@@ -166,8 +173,11 @@ function DashboardSummry(props) {
             {/* ========= charts start here =================================*/}
             <Grid container item direction="row" xs >
                 <DashboardPieChart chartName={"Temp"} classes={classes} theme={theme} dataSet={sampleTempData} colorScale={defaultColorScale} />
+                <VerticleDividerStyled orientation={'vertical'} flexItem/>
                 <DashboardPieChart chartName={"Humidity"} classes={classes} theme={theme} dataSet={sampleHumidityData} colorScale={defaultColorScale} />
+                <VerticleDividerStyled orientation={'vertical'} flexItem/>
                 <DashboardPieChart chartName={"CO2"} classes={classes} theme={theme} dataSet={sampleCO2Data} colorScale={defaultColorScale} />
+                <VerticleDividerStyled orientation={'vertical'} flexItem/>
                 <DashboardPieChart chartName={"Progress"} classes={classes} theme={theme} dataSet={sampleProgressData} colorScale={progressColorScale} />
             </Grid>
         </Grid>

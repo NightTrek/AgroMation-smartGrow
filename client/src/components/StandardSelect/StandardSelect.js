@@ -6,7 +6,7 @@ import {withStyles, FormControl} from "@material-ui/core"
         borderRadius: "24px",
         background: theme.palette.secondary.dark,
         paddingLeft: "24px",
-        paddingRight: '8px',
+        paddingRight: '20px',
         "& .muiSelect-select": {
 
         }

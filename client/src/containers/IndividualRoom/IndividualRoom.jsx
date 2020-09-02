@@ -1,10 +1,10 @@
-import React, { Component } from 'react'
+import React from 'react'
 // import PropTypes from 'prop-types'
-import { Container, Grid, makeStyles, useTheme, withStyles, Tab, Tabs, Box, Typography } from '@material-ui/core'
+import { Container, Grid, makeStyles, withStyles, Tab, Tabs } from '@material-ui/core'
 import RoomSummery from '../RoomSummery/RoomSummery'
-import TempChart from "../TempChart/TempChart";
 import { PrimaryLineChart } from '../PrimaryLineChart/PrimaryLineChart';
 import { LightingController } from '../LightingController/LightingController';
+import requireAuth from '../../hoc/requireAuth';
 
 
 
@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function IndividualRoom() {
+export default requireAuth(function IndividualRoom() {
     const classes = useStyles();
 
     const [state, setState] = React.useState({ //setState
@@ -84,16 +84,16 @@ export default function IndividualRoom() {
         pick: 1,
     });
 
-    const handleChange = (event) => {
-        console.log(state.pick)
-        const name = event.target.name;
-        // console.log(name);
-        setState({
-            ...state,
-            [name]: event.target.value,
-        });
-        // props.setRoom(event.target.value);
-    };
+    // const handleChange = (event) => {
+    //     console.log(state.pick)
+    //     const name = event.target.name;
+    //     // console.log(name);
+    //     setState({
+    //         ...state,
+    //         [name]: event.target.value,
+    //     });
+    //     // props.setRoom(event.target.value);
+    // };
 
     const handleTabChange = (event, newValue) => {
         setState({
@@ -136,4 +136,4 @@ export default function IndividualRoom() {
             </Grid>
         </Container>
     )
-}
+})

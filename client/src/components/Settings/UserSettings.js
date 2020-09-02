@@ -5,13 +5,14 @@ import { connect } from "react-redux";
 import InputField from "../../containers/InputField";
 
 class UserSettings extends Component {
+
   renderInput = ({ input }) => {
     return <input {...input} />;
   };
 
   onSubmit = formProps => {
     this.props.usersettings(formProps, () => {
-      this.props.history.push("/settings");
+      
     });
   };
 
@@ -28,7 +29,7 @@ class UserSettings extends Component {
               disabled
               id="profile_email"
               className="form-control disabled"
-              value="email here"
+              value={this.props.CurrentEmail}
             />
           </div>
           <div className="form-group">
@@ -38,7 +39,7 @@ class UserSettings extends Component {
               disabled
               id="profile_username"
               className="form-control disabled"
-              value="username here"
+              value={this.props.CurrentUserName}
             />
           </div>
           <div className="form-group">
@@ -48,7 +49,7 @@ class UserSettings extends Component {
               disabled
               id="profile_password"
               className="form-control disabled"
-              value="password here"
+              value={this.props.CurrentPass}
             />
           </div>
         </form>
@@ -58,7 +59,7 @@ class UserSettings extends Component {
           className="form-horizontal"
           // need a patch method for user to edit their info
           // action="/users/@me/update?_method=PATCH"
-          method="POST"
+          
         >
           <div className="form-group">
             <h6>Edit your info below</h6>
@@ -101,7 +102,7 @@ class UserSettings extends Component {
             </fieldset>
           </div>
           <div className="form-group">
-            <button type="submit" className="btn btn-primary btn-radius">
+            <button  className="btn btn-primary btn-radius">
               Save Changes
             </button>
           </div>

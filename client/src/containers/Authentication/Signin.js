@@ -4,6 +4,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { signin } from "../../actions";
 import InputField from "../InputField";
+import {Typography} from "@material-ui/core";
 
 class Signin extends Component {
   renderInput = ({ input }) => {
@@ -11,19 +12,17 @@ class Signin extends Component {
   };
 
   onSubmit = formProps => {
-    console.log(formProps);
     this.props.signin(formProps, () => {
       this.props.history.push("/dashboard");
     });
   };
 
   render() {
-    console.log(this.props);
     const { handleSubmit } = this.props;
     return (
       <form className="form-horizontal" onSubmit={handleSubmit(this.onSubmit)}>
         <div className="form-group">
-          <label type="email" id="labelColor">
+          <label type="email" className="labelColor">
             Email
           </label>
           <fieldset>
@@ -38,7 +37,7 @@ class Signin extends Component {
           </fieldset>
         </div>
         <div className="form-group">
-          <label type="password" id="labelColor">
+          <label type="password" className="labelColor">
             Password
           </label>
           <fieldset>

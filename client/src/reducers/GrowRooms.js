@@ -1,4 +1,4 @@
-import {ADD_GROWROOM, GROWROOM_ERROR, FETCH_GROWROOMS, FETCH_RECENT} from "../actions/types";
+import {ADD_GROWROOM, GROWROOM_ERROR, FETCH_GROWROOMS, FETCH_RECENT, } from "../actions/types";
 
 const INITIAL_STATE = {
   growRooms: [],

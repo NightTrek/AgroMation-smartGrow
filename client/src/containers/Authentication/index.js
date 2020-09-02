@@ -44,14 +44,14 @@ class Auth extends Component {
             className="btn btn-primary"
             onClick={this.renderSignin}
           >
-            SIGNIN
+            Have an Account? Signin
           </button>
           <button
             id="signupButton"
             className="btn btn-primary"
             onClick={this.renderSignup}
           >
-            SIGNUP
+            Need account Signup
           </button>
 
           {this.state.btn ? <Signin history={this.props.history}/> : <Signup history={this.props.history} />}

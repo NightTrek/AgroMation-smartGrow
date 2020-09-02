@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import { VictoryPie, VictoryLabel } from "victory";
-import { Grid, Typography, List } from "@material-ui/core"
+import { Grid, Typography, List,withStyles } from "@material-ui/core"
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -10,27 +10,12 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import ListItem from '@material-ui/core/ListItem';
+import {StandardRoundSelectForm} from "../StandardSelect/StandardSelect.js";
+import {sampleTempData,sampleHumidityData,sampleProgressData,sampleCO2Data} from "../../exampleDataTypes/clientExamlpeDataTypes";
 import './style.css';
 
 
 
-
-const sampleTempData = [{ x: "Fault", y: 1, catName: "Fault" },
-{ x: "Warning", y: 2, catName: "Warning" },
-{ x: "Nominal", y: 5, catName: "Nominal" }
-];
-const sampleHumidityData = [{ x: 1, y: 1, catName: "Fault" },
-{ x: 2, y: 1, catName: "Warning" },
-{ x: 3, y: 6, catName: "Nominal" }
-];
-const sampleProgressData = [{ x: 1, y: 1, catName: "Clone" },
-{ x: 2, y: 3, catName: "Veg" },
-{ x: 3, y: 4, catName: "Flower" }
-];
-const sampleCO2Data = [{ x: 1, y: 1, catName: "Fault" },
-{ x: 2, y: 1, catName: "Warning" },
-{ x: 3, y: 6, catName: "Nominal" }
-];
 
 
 
@@ -159,8 +144,8 @@ function DashboardSummry(props) {
                 </Grid>
                 <Grid item xs ></Grid>
                 <Grid item xs={2}>
-                    <FormControl variant={"filled"} className={classes.formControl} color={'primary'} focused >
-                        <InputLabel htmlFor="Room-Name">Room</InputLabel>
+                    <StandardRoundSelectForm className={classes.formControl} >
+                        
                         <Select
                             value={state.pick}
                             onChange={handleChange}
@@ -174,7 +159,7 @@ function DashboardSummry(props) {
                                 <MenuItem key={Index} value={Index}>{Item || Item.name}</MenuItem>
                             ))}
                         </Select>
-                    </FormControl>
+                    </StandardRoundSelectForm>
                 </Grid>
             </Grid>
 

@@ -48,7 +48,7 @@ class Signup extends Component {
       <form className="form-horizontal" onSubmit={handleSubmit(this.onSubmit)}>
         <div className="form-group">
           <fieldset>
-            <label for="email" id="labelColor">
+            <label htmlFor="email" className="labelColor">
               Email
             </label>
             <Field
@@ -64,7 +64,7 @@ class Signup extends Component {
 
         <div className="form-group">
           <fieldset>
-            <label for="username" id="labelColor">
+            <label htmlFor="username" className="labelColor">
               Full Name
             </label>
             <Field
@@ -79,7 +79,7 @@ class Signup extends Component {
         </div>
         <div className="form-group">
           <fieldset>
-            <label for="password" id="labelColor">
+            <label htmlFor="password" className="labelColor">
               Password
             </label>
             <Field

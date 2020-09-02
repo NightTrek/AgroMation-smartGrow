@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import { VictoryPie, VictoryLabel } from "victory";
-import { Grid, Typography, List } from "@material-ui/core"
+import { Grid, Typography, List,withStyles, Divider } from "@material-ui/core"
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -10,27 +10,21 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import ListItem from '@material-ui/core/ListItem';
+import {StandardRoundSelectForm} from "../StandardSelect/StandardSelect.js";
+import {sampleTempData,sampleHumidityData,sampleProgressData,sampleCO2Data} from "../../exampleDataTypes/clientExamlpeDataTypes";
 import './style.css';
 
 
+export const VerticleDividerStyled = withStyles((theme) => ({
 
+    root: {
+        background:theme.palette.secondary.dark,
+        "& .MuiDivider-vertical": {
+            
+        }
+    },
 
-const sampleTempData = [{ x: "Fault", y: 1, catName: "Fault" },
-{ x: "Warning", y: 2, catName: "Warning" },
-{ x: "Nominal", y: 5, catName: "Nominal" }
-];
-const sampleHumidityData = [{ x: 1, y: 1, catName: "Fault" },
-{ x: 2, y: 1, catName: "Warning" },
-{ x: 3, y: 6, catName: "Nominal" }
-];
-const sampleProgressData = [{ x: 1, y: 1, catName: "Clone" },
-{ x: 2, y: 3, catName: "Veg" },
-{ x: 3, y: 4, catName: "Flower" }
-];
-const sampleCO2Data = [{ x: 1, y: 1, catName: "Fault" },
-{ x: 2, y: 1, catName: "Warning" },
-{ x: 3, y: 6, catName: "Nominal" }
-];
+}))(Divider);
 
 
 
@@ -152,15 +146,13 @@ function DashboardSummry(props) {
     return (
         <Grid container direction="column" justify={"center"} spacing={2} className={classes.dashboardSummery}>
             <Grid container item direction="row" xs>
-                <Grid item xs={1}>
-                </Grid>
-                <Grid item xs={2}>
+                <Grid item xs={2} style={{paddingLeft:"24px"}}>
                     <Typography variant={"h6"}>Summery</Typography>
                 </Grid>
                 <Grid item xs ></Grid>
-                <Grid item xs={2}>
-                    <FormControl variant={"filled"} className={classes.formControl} color={'primary'} focused >
-                        <InputLabel htmlFor="Room-Name">Room</InputLabel>
+                <Grid item >
+                    <StandardRoundSelectForm className={classes.formControl} >
+                        
                         <Select
                             value={state.pick}
                             onChange={handleChange}
@@ -174,15 +166,18 @@ function DashboardSummry(props) {
                                 <MenuItem key={Index} value={Index}>{Item || Item.name}</MenuItem>
                             ))}
                         </Select>
-                    </FormControl>
+                    </StandardRoundSelectForm>
                 </Grid>
             </Grid>
 
             {/* ========= charts start here =================================*/}
             <Grid container item direction="row" xs >
                 <DashboardPieChart chartName={"Temp"} classes={classes} theme={theme} dataSet={sampleTempData} colorScale={defaultColorScale} />
+                <VerticleDividerStyled orientation={'vertical'} flexItem/>
                 <DashboardPieChart chartName={"Humidity"} classes={classes} theme={theme} dataSet={sampleHumidityData} colorScale={defaultColorScale} />
+                <VerticleDividerStyled orientation={'vertical'} flexItem/>
                 <DashboardPieChart chartName={"CO2"} classes={classes} theme={theme} dataSet={sampleCO2Data} colorScale={defaultColorScale} />
+                <VerticleDividerStyled orientation={'vertical'} flexItem/>
                 <DashboardPieChart chartName={"Progress"} classes={classes} theme={theme} dataSet={sampleProgressData} colorScale={progressColorScale} />
             </Grid>
         </Grid>

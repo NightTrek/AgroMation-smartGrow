@@ -15,7 +15,6 @@ import Dashboard2 from './containers/dashboard2/Dashboard2';
 
 import Wrapper from "./containers/Wrapper";
 
-import TempChart from "./containers/TempChart/TempChart";
 import './style.css';
 
 

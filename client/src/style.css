@@ -61,6 +61,7 @@ body,
   margin-left: auto;
   margin-right: auto;
   border: 1px solid #3e3e3b;
+  position: relative;
   /* opacity: 0.85; */
 }
 
@@ -82,7 +83,14 @@ body,
 #signupButtonT {
   position: relative;
   top: -150px;
-  left: 80px;
+  left: 48px;
+  width: 212px;
+}
+#Users,
+#UsersT {
+  position: absolute;
+  top: 48px;
+  right: 64px;
   width: 150px;
 }
 
@@ -90,8 +98,8 @@ body,
 #loginButtonT {
   position: relative;
   top: -250px;
-  left: 230px;
-  width: 150px;
+  left: 256px;
+  width: 212px;
 }
 #stylingButton,
 #signupButton,
@@ -112,6 +120,11 @@ body,
 /*=============== END Button Toggles Styles ===============*/
 
 /*=============== START Form Styles ===============*/
+
+
+.MuiSelect-icon {
+  color:white !important;
+}
 .form-horizontal {
   position: relative;
   top: -40px;
@@ -119,6 +132,7 @@ body,
 }
 
 .form-horizontal > .form-group {
+  left:64px;
   text-align: center;
 }
 
@@ -152,7 +166,7 @@ p {
   color: #687a92;
 }
 
-#labelColor {
+.labelColor {
   color: #ebeced;
 }
 

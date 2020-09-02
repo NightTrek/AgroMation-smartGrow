@@ -1,5 +1,8 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, {useDispatch, useEffect} from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { compose } from "redux";
+import { connect, useSelector, shallowEqual } from "react-redux";
+import { reduxForm } from "redux-form";
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -22,6 +25,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import agroLogo from "./../../img/AgroMationLogosquare512.png";
 import GroupIcon from '@material-ui/icons/Group';
 import agroLogoCombined from '../../img/AgroMationCombined.png';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import InputLabel from '@material-ui/core/InputLabel';
 // import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
@@ -29,10 +33,28 @@ import Select from '@material-ui/core/Select';
 // import NativeSelect from '@material-ui/core/NativeSelect';
 // import Box from '@material-ui/core/Box';
 import "./style.css";
-import { Grid } from '@material-ui/core';
+import { Grid, withStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
+import { fetchUser, setLocation } from "../../actions";
 
 const drawerWidth = 240;
+
+
+const StandardRoundSelectForm = withStyles((theme) => ({
+
+    root: {
+        borderRadius:"24px",
+        background:theme.palette.secondary.dark,
+        paddingLeft:"24px",
+        paddingRight:'6px',
+        "& .muiSelect-select":{
+            
+        }
+    },
+    
+}))(FormControl);
+
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -138,37 +160,73 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function MiniDrawer(props) {
+
+
+ const MiniDrawer = (props) => {
     const classes = useStyles();
     const theme = useTheme();
+    const PageName = useLocation();
+    // const dispatch = useDispatch();
+
+    let {user,pick, auth} = useSelector( state => ({
+        user:state.users.user,
+        pick:state.users.activeLocation,
+        auth:state.auth.authenticated
+
+    }),shallowEqual)
+
+    useEffect(()=>{
+        if(user.firstName === undefined || user.location.length === undefined){
+            console.log("fetching user")
+            props.fetchUser()
+        }
+    })
+    
+    //check if data has loaded and if not display loading text
+    if(user.firstName === undefined || user.location.length === undefined){
+        console.log("setting loading data")
+        user = {
+            name:"loading",
+            location:[
+                {
+                    name:"loading",
+                    address: "Loading Address"
+                },
+                {
+                    name:"loading locations",
+                    address: "loading address"
+                },
+                
+            ]
+        };
+        pick = 0;
+    }
+
     const [open, setOpen] = React.useState(false);
 
-    const [state, setState] = React.useState({
-        locations: ["Green Gardens", "Desert Warhouse", "Hilltop Garden"],
-        pick: 0
-    });
 
+    //dispatches location change to redux state. changes the index of state.users.activelocation for the state.users.user.location array
     const handleChange = (event) => {
-        const name = event.target.name;
-        console.log(name);
-        setState({
-            ...state,
-            [name]: event.target.value,
-        });
+        props.setLocation(event.target.value);
     };
 
+    //checks if auth has a value and opens if it does
     const handleDrawerOpen = () => {
-        setOpen(true);
+        if(auth){
+            setOpen(true);
+        }
     };
 
     const handleDrawerClose = () => {
         setOpen(false);
     };
+    
+    const getPageNameFromAddress = () => {
+        const array = PageName.pathname.split('/');
+        return array[1];
+    }
 
-
-
-    const menuIcons = [<DashboardIcon data-index={"dashboard"} color={"primary"} />, <BusinessIcon data-index={"rooms"} color={"primary"} />, <GroupIcon data-index={"users"} color={"primary"} />, <SettingsIcon data-index={"settings"} color={"primary"} />]
-
+    const menuIcons = [<DashboardIcon data-index={"dashboard"} color={"primary"} />, <BusinessIcon data-index={"rooms"} color={"primary"} />, <GroupIcon data-index={"users"} color={"primary"} />, <SettingsIcon data-index={"settings"} color={"primary"} />, <ExitToAppIcon data-index={'signout'} color={"primary"}/>]
 
     return (
         <div className={classes.root}>
@@ -191,7 +249,7 @@ export default function MiniDrawer(props) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap className={classes.title}>
-                        {props.currentPage || "AgroMation"}
+                        {getPageNameFromAddress() || "AgroMation"}
                     </Typography>
                     <img src={agroLogo} alt={"AgroMation logo"} className={"topbarLogoLeft"} />
                 </Toolbar>
@@ -231,14 +289,14 @@ export default function MiniDrawer(props) {
                         className={classes.bottomdrawerBox}>
 
                         <Typography variant={"h5"} className={classes.locationName}>
-                            {state.locations[state.pick] || "Green Gardens"}
+                            {user.location[pick].name || "Green Gardens"}
                         </Typography>
 
 
-                        <FormControl variant={"filled"} className={classes.formControl} focused >
-                            <InputLabel htmlFor="Location-Name">Locations</InputLabel>
+                        <StandardRoundSelectForm className={classes.formControl} hiddenLabel >
+                            {/* <InputLabel style={{alignItems:"center",color:"white"}}>Location</InputLabel> */}
                             <Select
-                                value={state.pick}
+                                value={pick}
                                 onChange={handleChange}
                                 inputProps={{
                                     name: 'pick',
@@ -246,19 +304,18 @@ export default function MiniDrawer(props) {
                                 }}
                                 defaultValue={0}
                             >
-                                {console.log(state)}
-                                {state.locations.map((Item, Index) => (
-                                    <MenuItem key={Index} value={Index}>{Item || Item.name}</MenuItem>
+                                {user.location.map((Item, Index) => (
+                                    <MenuItem key={Index} value={Index}>{Item.name}</MenuItem>
                                 ))}
                             </Select>
-                        </FormControl>
+                        </StandardRoundSelectForm>
                         <Typography variant={"subtitle2"}>
-                            {props.currentLocationAddress || "9898 Trent Bypass suite 541"}
+                            {user.location[pick].address || "9898 Trent Bypass suite 541"}
                         </Typography>
                     </Grid> : <div></div>}
                 <Divider />
                 <List>
-                    {['Dashboard', 'Rooms', 'Users', 'Settings'].map((text, index) => (
+                    {['Dashboard', 'Rooms', 'Users', 'Settings','signout'].map((text, index) => (
                         <NavLink to={"/" + text} key={text}> 
                             <ListItem button data-index={text} value={text}>
 
@@ -277,3 +334,14 @@ export default function MiniDrawer(props) {
         </div>
     );
 }
+
+const mapStateToProps = ( state ) => {
+    return { user: state.user };
+}
+
+const formedComponent = compose(
+    connect(mapStateToProps, { fetchUser: fetchUser, setLocation: setLocation }),
+    reduxForm({ form: 'Add todo' })
+)(MiniDrawer);
+
+export default formedComponent;

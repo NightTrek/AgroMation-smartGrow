@@ -1,9 +1,10 @@
-import React, { Component } from 'react'
+import React from 'react'
 // import PropTypes from 'prop-types'
 import { Container, Grid, makeStyles, useTheme, withStyles, Button, Tabs, Box, Typography, List, ListItem, ListItemText, ListItemIcon } from '@material-ui/core'
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import { FixedSizeList } from 'react-window';
 import CheckCircleRoundedIcon from '@material-ui/icons/CheckCircleRounded';
+import requireAuth from '../../hoc/requireAuth';
 
 const exampleUsers = [
     {
@@ -165,7 +166,7 @@ const useStyles = makeStyles((theme) => ({
     );
 }
 
-export default function UsersPage(props) {
+export default requireAuth(function UsersPage(props) {
     const classes = useStyles();
 
     const [state, setState] = React.useState({ //setState
@@ -213,4 +214,4 @@ export default function UsersPage(props) {
             </Grid>
         </Container>
     )
-}
+})

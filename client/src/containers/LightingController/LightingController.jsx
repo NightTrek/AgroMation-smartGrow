@@ -2,7 +2,7 @@ import React, { useState, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { Grid, FormControl, InputLabel, Select, MenuItem, makeStyles, useTheme, withStyles, Slider, Typography, Button, Divider, IconButton, Box } from '@material-ui/core'
 import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
-
+import {StandardRoundSelectForm} from "../../components/StandardSelect/StandardSelect";
 
 
 const exampleLightZoneArray = [
@@ -501,8 +501,7 @@ export const LightingController = (props) => {
                 </Grid>
                 <Grid item xs={1}></Grid>
                 <Grid item xs={2}>
-                    <FormControl variant={"filled"} className={classes.formControl} color={'primary'} focused >
-                        <InputLabel htmlFor="Room-Name">zone</InputLabel>
+                    <StandardRoundSelectForm>
                         <Select
                             value={state.currentZone}
                             onChange={handleChange}
@@ -516,7 +515,7 @@ export const LightingController = (props) => {
                                 <MenuItem key={Index} value={Index}>{Item.name}</MenuItem>
                             ))}
                         </Select>
-                    </FormControl>
+                    </StandardRoundSelectForm>
                 </Grid>
                 <Grid item xs></Grid>
             </Grid>

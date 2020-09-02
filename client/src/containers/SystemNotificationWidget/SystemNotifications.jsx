@@ -13,6 +13,8 @@ import IconButton from '@material-ui/core/IconButton';
 import moment from 'moment';
 // import FixedSizeList  from 'react-window/src/FixedSizeList';
 import { addGrowRoom, fetchUserGrowRoomsAndStatus } from "../../actions";
+import {sampleNotifications} from "../../exampleDataTypes/clientExamlpeDataTypes";
+
 
 const useStyles = makeStyles((theme) => ({
     notificationsWidget: {
@@ -23,25 +25,59 @@ const useStyles = makeStyles((theme) => ({
         minHeight: "360px",
         marginTop: "8px",
     },
+    notificationsList: {
+        minWidth: "256px",
+        maxWidth: "812px",
+        width: "100%",
+    },
     iconButton: {
         color: "white",
+        height:"48px",
+        width:"48px",
+    },
+    listItemIcon:{
+        color: theme.palette.text.main
     },
     warning: {
         // background:theme.palette.roomStatus.warning,
-        color: theme.palette.roomStatus.warning
+        background: theme.palette.roomStatus.warning
+    },
+    warningItem:{
+        background: theme.palette.roomStatus.warning,
+        borderRadius: "12px",
+        // padding: "2px",
+        // marginLeft: "8px",
+        // marginRight: "8px",
+        paddingLeft: "8px",
+        paddingRight: "8px",
+        marginTop:"4px",
+        marginBottom:"4px",
     },
     warningText: {
         background: theme.palette.roomStatus.warning,
         borderRadius: "12px",
         padding: "2px",
-        marginLeft: "8px",
-        marginRight: "8px",
+        // marginLeft: "8px",
+        // marginRight: "8px",
         paddingLeft: "8px",
-        paddingRight: "8px",
+        // paddingRight: "8px",
+        marginTop:"4px",
+        marginBottom:"4px",
     },
     fault: {
         // background:theme.palette.roomStatus.fault,
-        color: theme.palette.roomStatus.fault
+        color: theme.palette.text.main
+    },
+    faultItem:{
+        background: theme.palette.roomStatus.fault,
+        borderRadius: "12px",
+        // padding: "2px",
+        // marginLeft: "8px",
+        // marginRight: "8px",
+        paddingLeft: "8px",
+        paddingRight: "8px",
+        marginTop:"4px",
+        marginBottom:"4px",
     },
     faultText: {
         background: theme.palette.roomStatus.fault,
@@ -49,12 +85,24 @@ const useStyles = makeStyles((theme) => ({
         padding: "2px",
         paddingLeft: "8px",
         paddingRight: "8px",
-        marginLeft: "8px",
-        marginRight: "8px"
+        // marginLeft: "8px",
+        // marginRight: "8px"
+
     },
     info: {
         // background:theme.palette.secondary.main,
         color: theme.palette.secondary.main
+    },
+    infoItem:{
+        background: theme.palette.secondary.main,
+        borderRadius: "12px",
+        // padding: "2px",
+        // marginLeft: "8px",
+        // marginRight: "8px",
+        paddingLeft: "8px",
+        paddingRight: "8px",
+        marginTop:"4px",
+        marginBottom:"4px",
     },
     infoText: {
         background: theme.palette.secondary.main,
@@ -69,37 +117,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const sampleNotifications = [{
-    type: "FAULT",
-    room: "Room Alpha",
-    msg: "Controller offline",
-    timeStamp: "1597477764"
-}, {
-    type: "warning",
-    room: "Room Beta",
-    msg: "Temprature warning",
-    timeStamp: "1597477764"
-}, {
-    type: "warning",
-    room: "Clone Room",
-    msg: "Temprature Warning",
-    timeStamp: "1597477764"
-}, {
-    type: "warning",
-    room: "Room Beta",
-    msg: "Humidity Warning",
-    timeStamp: "1597477764"
-}, {
-    type: "info",
-    room: "Veg room Alpha",
-    msg: "only 7 days left",
-    timeStamp: "1597477764"
-}, {
-    type: "info",
-    room: "Room Alpha",
-    msg: "Temprature out of range",
-    timeStamp: "1597477764"
-}]
+
 
 const NotificationsListItems = (props, style) => {
     const [state,] = React.useState({ //setState
@@ -115,24 +133,32 @@ const NotificationsListItems = (props, style) => {
             }
             switch (item.type) {
                 case "warning":
-                    return (
-                        <ListItem button alignItems="flex-start" style={style} className={"warning"} key={index}>
-                            <ListItemIcon ><ErrorRoundedIcon className={classes.warning} /></ListItemIcon><ListItemText >{item.room + ": "}</ListItemText><ListItemText className={classes.warningText}> {item.msg + " "}</ListItemText><ListItemText >{itemTime.format('HH:mm, MM:DD:YYYY')}</ListItemText>
-                        </ListItem>
-                    )
+                    if (props.pick === 0 || props.pick === 2) {
+                        return (
+                            <ListItem button alignItems="flex-start" style={style} className={classes.warningItem} key={index}>
+                                <ListItemIcon ><ErrorRoundedIcon className={classes.listItemIcon} /></ListItemIcon><ListItemText >{item.room + ": "}</ListItemText><ListItemText className={classes.warningText}> {item.msg + " "}</ListItemText><ListItemText >{itemTime.format('HH:mm, MM:DD:YYYY')}</ListItemText>
+                            </ListItem>
+                        )
+                    }
+                    return "";
                 case "FAULT":
-                    return (
-                        <ListItem button alignItems="flex-start" style={style} className={"fault"} key={index}>
-                            <ListItemIcon ><BrokenImageIcon className={classes.fault} /></ListItemIcon><ListItemText >{item.room + ": "}</ListItemText><ListItemText className={classes.faultText}>{item.msg + " "}</ListItemText><ListItemText >{itemTime.format('HH:mm, MM:DD:YYYY')}</ListItemText>
-                        </ListItem>
-                    )
+                    if (props.pick === 1 || props.pick === 2) {
+                        return (
+                            <ListItem button alignItems="flex-start" style={style} className={classes.faultItem} key={index}>
+                                <ListItemIcon ><BrokenImageIcon className={classes.listItemIcon} /></ListItemIcon><ListItemText >{item.room + ": "}</ListItemText><ListItemText className={classes.faultText}>{item.msg + " "}</ListItemText><ListItemText >{itemTime.format('HH:mm, MM:DD:YYYY')}</ListItemText>
+                            </ListItem>
+                        )
+                    }
+                    return ""
                 default:
-                    return (
-                        <ListItem button alignItems="space-evenly" style={style} className={"info"} key={index}>
-                            <ListItemIcon ><InfoIcon className={classes.info} /></ListItemIcon><ListItemText >{item.room + ": "}</ListItemText><ListItemText className={classes.infoText}>{item.room + ": " + item.msg + " "}</ListItemText><ListItemText >{itemTime.format('HH:mm, MM:DD:YYYY')}</ListItemText>
-                        </ListItem>
-                    )
-
+                    if (props.pick !== 0 && props.pick !== 1) {
+                        return (
+                            <ListItem button alignItems="space-evenly" style={style} className={classes.infoItem} key={index}>
+                                <ListItemIcon ><InfoIcon className={classes.listItemIcon} /></ListItemIcon><ListItemText >{item.room + ": "}</ListItemText><ListItemText className={classes.infoText}>{item.room + ": " + item.msg + " "}</ListItemText><ListItemText >{itemTime.format('HH:mm, MM:DD:YYYY')}</ListItemText>
+                            </ListItem>
+                        )
+                    }
+                    return "";
             }
         }))
 }
@@ -142,9 +168,9 @@ const Row = ({ index, style }) => (
 
 export const SystemNotifications = () => {
     const classes = useStyles();
-    const [state,] = React.useState({ //setState
+    const [state,setState] = React.useState({ //setState
         notifications: sampleNotifications,
-        pick: 0
+        pick: 2
     });
     const options = [
         'warnings',
@@ -152,16 +178,21 @@ export const SystemNotifications = () => {
         'All'];
 
     const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
+    const open = Boolean(anchorEl);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const ITEM_HEIGHT = 48;
+    const handleClose = (event) => {
+        console.log(event.target.value);
+        setState({
+            ...state,
+            pick:event.target.value
+        })
+        setAnchorEl(null);
+    };
+    const ITEM_HEIGHT = 48;
 
     return (
         <Grid container item className={classes.notificationsWidget} xs justify={"center"} spacing={1} direction={"column"}>
@@ -173,7 +204,7 @@ export const SystemNotifications = () => {
 
                 </Grid>
                 <Grid container item xs={1}>
-                    <IconButton 
+                    <IconButton
                         aria-controls="long-menu"
                         aria-haspopup="true"
                         onClick={handleClick}
@@ -181,6 +212,7 @@ export const SystemNotifications = () => {
                     <Menu
                         id="long-menu"
                         anchorEl={anchorEl}
+                        value={state.pick}
                         keepMounted
                         open={open}
                         onClose={handleClose}
@@ -191,8 +223,8 @@ export const SystemNotifications = () => {
                             },
                         }}
                     >
-                        {options.map((option) => (
-                            <MenuItem key={option} selected={option === 'Pyxis'} onClick={handleClose}>
+                        {options.map((option, index) => (
+                            <MenuItem key={option} value={index} selected={option === 'Pyxis'} onClick={handleClose}>
                                 {option}
                             </MenuItem>
                         ))}
@@ -200,12 +232,12 @@ export const SystemNotifications = () => {
                 </Grid>
             </Grid>
             <Grid container item xs direction={"row"}>
-                <List >
-                    {NotificationsListItems()}
+                <List className={classes.notificationsList}>
+                    {<NotificationsListItems pick={state.pick}/>}
                 </List>
             </Grid>
             <Grid container item xs justify={"center"}>
-                <Button variant="outlined" color="primary">
+                <Button variant="outlined" color="primary" style={{width:"192px",height:"48px"}}>
                     Show {state.notifications.length - 4} more
                 </Button>
             </Grid>

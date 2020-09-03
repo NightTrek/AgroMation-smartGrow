@@ -216,3 +216,17 @@ a:hover {
   color: white;
 }
 /*=============== END Button Styles ===============*/
+
+
+
+
+/* =================== React Spedometer =============== */
+
+
+.speedometer1{
+  filter:grayscale(1);
+}
+
+.speedometer1:hover{
+  filter:none;
+}

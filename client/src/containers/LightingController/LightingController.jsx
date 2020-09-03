@@ -155,11 +155,11 @@ const PowerIntensitySlider = withStyles({
     vertical: {
         minHeight: "128px",
         "& .MuiSlider-track": {
-            width: 32,
+            width: 26,
             background: 'linear-gradient(white, black)',
         },
         "& .MuiSlider-rail": {
-            width: 25,
+            width: 24,
             background: 'linear-gradient(white, black)',
         },
         "& .MuiSlider-markLabel": {
@@ -201,11 +201,11 @@ const RedIntensitySlider = withStyles({
     vertical: {
         minHeight: "128px",
         "& .MuiSlider-track": {
-            width: 32,
+            width: 26,
             background: 'linear-gradient(red, black)',
         },
         "& .MuiSlider-rail": {
-            width: 25,
+            width: 24,
             background: 'linear-gradient(red, black)',
         },
         "& .MuiSlider-markLabel": {
@@ -246,11 +246,11 @@ const YellowIntensitySlider = withStyles({
     vertical: {
         minHeight: "128px",
         "& .MuiSlider-track": {
-            width: 32,
+            width: 26,
             background: 'linear-gradient(yellow, black)',
         },
         "& .MuiSlider-rail": {
-            width: 25,
+            width: 24,
             background: 'linear-gradient(yellow, black)',
         },
         "& .MuiSlider-markLabel": {
@@ -291,11 +291,11 @@ const GreenIntensitySlider = withStyles({
     vertical: {
         minHeight: "128px",
         "& .MuiSlider-track": {
-            width: 32,
+            width: 26,
             background: 'linear-gradient(green, black)',
         },
         "& .MuiSlider-rail": {
-            width: 25,
+            width: 24,
             background: 'linear-gradient(green, black)',
         },
         "& .MuiSlider-markLabel": {
@@ -440,7 +440,7 @@ const PowerIntensity = (props) => {
                 <Typography variant={"caption"} >{topCaption}</Typography>
             </Grid>
             <Grid item container className={classes.sliderBackround} direction={"row"} align={"center"}>
-                <Grid item style={{ minHeight: "192px", marginTop: "24px" }}>
+                <Grid item style={{ minHeight: "192px", marginTop: "24px",marginLeft:"24px", }}>
                     <div style={{ minHeight: "192px" }}>
                         {typeOptions[type]}
                     </div>
@@ -495,11 +495,10 @@ export const LightingController = (props) => {
         <Grid item container direction={"column"} >
             {/* This is the topBar */}
             <Grid item container direction={"row"} spacing={5} style={{ paddingTop: "12px" }}>
-                <Grid item xs={1}></Grid>
                 <Grid item xs >
                     <Typography variant={"h5"}>{`(${state.lightZoneArray[state.currentZone].activeCount}) Lights Active`}</Typography>
                 </Grid>
-                <Grid item xs={1}></Grid>
+                <Grid item xs={2}></Grid>
                 <Grid item xs={2}>
                     <StandardRoundSelectForm>
                         <Select

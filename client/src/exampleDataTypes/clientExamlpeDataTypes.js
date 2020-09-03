@@ -111,3 +111,36 @@ export const sampleCO2Data = [{ x: 1, y: 1, catName: "Fault" },
 { x: 2, y: 1, catName: "Warning" },
 { x: 3, y: 6, catName: "Nominal" }
 ];
+
+
+export const sampleNotifications = [{
+    type: "FAULT",
+    room: "Room Alpha",
+    msg: "Controller offline",
+    timeStamp: "1597477764"
+}, {
+    type: "warning",
+    room: "Room Beta",
+    msg: "Temprature warning",
+    timeStamp: "1597477764"
+}, {
+    type: "warning",
+    room: "Clone Room",
+    msg: "Temprature Warning",
+    timeStamp: "1597477764"
+}, {
+    type: "warning",
+    room: "Room Beta",
+    msg: "Humidity Warning",
+    timeStamp: "1597477764"
+}, {
+    type: "info",
+    room: "Veg room Alpha",
+    msg: "only 7 days left",
+    timeStamp: "1597477764"
+}, {
+    type: "info",
+    room: "Room Alpha",
+    msg: "Temprature out of range",
+    timeStamp: "1597477764"
+}]

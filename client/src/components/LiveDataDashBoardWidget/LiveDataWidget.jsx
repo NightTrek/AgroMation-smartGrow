@@ -64,7 +64,9 @@ export const LiveDataWidget = (props) => {
         humidity: 32,
         humidityColor: theme.palette.primary.main,
         CO2Level: 2885,
-        CO2Color: theme.palette.primary.main
+        CO2Color: theme.palette.primary.main,
+        PressureLevel: 1114,
+        PressureColor: theme.palette.primary.main
     };
     const classes = useStyles();
     const LiveData = props.LiveData || exampleLiveData;
@@ -74,28 +76,39 @@ export const LiveDataWidget = (props) => {
     return (
         <Grid item container className={classes.LiveDataWidget} direction={"column"}>
             <Grid item container direction={"row"}>
-                <Grid container item xs>
-    <Typography variant={"h5"} style={{ paddingLeft: "12px" }}>Live Data: {LiveData.roomName}</Typography>
+                <Grid container item xs direction={"column"}>
+                    <Grid item>
+                    <Typography variant={"h5"} style={{ paddingLeft: "12px" }}>Live Data:</Typography>
+                    </Grid>
+                    <Grid item>
+                    <Typography variant={"h6"} style={{ paddingLeft: "12px" }}>{LiveData.roomName}</Typography>
+                    </Grid>
                 </Grid>
                 <Grid item xs>
                     <List>
                         <ListItem> Temprature</ListItem>
-                        <ListItem> <Typography variant={"h6"} style={{ color: LiveData.TempColor }}> {LiveData.Temp}</Typography></ListItem>
+                        <ListItem> <Typography variant={"h4"} style={{ color: LiveData.TempColor }}> {LiveData.Temp}</Typography></ListItem>
                     </List>
                 </Grid>
                 <Grid item xs>
                     <List>
                         <ListItem> Humidity</ListItem>
-                        <ListItem> <Typography variant={"h6"} style={{ color: LiveData.humidityColor }}>{LiveData.humidity}</Typography></ListItem>
+                        <ListItem> <Typography variant={"h4"} style={{ color: LiveData.humidityColor }}>{LiveData.humidity}</Typography></ListItem>
                     </List>
                 </Grid>
                 <Grid item xs>
                     <List>
                         <ListItem> CO2 level</ListItem>
-                        <ListItem> <Typography variant={"h6"} style={{ color: LiveData.CO2Color }}>{LiveData.CO2Level}</Typography></ListItem>
+                        <ListItem> <Typography variant={"h4"} style={{ color: LiveData.CO2Color }}>{LiveData.CO2Level}</Typography></ListItem>
                     </List>
                 </Grid>
-                <Grid item xs={1}>
+                <Grid item xs>
+                    <List>
+                        <ListItem> Pressure level</ListItem>
+                        <ListItem> <Typography variant={"h4"} style={{ color: LiveData.PressureColor }}>{LiveData.PressureLevel}</Typography></ListItem>
+                    </List>
+                </Grid>
+                <Grid item xs>
                     <Button variant="outlined" color="primary">
                     Show Room
                 </Button></Grid>

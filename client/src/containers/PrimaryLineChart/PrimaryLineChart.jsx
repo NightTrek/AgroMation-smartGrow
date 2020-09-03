@@ -146,10 +146,12 @@ export const PrimaryLineChart = (props) => {
     const classes = useStyles();
     const theme = useTheme();
     const tempData = props.tempData || exampleTempData;
+    const tempDomain = [60, 90];
     const humidityData = props.humidityData || exampleHumidityData;
-    const tempDomain = [20, 100];
+    
+    const humidityDomain = [60, 90];
     const co2Data = props.co2Data || exampleCO2Data;
-    const co2Domain = [0,4000];
+    const co2Domain = [2000,4000];
     const pressureData = props.pressureData || examplePressureData;
     const pressureDomain = [950, 1200]
     const [state, setState] = useState({
@@ -209,9 +211,9 @@ export const PrimaryLineChart = (props) => {
                             offsetY={200}
                             standalone={false}
                             style={{
-                                axis: { stroke: "#ffffff", color: "#ffffff" },
+                                axis: { stroke: theme.palette.secondary.dark, color: "#ffffff" },
                                 axisLabel: { fontSize: 20, padding: 30, color: "#ffffff" },
-                                grid: { stroke: ({ tick }) => tick > 0.5 ? theme.palette.primary.main : "grey" },
+                                grid: { stroke: ({ tick }) => tick > 0.5 ? theme.palette.secondary.dark : "grey" },
                                 tickLabels: { fontSize: 12, fill: "#ffffff" }
                             }}
                         />
@@ -221,9 +223,9 @@ export const PrimaryLineChart = (props) => {
                             orientation="top"
                             standalone={false}
                             style={{
-                                axis: { stroke: "#ffffff", color: "#ffffff" },
+                                axis: { stroke: theme.palette.secondary.dark, color: "#ffffff" },
                                 axisLabel: { fontSize: 20, padding: 30, color: "#ffffff" },
-                                grid: { stroke: ({ tick }) => tick > 0.5 ? theme.palette.primary.main : "grey" },
+                                grid: { stroke: ({ tick }) => tick > 0.5 ? theme.palette.secondary.dark : "grey" },
                                 tickLabels: { fontSize: 12, fill: "#ffffff" }
                             }}
                         />
@@ -257,7 +259,7 @@ export const PrimaryLineChart = (props) => {
                             <Button variant={"outlined"} color={"primary"} id={"Temp"} value="temp" onClick={e => {setState({...state, dataSet:tempData,dataType:"Temprature",domain:tempDomain,})}}>Temp</Button>
                         </Grid>
                         <Grid item xs={2}>
-                            <Button variant={"outlined"} color={"primary"} id={"Humidity"} onClick={e => {setState({...state, dataSet:humidityData,dataType:"Humidity",domain:tempDomain,})}}>Humidity</Button>
+                            <Button variant={"outlined"} color={"primary"} id={"Humidity"} onClick={e => {setState({...state, dataSet:humidityData,dataType:"Humidity",domain:humidityDomain,})}}>Humidity</Button>
                         </Grid>
                         <Grid item xs={2}> 
                             <Button variant={"outlined"} color={"primary"} id={"CO2"} onClick={e => {setState({...state, dataSet:co2Data,dataType:"CO2 Level",domain:co2Domain,})}}>CO2 Level</Button>

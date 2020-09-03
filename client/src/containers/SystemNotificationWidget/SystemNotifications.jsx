@@ -185,7 +185,6 @@ export const SystemNotifications = () => {
     };
 
     const handleClose = (event) => {
-        console.log(event.target.value);
         setState({
             ...state,
             pick:event.target.value

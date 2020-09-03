@@ -2,29 +2,20 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import { VictoryPie, VictoryLabel } from "victory";
-import { Grid, Typography, List,withStyles, Divider } from "@material-ui/core"
+import { Grid, Typography, List} from "@material-ui/core"
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
+// import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 // import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
+// import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import ListItem from '@material-ui/core/ListItem';
 import {StandardRoundSelectForm} from "../StandardSelect/StandardSelect.js";
 import {sampleTempData,sampleHumidityData,sampleProgressData,sampleCO2Data} from "../../exampleDataTypes/clientExamlpeDataTypes";
 import './style.css';
+import VerticleDividerStyled from "../VerticalDivider/VerticalDivider"
 
 
-export const VerticleDividerStyled = withStyles((theme) => ({
-
-    root: {
-        background:theme.palette.secondary.dark,
-        "& .MuiDivider-vertical": {
-            
-        }
-    },
-
-}))(Divider);
 
 
 

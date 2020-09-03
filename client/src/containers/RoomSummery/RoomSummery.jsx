@@ -1026,23 +1026,25 @@ function RoomSummery(props) {
                     <LeftRightButton color={"primary"} onClick={handleRightShift}><KeyboardArrowLeftIcon style={{ fontSize: 48 }} /></LeftRightButton>
                 </Grid>
                 <Grid item container direction={'row'} lg>
+                <VerticleDividerStyled orientation={'vertical'} flexItem/>
                     {MeterArray.map((Component, index) => {
                         if (state.MeterArrayIndexStart === 1) {
                             if (index > 0) {
                                 return (
-                                    <div><VerticleDividerStyled orientation={'vertical'} flexItem/>{Component}<VerticleDividerStyled orientation={'vertical'} flexItem/></div>
+                                    Component
                                 );
                             }
                             return (<div key={index}></div>);
                         } else {
                             if (index < MeterArray.length - 1) {
                                 return (
-                                    <div><VerticleDividerStyled orientation={'vertical'} flexItem/>{Component}<VerticleDividerStyled orientation={'vertical'} flexItem/></div>
+                                    Component
                                 );
                             }
                             return (<div key={index}></div>);
                         }
                     })}
+                    <VerticleDividerStyled orientation={'vertical'} flexItem/>
                 </Grid>
                 <Grid item container direction={'column'} justify={"center"} lg={1}>
                     <LeftRightButton color={"primary"} onClick={handleRightShift}><KeyboardArrowRightIcon style={{ fontSize: 48 }} /></LeftRightButton>

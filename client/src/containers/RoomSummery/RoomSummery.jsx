@@ -12,7 +12,7 @@ import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect.js";
 import { ExampleRoomData } from "../../exampleDataTypes/clientExamlpeDataTypes";
 import CancelIcon from '@material-ui/icons/Cancel';
-import VerticleDividerStyled from "../../components/VerticalDivider/VerticalDivider";
+// import VerticleDividerStyled from "../../components/VerticalDivider/VerticalDivider";
 
 
 

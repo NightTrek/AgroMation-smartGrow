@@ -2,7 +2,7 @@ import React from 'react'
 // import PropTypes from 'prop-types'
 import {
     Container, Grid, makeStyles, useTheme, withStyles, Button, Modal, Box, Typography, List,
-    ListItem, ListItemText, ListItemIcon, Backdrop, Fade, IconButton, Input, Select, MenuItem
+    ListItem, ListItemText, ListItemIcon, Backdrop, Fade, IconButton, Input, Select, MenuItem,
 } from '@material-ui/core';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import { FixedSizeList } from 'react-window';
@@ -80,6 +80,19 @@ const EditUserButton = withStyles((theme) => ({
     },
 
 }))(Button);
+
+
+const EditUserInput = withStyles((theme) => ({
+
+    root: {
+        borderRadius: "32px",
+        paddingLeft:"12px",
+        boxShadow: `1px 1px 1px 1px ${theme.palette.secondary.main}`,
+        color: "white",
+        background: theme.palette.roomStatus.fault,
+    },
+
+}))(Input);
 
 const useStyles = makeStyles((theme) => ({
     usersPageWidget: {
@@ -253,7 +266,7 @@ const UserWidget = (props) => {
                                 <Grid item container direction={"row"} spacing={5}>
                                     <Grid item xs={12} sm={6}>
 
-                                        <Input defaultValue={props.userName} inputProps={{ 'aria-label': 'description' }} />
+                                        <EditUserInput defaultValue={props.userName} inputProps={{ 'aria-label': 'description' }} />
 
 
                                     </Grid>
@@ -275,10 +288,10 @@ const UserWidget = (props) => {
                                         </StandardRoundSelectForm>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Input defaultValue={props.email} inputProps={{ 'aria-label': 'description' }} />
+                                        <EditUserInput defaultValue={props.email} inputProps={{ 'aria-label': 'description' }} />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Input defaultValue={props.phone} inputProps={{ 'aria-label': 'description' }} />
+                                        <EditUserInput defaultValue={props.phone} inputProps={{ 'aria-label': 'description' }} />
                                     </Grid>
 
                                 </Grid>
@@ -290,12 +303,12 @@ const UserWidget = (props) => {
                                     <Grid item container direction={'row'}>
 
                                         <Grid item xs>
-                                            <Input defaultValue={"*********************"} inputProps={{ 'aria-label': 'description' }} />
+                                            <EditUserInput label={"Generated password"} defaultValue={"*********************"} inputProps={{ 'aria-label': 'description' }} />
                                         </Grid>
                                         <Grid item xs>
-                                            <Button variant={"outlined"} color={"primary"}>
+                                            <EditUserButton color={"primary"}>
                                                 Generate new Password
-                                        </Button>
+                                        </EditUserButton>
                                         </Grid>
                                     </Grid>
 

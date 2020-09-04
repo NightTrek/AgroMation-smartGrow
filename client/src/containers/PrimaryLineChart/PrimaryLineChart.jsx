@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { Grid, Button } from '@material-ui/core'
 import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles'; //useTheme
-import { VictoryChart, VictoryLine, VictoryAxis, VictoryContainer } from 'victory';
+import { VictoryChart, VictoryLine, VictoryAxis, VictoryContainer, VictoryVoronoiContainer,VictoryTooltip } from 'victory';
 
 const exampleTempData = [
     { x: 1300, y: 74 , sp: 74 },
@@ -127,7 +127,15 @@ function useWindowSize() {
 }
 
 
-
+const getDomain = (tempData, min, max) =>{
+    let sum = 0;
+    let index = 0;
+    tempData.map((item, Index) => {
+        sum+= item;
+        index = Index
+    });
+    return [sum/index-min,sum/index+max]
+}
 
 
 const useStyles = makeStyles((theme) => ({
@@ -143,6 +151,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 export const PrimaryLineChart = (props) => {
+    console.log(getDomain(exampleTempData,20,20))
     const classes = useStyles();
     const theme = useTheme();
     const tempData = props.tempData || exampleTempData;
@@ -157,7 +166,8 @@ export const PrimaryLineChart = (props) => {
     const [state, setState] = useState({
         dataSet: tempData,
         dataType:"temp",
-        domain:tempDomain
+        domain:tempDomain,
+        unit:" °F",
     });
     // console.log(state.dataSet);
     //react media queries that decide if the chart is responsive or static using a custom hook to get window size
@@ -203,7 +213,7 @@ export const PrimaryLineChart = (props) => {
             <Grid container item direction={"row"} xs>
                 <Grid item className={classes.ChartContainer}>
                     <VictoryChart
-                        containerComponent={<VictoryContainer responsive={responsiveChart} />}
+                        containerComponent={<VictoryVoronoiContainer responsive={responsiveChart} />}
                        width={responsiveChart ? 400: adjustedWidth}>
                         <VictoryAxis
                             dependentAxis
@@ -238,7 +248,7 @@ export const PrimaryLineChart = (props) => {
                             labels: {
                                 color: "white"
                             }
-                        }} data={state.dataSet} interpolation="monotoneX" width={512} />
+                        }} data={state.dataSet} interpolation="monotoneX" width={512} labels={({ datum }) => `${datum.y}${state.unit}`} labelComponent={<VictoryTooltip/>} />
                         <VictoryLine style={{
                             data: { stroke: theme.palette.roomStatus.veg },
                             parent: {
@@ -250,22 +260,22 @@ export const PrimaryLineChart = (props) => {
                             }
                         }} data={state.dataSet.map((item) => {
                             return({x:item.x,y:item.sp})
-                            })} interpolation="monotoneX" />
+                            })} interpolation="monotoneX" labels={({ datum }) => `SetPoint ${datum.y}`} labelComponent={<VictoryTooltip/>}/>
                     </VictoryChart>
                 </Grid>
             </Grid>
             <Grid container item direction={"row"} xs={1} justify={'center'} style={{minWidth:"100%",marginLeft:"24px"}}>
                         <Grid item xs={2}>
-                            <Button variant={"outlined"} color={"primary"} id={"Temp"} value="temp" onClick={e => {setState({...state, dataSet:tempData,dataType:"Temprature",domain:tempDomain,})}}>Temp</Button>
+                            <Button variant={"outlined"} color={"primary"} id={"Temp"} value="temp" onClick={e => {setState({...state, dataSet:tempData,dataType:"Temprature",domain:tempDomain, unit:" °F",})}}>Temp</Button>
                         </Grid>
                         <Grid item xs={2}>
-                            <Button variant={"outlined"} color={"primary"} id={"Humidity"} onClick={e => {setState({...state, dataSet:humidityData,dataType:"Humidity",domain:humidityDomain,})}}>Humidity</Button>
+                            <Button variant={"outlined"} color={"primary"} id={"Humidity"} onClick={e => {setState({...state, dataSet:humidityData,dataType:"Humidity",domain:humidityDomain,unit:" %",})}}>Humidity</Button>
                         </Grid>
                         <Grid item xs={2}> 
-                            <Button variant={"outlined"} color={"primary"} id={"CO2"} onClick={e => {setState({...state, dataSet:co2Data,dataType:"CO2 Level",domain:co2Domain,})}}>CO2 Level</Button>
+                            <Button variant={"outlined"} color={"primary"} id={"CO2"} onClick={e => {setState({...state, dataSet:co2Data,dataType:"CO2 Level",domain:co2Domain,unit:" ppm",})}}>CO2 Level</Button>
                         </Grid>
                         <Grid item xs={2}>
-                            <Button variant={"outlined"} color={"primary"} id={"Pressure"} onClick={e => {setState({...state, dataSet:pressureData,dataType:"Pressure Level",domain:pressureDomain,})}}>Pressure</Button>
+                            <Button variant={"outlined"} color={"primary"} id={"Pressure"} onClick={e => {setState({...state, dataSet:pressureData,dataType:"Pressure Level",domain:pressureDomain,unit:" mbar"})}}>Pressure</Button>
                         </Grid>
                         <Grid item xs={2}>
                             <Button variant={"outlined"} color={"primary"} id={"Lights"} disabled={true} >Lights</Button>

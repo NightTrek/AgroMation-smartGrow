@@ -81,7 +81,7 @@ export default requireAuth(function IndividualRoom() {
 
     const [state, setState] = React.useState({ //setState
         Tabs: ["Analytics", "Lights", "Alarms", "Logs"],
-        pick: 0,
+        pick: 1,
     });
 
     // const handleChange = (event) => {

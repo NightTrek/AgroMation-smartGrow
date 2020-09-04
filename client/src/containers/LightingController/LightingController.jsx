@@ -2,7 +2,7 @@ import React, { useState, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { Grid, FormControl, InputLabel, Select, MenuItem, makeStyles, useTheme, withStyles, Slider, Typography, Button, Divider, IconButton, Box } from '@material-ui/core'
 import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
-import {StandardRoundSelectForm} from "../../components/StandardSelect/StandardSelect";
+import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect";
 
 
 const exampleLightZoneArray = [
@@ -73,54 +73,6 @@ function valuetext(value) {
     return `${value}%`;
 }
 
-const marks = [
-    {
-        value: 0,
-        label: '0%',
-    },
-    // {
-    //     value: 10,
-    //     label: '10%',
-    // },
-    {
-        value: 20,
-        label: '20%',
-    },
-    // {
-    //     value: 30,
-    //     label: '30%',
-    // },
-    {
-        value: 40,
-        label: '40%',
-    },
-    // {
-    //     value: 50,
-    //     label: '50%',
-    // },
-    {
-        value: 60,
-        label: '60%',
-    },
-    // {
-    //     value: 70,
-    //     label: '70%',
-    // },
-    {
-        value: 80,
-        label: '80%',
-    },
-    // {
-    //     value: 90,
-    //     label: '90%',
-    // },
-    {
-        value: 100,
-        label: '100%',
-    },
-];
-
-
 //calc(-50% + 4px)
 
 const PowerIntensitySlider = withStyles({
@@ -128,8 +80,8 @@ const PowerIntensitySlider = withStyles({
         color: '#52af77',
     },
     thumb: {
-        height: 36,
-        width: 36,
+        height: 48,
+        width: 56,
         backgroundColor: '#fff',
         border: '2px solid currentColor',
         marginTop: -8,
@@ -153,18 +105,24 @@ const PowerIntensitySlider = withStyles({
         borderRadius: 4,
     },
     vertical: {
-        minHeight: "128px",
+        minHeight: "192px",
         "& .MuiSlider-track": {
-            width: 26,
+            width: 32,
             background: 'linear-gradient(white, black)',
+            borderRadius:" 0 0 24px 24px",
         },
         "& .MuiSlider-rail": {
-            width: 24,
+            width: 30,
             background: 'linear-gradient(white, black)',
+            borderRadius:"24px",
         },
         "& .MuiSlider-markLabel": {
             left: '64px',
             color: "white",
+        },
+        "& .MuiSlider-thumb":{
+            // marginTop: -320,
+            marginLeft: -12,
         }
     }
 })(Slider);
@@ -174,8 +132,8 @@ const RedIntensitySlider = withStyles({
         color: '#52af77',
     },
     thumb: {
-        height: 36,
-        width: 36,
+        height: 48,
+        width: 56,
         backgroundColor: '#fff',
         border: '2px solid currentColor',
         marginTop: -8,
@@ -199,18 +157,24 @@ const RedIntensitySlider = withStyles({
         borderRadius: 4,
     },
     vertical: {
-        minHeight: "128px",
+        minHeight: "192px",
         "& .MuiSlider-track": {
-            width: 26,
+            width: 32,
             background: 'linear-gradient(red, black)',
+            borderRadius:" 0 0 24px 24px",
         },
         "& .MuiSlider-rail": {
-            width: 24,
+            width: 30,
             background: 'linear-gradient(red, black)',
+            borderRadius:"24px",
         },
         "& .MuiSlider-markLabel": {
             left: '64px',
             color: "white",
+        },
+        "& .MuiSlider-thumb":{
+            marginTop: -320,
+            marginLeft: -12,
         }
     }
 })(Slider);
@@ -219,8 +183,8 @@ const YellowIntensitySlider = withStyles({
         color: '#52af77',
     },
     thumb: {
-        height: 36,
-        width: 36,
+        height: 48,
+        width: 56,
         backgroundColor: '#fff',
         border: '2px solid currentColor',
         marginTop: -8,
@@ -244,32 +208,39 @@ const YellowIntensitySlider = withStyles({
         borderRadius: 4,
     },
     vertical: {
-        minHeight: "128px",
+        minHeight: "192px",
         "& .MuiSlider-track": {
-            width: 26,
+            width: 32,
             background: 'linear-gradient(yellow, black)',
+            borderRadius:" 0 0 24px 24px",
         },
         "& .MuiSlider-rail": {
-            width: 24,
+            width: 30,
             background: 'linear-gradient(yellow, black)',
+            borderRadius:"24px",
         },
         "& .MuiSlider-markLabel": {
             left: '64px',
             color: "white",
+        },
+        "& .MuiSlider-thumb":{
+            marginTop: -320,
+            marginLeft: -12,
         }
     }
 })(Slider);
 const GreenIntensitySlider = withStyles({
     root: {
         color: '#52af77',
+        
     },
     thumb: {
-        height: 36,
-        width: 36,
+        height: 48,
+        width: 56,
         backgroundColor: '#fff',
         border: '2px solid currentColor',
-        marginTop: -8,
-        marginLeft: -12,
+        // marginTop: -8,
+        // marginLeft: -32,
         '&:focus, &:hover, &$active': {
             boxShadow: 'inherit',
         },
@@ -278,30 +249,27 @@ const GreenIntensitySlider = withStyles({
     valueLabel: {
         left: '48px',
     },
-    track: {
-        height: 8,
-        width: 12,
-        borderRadius: 4,
-    },
-    rail: {
-        height: 8,
-        width: 12,
-        borderRadius: 4,
-    },
     vertical: {
-        minHeight: "128px",
+        minHeight: "192px",
         "& .MuiSlider-track": {
-            width: 26,
+            width: 32,
             background: 'linear-gradient(green, black)',
+            borderRadius:" 0 0 24px 24px",
         },
         "& .MuiSlider-rail": {
-            width: 24,
+            width: 30,
             background: 'linear-gradient(green, black)',
+            borderRadius:"24px",
         },
         "& .MuiSlider-markLabel": {
             left: '64px',
             color: "white",
+        },
+        "& .MuiSlider-thumb":{
+            marginTop: -320,
+            marginLeft: -12,
         }
+
     }
 })(Slider);
 
@@ -352,7 +320,8 @@ const useStyles = makeStyles((theme) => ({
     },
     topCaption: {
         height: "24px",
-        marginTop: "8px"
+        marginTop: "8px",
+        marginLeft: "8px"
     },
     lightZoneWidget: {
         background: theme.palette.secondary.dark,
@@ -401,7 +370,7 @@ const PowerIntensity = (props) => {
             defaultValue={defaultValue}
             aria-labelledby="vertical-slider"
             getAriaValueText={valuetext}
-            marks={marks}
+            marks={false}
             ThumbComponent={ThumbComponent}
             onChange={handleSliderChange}
         />,
@@ -410,7 +379,7 @@ const PowerIntensity = (props) => {
             defaultValue={defaultValue}
             aria-labelledby="vertical-slider"
             getAriaValueText={valuetext}
-            marks={marks}
+            marks={false}
             ThumbComponent={ThumbComponent}
             onChange={handleSliderChange}
         />,
@@ -419,7 +388,7 @@ const PowerIntensity = (props) => {
             defaultValue={defaultValue}
             aria-labelledby="vertical-slider"
             getAriaValueText={valuetext}
-            marks={marks}
+            marks={false}
             ThumbComponent={ThumbComponent}
             onChange={handleSliderChange}
         />,
@@ -428,7 +397,7 @@ const PowerIntensity = (props) => {
             defaultValue={defaultValue}
             aria-labelledby="vertical-slider"
             getAriaValueText={valuetext}
-            marks={marks}
+            marks={false}
             ThumbComponent={ThumbComponent}
             onChange={handleSliderChange}
         />
@@ -440,7 +409,7 @@ const PowerIntensity = (props) => {
                 <Typography variant={"caption"} >{topCaption}</Typography>
             </Grid>
             <Grid item container className={classes.sliderBackround} direction={"row"} align={"center"}>
-                <Grid item style={{ minHeight: "192px", marginTop: "24px",marginLeft:"24px", }}>
+                <Grid item style={{ minHeight: "192px", marginTop: "24px", marginLeft: "24px", }}>
                     <div style={{ minHeight: "192px" }}>
                         {typeOptions[type]}
                     </div>
@@ -449,7 +418,7 @@ const PowerIntensity = (props) => {
             <Grid item container direction={"row"} justify={"center"}>
                 <Grid item className={classes.SliderBottomLabel}>
 
-                    <Button style={{ color: color }}><Typography variant={"button"} align={"right"} >set {bottomHeading}</Typography></Button>
+                    <Button style={{ color: color }}><Typography variant={"button"} align={"center"} >set {bottomHeading}</Typography></Button>
                 </Grid>
             </Grid>
 
@@ -459,7 +428,7 @@ const PowerIntensity = (props) => {
 
 const RGBInensities = (props) => {
     return (
-        <Grid item container direction={"row"} xs={5}>
+        <Grid item container direction={"row"} xs={5} wrap={'nowrap'}>
             <PowerIntensity type={1} topCaption={"Color Spectrum"} bottomHeading={"Red"} color={"red"} />
             <Divider orientation={"vertical"} flexItem></Divider>
             <PowerIntensity type={2} topCaption={" "} bottomHeading={"Yellow"} color={"yellow"} />
@@ -495,10 +464,10 @@ export const LightingController = (props) => {
         <Grid item container direction={"column"} >
             {/* This is the topBar */}
             <Grid item container direction={"row"} spacing={5} style={{ paddingTop: "12px" }}>
-                <Grid item xs >
+                <Grid item xs style={{ marginLeft: "24px" }}>
                     <Typography variant={"h5"}>{`(${state.lightZoneArray[state.currentZone].activeCount}) Lights Active`}</Typography>
                 </Grid>
-                <Grid item xs={2}></Grid>
+                <Grid item xs></Grid>
                 <Grid item xs={2}>
                     <StandardRoundSelectForm>
                         <Select
@@ -516,41 +485,43 @@ export const LightingController = (props) => {
                         </Select>
                     </StandardRoundSelectForm>
                 </Grid>
-                <Grid item xs></Grid>
+                <Grid item xs={4}></Grid>
             </Grid>
             {/*this is the main bar  */}
             <Grid item container direction={"row"} spacing={5}>
                 <Divider orientation={"vertical"} variant={"middle"} flexItem></Divider>
                 <PowerIntensity />
                 <RGBInensities />
-                <Grid container item xs={4} direction={"column"} className={classes.lightZoneWidget}>
-                    {state.lightZoneArray.map((item, index) => {
-                        let color= "black";
-                        let textColor="red";
-                        let active="inactive";
-                        if(item.activeCount===6){
-                            color=theme.palette.primary.main;
-                            active="active"
-                            textColor=theme.palette.roomStatus.veg;
-                        }
-                        return (
-                            <Grid item container direction={"column"} xs={4} spacing={0} key={index} className={classes.LightZoneButtonOuterBox}>
-                                <Grid item>
-                                    <Typography variant={"subtitle2"}>{item.name}</Typography>
+                <Grid container item xs={4} direction={"column"} justify={"center"} className={classes.lightZoneWidget}>
+                    <Grid item container direction={'row'} justify={"center"} style={{marginLeft:'24px'}}>
+                        {state.lightZoneArray.map((item, index) => {
+                            let color = "black";
+                            let textColor = "red";
+                            let active = "inactive";
+                            if (item.activeCount === 6) {
+                                color = theme.palette.primary.main;
+                                active = "active"
+                                textColor = theme.palette.roomStatus.veg;
+                            }
+                            return (
+                                <Grid item container direction={"column"} justify={"center"} xs={6} spacing={0} key={index} className={classes.LightZoneButtonOuterBox}>
+                                    <Grid item>
+                                        <Typography variant={"subtitle2"}>{item.name}</Typography>
+                                    </Grid>
+                                    <Grid item className={classes.lightZoneButtonBox} style={{ positon: "relative", background: color, }}>
+                                        <ZoneIconButton><EmojiObjectsIcon style={{ fontSize: "36px", color: "white" }} /></ZoneIconButton>
+                                    </Grid>
+                                    <Grid item>
+                                        <Typography variant={"caption"} align={"right"} style={{ color: textColor }}>{active}</Typography>
+
+                                    </Grid>
                                 </Grid>
-                                <Grid item className={classes.lightZoneButtonBox} style={{positon:"relative",background: color,}}>
-                                    <ZoneIconButton><EmojiObjectsIcon style={{ fontSize: "36px", color: "white" }} /></ZoneIconButton>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant={"caption"} align={"right"} style={{color:textColor}}>{active}</Typography>
-                                    
-                                </Grid>
-                            </Grid>
-                        );
-                    })}
+                            );
+                        })}
+                    </Grid>
                 </Grid>
-            <Grid item xs={1}></Grid>
-        </Grid>
+                <Grid item xs={1}></Grid>
+            </Grid>
         </Grid >
     )
 }

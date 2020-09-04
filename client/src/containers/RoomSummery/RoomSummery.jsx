@@ -117,48 +117,48 @@ function TempMeter(props) {
         }
     };
 
-     //Label stuff
-     const [Labels, setLabels] = React.useState([{},{},{},{},{}]);
-    
+    //Label stuff
+    const [Labels, setLabels] = React.useState([{}, {}, {}, {}, {}]);
 
-     const handleMouseEnter = () => {
-         console.log("mouse Enter CO2")
-         setLabels([{
-             text:`${state.rooms[state.pick].tempSetPoint - 20}${tempUnitString}`,
-             fontSize:"12px",
-             position:"OUTSIDE",
-             color:"white"
-         },{
-             text:`${state.rooms[state.pick].tempSetPoint - 5}${tempUnitString}`,
-             fontSize:"12px",
-             position:"OUTSIDE",
-             color:"white"
-         },
-         {
-             text:``,
-             fontSize:"12px",
-             position:"OUTSIDE",
-             color:"white"
-         },
-         {
-             text:`${state.rooms[state.pick].tempSetPoint + 5}${tempUnitString}`,
-             fontSize:"12px",
-             position:"OUTSIDE",
-             color:"white"
-         },
-         {
-             text:`${state.rooms[state.pick].tempSetPoint + 20}${tempUnitString}`,
-             fontSize:"12px",
-             position:"OUTSIDE",
-             color:"white"
-         }])
-     }
-     const handleMouseLeave = () => {
-         setLabels([{},{},{},{},{}])
-     }
+
+    const handleMouseEnter = () => {
+        console.log("mouse Enter CO2")
+        setLabels([{
+            text: `${state.rooms[state.pick].tempSetPoint - 20}${tempUnitString}`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
+        }, {
+            text: `${state.rooms[state.pick].tempSetPoint - 5}${tempUnitString}`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
+        },
+        {
+            text: ``,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
+        },
+        {
+            text: `${state.rooms[state.pick].tempSetPoint + 5}${tempUnitString}`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
+        },
+        {
+            text: `${state.rooms[state.pick].tempSetPoint + 20}${tempUnitString}`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
+        }])
+    }
+    const handleMouseLeave = () => {
+        setLabels([{}, {}, {}, {}, {}])
+    }
 
     return (
-        <Grid container item xs direction={'column'} justify={'center'}>
+        <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'}>
 
             <Typography variant={"h6"} align={'center'}>Temp</Typography>
             <Grid item xs className={classes.meterContainer}>
@@ -287,48 +287,48 @@ function HumidityMeter(props) {
     };
 
     //Label stuff
-    const [Labels, setLabels] = React.useState([{},{},{},{},{}]);
-    
+    const [Labels, setLabels] = React.useState([{}, {}, {}, {}, {}]);
+
 
     const handleMouseEnter = () => {
         console.log("mouse Enter CO2")
         setLabels([{
-            text:`${state.rooms[state.pick].humiditySetPoint - 20}%`,
-            fontSize:"12px",
-            position:"OUTSIDE",
-            color:"white"
-        },{
-            text:`${state.rooms[state.pick].humiditySetPoint - 5}%`,
-            fontSize:"12px",
-            position:"OUTSIDE",
-            color:"white"
+            text: `${state.rooms[state.pick].humiditySetPoint - 20}%`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
+        }, {
+            text: `${state.rooms[state.pick].humiditySetPoint - 5}%`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
         },
         {
-            text:``,
-            fontSize:"12px",
-            position:"OUTSIDE",
-            color:"white"
+            text: ``,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
         },
         {
-            text:`${state.rooms[state.pick].humiditySetPoint + 5}%`,
-            fontSize:"12px",
-            position:"OUTSIDE",
-            color:"white"
+            text: `${state.rooms[state.pick].humiditySetPoint + 5}%`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
         },
         {
-            text:`${state.rooms[state.pick].humiditySetPoint + 20}%`,
-            fontSize:"12px",
-            position:"OUTSIDE",
-            color:"white"
+            text: `${state.rooms[state.pick].humiditySetPoint + 20}%`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
         }])
     }
     const handleMouseLeave = () => {
-        setLabels([{},{},{},{},{}])
+        setLabels([{}, {}, {}, {}, {}])
     }
 
 
     return (
-        <Grid container item xs direction={'column'} justify={'center'}>
+        <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'}>
             <Typography variant={"h6"} align={'center'}>Humidty</Typography>
             <Grid item xs className={classes.meterContainer}>
                 <div className={"speedometer1"} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
@@ -348,8 +348,8 @@ function HumidityMeter(props) {
                         state.rooms[state.pick].humiditySetPoint - 10,
                         state.rooms[state.pick].humiditySetPoint + 10, state.rooms[state.pick].humiditySetPoint + 30,
                         state.rooms[state.pick].humiditySetPoint + 50]}
-                        segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]} 
-                        customSegmentLabels={Labels}/>
+                        segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]}
+                        customSegmentLabels={Labels} />
                 </div>
                 <DiagnosticColorBar handleOpen={handleOpen} datapoint={state.liveData.humidty} min={state.rooms[state.pick].humiditySetPoint - 10} superMin={state.rooms[state.pick].humiditySetPoint - 30}
                     max={state.rooms[state.pick].humiditySetPoint + 10} superMax={state.rooms[state.pick].humiditySetPoint + 30} setPoint={state.rooms[state.pick].humiditySetPoint + " %"} />
@@ -456,48 +456,48 @@ function CO2LevelMeter(props) {
         }
     };
 
-      //Label stuff
-      const [Labels, setLabels] = React.useState([{},{},{},{},{}]);
-    
+    //Label stuff
+    const [Labels, setLabels] = React.useState([{}, {}, {}, {}, {}]);
 
-      const handleMouseEnter = () => {
-          console.log("mouse Enter CO2")
-          setLabels([{
-              text:`${state.rooms[state.pick].CO2SetPoint - 1000}`,
-              fontSize:"12px",
-              position:"OUTSIDE",
-              color:"white"
-          },{
-              text:`${state.rooms[state.pick].CO2SetPoint - 200}`,
-              fontSize:"12px",
-              position:"OUTSIDE",
-              color:"white"
-          },
-          {
-              text:``,
-              fontSize:"12px",
-              position:"OUTSIDE",
-              color:"white"
-          },
-          {
-              text:`${state.rooms[state.pick].CO2SetPoint + 200}`,
-              fontSize:"12px",
-              position:"OUTSIDE",
-              color:"white"
-          },
-          {
-              text:`${state.rooms[state.pick].CO2SetPoint + 1000}`,
-              fontSize:"12px",
-              position:"OUTSIDE",
-              color:"white"
-          }])
-      }
-      const handleMouseLeave = () => {
-          setLabels([{},{},{},{},{}])
-      }
+
+    const handleMouseEnter = () => {
+        console.log("mouse Enter CO2")
+        setLabels([{
+            text: `${state.rooms[state.pick].CO2SetPoint - 1000}`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
+        }, {
+            text: `${state.rooms[state.pick].CO2SetPoint - 200}`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
+        },
+        {
+            text: ``,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
+        },
+        {
+            text: `${state.rooms[state.pick].CO2SetPoint + 200}`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
+        },
+        {
+            text: `${state.rooms[state.pick].CO2SetPoint + 1000}`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
+        }])
+    }
+    const handleMouseLeave = () => {
+        setLabels([{}, {}, {}, {}, {}])
+    }
 
     return (
-        <Grid container item xs direction={'column'} justify={'center'}>
+        <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'}>
             <Typography variant={"h6"} align={'center'}>CO2 Level</Typography>
             <Grid item xs className={classes.meterContainer}>
                 <div className={"speedometer1"} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
@@ -513,8 +513,8 @@ function CO2LevelMeter(props) {
                         maxValue={state.rooms[state.pick].CO2SetPoint + 2000}
                         segments={5}
                         customSegmentStops={[state.rooms[state.pick].CO2SetPoint - 2000, state.rooms[state.pick].CO2SetPoint - 1000, state.rooms[state.pick].CO2SetPoint - 200, state.rooms[state.pick].CO2SetPoint + 200, state.rooms[state.pick].CO2SetPoint + 1000, state.rooms[state.pick].CO2SetPoint + 2000]}
-                        segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]} 
-                        customSegmentLabels={Labels}/>
+                        segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]}
+                        customSegmentLabels={Labels} />
                 </div>
                 <DiagnosticColorBar handleOpen={handleOpen} datapoint={state.liveData.CO2level} min={state.rooms[state.pick].CO2SetPoint - 200} superMin={state.rooms[state.pick].CO2SetPoint - 1000}
                     max={state.rooms[state.pick].CO2SetPoint + 200} superMax={state.rooms[state.pick].CO2SetPoint + 1000} setPoint={state.rooms[state.pick].CO2SetPoint + " ppm"} />
@@ -620,46 +620,46 @@ function PressureMeter(props) {
     };
 
     //Label stuff
-    const [Labels, setLabels] = React.useState([{},{},{},{},{}]);
-    
+    const [Labels, setLabels] = React.useState([{}, {}, {}, {}, {}]);
+
 
     const handleMouseEnter = () => {
         setLabels([{
-            text:`${state.rooms[state.pick].pressureSetPont - 300}`,
-            fontSize:"12px",
-            position:"OUTSIDE",
-            color:"white"
-        },{
-            text:`${state.rooms[state.pick].pressureSetPont - 100}`,
-            fontSize:"12px",
-            position:"OUTSIDE",
-            color:"white"
+            text: `${state.rooms[state.pick].pressureSetPont - 300}`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
+        }, {
+            text: `${state.rooms[state.pick].pressureSetPont - 100}`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
         },
         {
-            text:`${state.rooms[state.pick].pressureSetPont - 20}`,
-            fontSize:"12px",
-            position:"OUTSIDE",
-            color:"white"
+            text: `${state.rooms[state.pick].pressureSetPont - 20}`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
         },
         {
-            text:`${state.rooms[state.pick].pressureSetPont + 20}`,
-            fontSize:"12px",
-            position:"OUTSIDE",
-            color:"white"
+            text: `${state.rooms[state.pick].pressureSetPont + 20}`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
         },
         {
-            text:`${state.rooms[state.pick].pressureSetPont + 100}`,
-            fontSize:"12px",
-            position:"OUTSIDE",
-            color:"white"
+            text: `${state.rooms[state.pick].pressureSetPont + 100}`,
+            fontSize: "12px",
+            position: "OUTSIDE",
+            color: "white"
         }])
     }
     const handleMouseLeave = () => {
-        setLabels([{},{},{},{},{}])
+        setLabels([{}, {}, {}, {}, {}])
     }
 
     return (
-        <Grid container item xs direction={'column'} justify={'center'}>
+        <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'}>
             <Typography variant={"h6"} align={'center'}>Pressure level</Typography>
             <Grid item xs className={classes.meterContainer}>
                 <div className={"speedometer1"} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
@@ -675,8 +675,8 @@ function PressureMeter(props) {
                         segments={5}
                         currentValueText={`${state.liveData.pressure} mbar`}
                         customSegmentStops={[state.rooms[state.pick].pressureSetPont - 300, state.rooms[state.pick].pressureSetPont - 100, state.rooms[state.pick].pressureSetPont - 20, state.rooms[state.pick].pressureSetPont + 20, state.rooms[state.pick].pressureSetPont + 100, state.rooms[state.pick].pressureSetPont + 300]}
-                        segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]} 
-                        customSegmentLabels={Labels}/>
+                        segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]}
+                        customSegmentLabels={Labels} />
                 </div>
                 <DiagnosticColorBar handleOpen={handleOpen} datapoint={state.liveData.pressure} min={state.rooms[state.pick].pressureSetPont - 20} superMin={state.rooms[state.pick].pressureSetPont - 100}
                     max={state.rooms[state.pick].pressureSetPont + 20} superMax={state.rooms[state.pick].pressureSetPont + 100} setPoint={state.rooms[state.pick].pressureSetPont + " mbar"} />
@@ -774,31 +774,31 @@ function StageMeter(props) {
 
 
     //Label stuff
-    const [Labels, setLabels] = React.useState([{},{},{}]);
-    
+    const [Labels, setLabels] = React.useState([{}, {}, {}]);
+
 
     const handleMouseEnter = () => {
         setLabels([{
-            text:`${(cloneHours) / 24}`,
-            fontSize:"12px",
-            color:"white"
-        },{
-            text:`${(vegHours) / 24}`,
-            fontSize:"12px",
-            color:"white"
+            text: `${(cloneHours) / 24}`,
+            fontSize: "12px",
+            color: "white"
+        }, {
+            text: `${(vegHours) / 24}`,
+            fontSize: "12px",
+            color: "white"
         },
         {
-            text:`${(flowerHours) / 24}`,
-            fontSize:"12px",
-            color:"white"
+            text: `${(flowerHours) / 24}`,
+            fontSize: "12px",
+            color: "white"
         }])
     }
     const handleMouseLeave = () => {
-        setLabels([{},{},{}])
+        setLabels([{}, {}, {}])
     }
 
     return (
-        <Grid container item xs direction={'column'} justify={'center'}>
+        <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'}>
             <Typography variant={"h6"} align={'center'}>Life Stage</Typography>
             <Grid item xs className={classes.meterContainer}>
                 <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
@@ -814,8 +814,8 @@ function StageMeter(props) {
                         segments={5}
                         currentValueText={`${32} days`}
                         customSegmentStops={[0, (cloneHours) / 24, (vegHours) / 24, TotalDays]}
-                        segmentColors={[theme.palette.roomStatus.clone, theme.palette.roomStatus.veg, theme.palette.roomStatus.flower]} 
-                        customSegmentLabels={Labels}/>
+                        segmentColors={[theme.palette.roomStatus.clone, theme.palette.roomStatus.veg, theme.palette.roomStatus.flower]}
+                        customSegmentLabels={Labels} />
                 </div>
                 <DiagnosticColorBar handleOpen={handleOpen} datapoint={2} min={1} superMin={0}
                     max={3} superMax={4} setPoint={state.rooms[state.pick].stage + " left in"} />
@@ -1021,32 +1021,34 @@ function RoomSummery(props) {
                     </StandardRoundSelectForm>
                 </Grid>
             </Grid>
-            <Grid item container direction={'row'}>
-                <Grid item container direction={'column'} justify={"center"} lg={1}>
+            <Grid item container direction={'row'} spacing={1}>
+                <Grid item container direction={'column'} justify={"center"} spacing={0} xs={1} lg={1}>
                     <LeftRightButton color={"primary"} onClick={handleRightShift}><KeyboardArrowLeftIcon style={{ fontSize: 48 }} /></LeftRightButton>
                 </Grid>
-                <Grid item container direction={'row'} lg>
-                <VerticleDividerStyled orientation={'vertical'} flexItem/>
-                    {MeterArray.map((Component, index) => {
-                        if (state.MeterArrayIndexStart === 1) {
-                            if (index > 0) {
-                                return (
-                                    Component
-                                );
+                {/* <Grid item container direction={"column"} xs lg> */}
+                    <Grid item container direction={'row'} xs lg={10}>
+                        {/* <VerticleDividerStyled orientation={'vertical'} flexItem /> */}
+                        {MeterArray.map((Component, index) => {
+                            if (state.MeterArrayIndexStart === 1) {
+                                if (index > 0) {
+                                    return (
+                                        Component
+                                    );
+                                }
+                                return (<div key={index}></div>);
+                            } else {
+                                if (index < MeterArray.length - 1) {
+                                    return (
+                                        Component
+                                    );
+                                }
+                                return (<div key={index}></div>);
                             }
-                            return (<div key={index}></div>);
-                        } else {
-                            if (index < MeterArray.length - 1) {
-                                return (
-                                    Component
-                                );
-                            }
-                            return (<div key={index}></div>);
-                        }
-                    })}
-                    <VerticleDividerStyled orientation={'vertical'} flexItem/>
-                </Grid>
-                <Grid item container direction={'column'} justify={"center"} lg={1}>
+                        })}
+                        {/* <VerticleDividerStyled orientation={'vertical'} flexItem /> */}
+                    </Grid>
+                {/* </Grid> */}
+                <Grid item container direction={'column'} justify={"center"} xs={1} lg={1}>
                     <LeftRightButton color={"primary"} onClick={handleRightShift}><KeyboardArrowRightIcon style={{ fontSize: 48 }} /></LeftRightButton>
                 </Grid>
             </Grid>

@@ -80,6 +80,6 @@ CREATE TABLE statusMsg(
     growroomID              INTEGER NOT NULL,
     type                    VARCHAR(32),
     Msg                     VARCHAR(256),
-    timestamp               INTEGER
+    timestamp               INTEGER,
     primary key(id)               
 );

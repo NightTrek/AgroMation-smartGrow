@@ -27,13 +27,13 @@ const localLogin = new LocalStrategy(localOptions, async (email, password, done)
       });
       return done(null, false);
     }
-    console.log(user);
+    // console.log(user);
     logger.log({
       level: 'info',
       message: `LOCAL LOGIN attempt by |||| ${user} || ${email}|${password} || `
     });
-    console.log(password);
-    console.log(user[0].password);
+    // console.log(password);
+    // console.log(user[0].password);
     const isMatch = await bcrypt.compare(password, user[0].password);
 
     if(!isMatch){
@@ -71,7 +71,7 @@ const jwtOptions = {
 const jwtLogin = new JwtStrategy(jwtOptions, async (payload, done) => {
   try {//payload.sub
     let con = await sql.GetConnection();
-    console.log(payload);
+    // console.log(payload);
     const user = await sql.selectWhere(con,"users","id",payload.sub);
     con.end();
     if(user.length == 0) {

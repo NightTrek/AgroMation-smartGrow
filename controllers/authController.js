@@ -12,10 +12,10 @@ const tokenForUser = function(user) {
   // Sub === subject
   // iat === issued at time
   // Its going to encode the whole 1st object and then add our secret to it
-  logger.log({
-    level: 'info',
-    message: `creating token for id ${user.id}  ||`
-  });
+  // logger.log({
+  //   level: 'info',
+  //   message: `creating token for id ${user.id}  ||`
+  // });
   // console.log(user);
   return jwt.encode({ sub: user.id, iat: timestamp}, config.secret);
 };
@@ -48,9 +48,9 @@ module.exports = {
       InsertObj.fullName=fullName;
       InsertObj.createdOn= moment().unix();
       const salt = await bcrypt.genSalt();
-      console.log('salt', salt);
+      // console.log('salt', salt);
       const hash = await bcrypt.hash(password, salt);
-      console.log('hash', hash);
+      // console.log('hash', hash);
       InsertObj.password=hash;
       let user = await sql.insertNewUser(con,"users",InsertObj);
       con.end();
@@ -58,7 +58,7 @@ module.exports = {
       user.id = user.insertId;
     logger.log({
         level: 'info',
-        message: `SUCCESSFULL Signup SESSION|||| BY| ${JSON.stringify(user.id)} || for user ${JSON.stringify(tokenForUser({id:user.insertId}))} `
+        message: `SUCCESSFULL Signup SESSION|||| BY| ${JSON.stringify(user.id)} || for user ${JSON.stringify(user.insertId)} `
       });
       res.json({ token: tokenForUser({id:user.insertId})});
     } catch(e) {

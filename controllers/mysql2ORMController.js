@@ -95,7 +95,7 @@ module.exports = {
 
     selectAndOrder: async function (con, whatToSelect, table, orderCol) {
         let queryString = "SELECT ?? FROM ?? ORDER BY ?? DESC";
-        console.log(queryString);
+        // console.log(queryString);
         try {
             let response = await con.query(queryString, [whatToSelect, table, orderCol]);
             return new Promise((resolve, reject) => {
@@ -150,7 +150,7 @@ module.exports = {
         let queryString =
             `INSERT INTO ${tableOneCol} SET ?;`;
         try {
-            console.log(InsertObject)
+            // console.log(InsertObject)
             let response = await con.query(
                 queryString, {
                     fullName: InsertObject.fullName,
@@ -185,7 +185,7 @@ module.exports = {
                         setPoint: InsertObject.setPoint
                     });
                 if (response) {
-                    console.log(response[0].insertId);
+                    // console.log(response[0].insertId);
                     resolve({id: response[0].insertId, msg: "success"});
                 } else {
                     reject("SQL ERROR 500 no response in Insert new Grow room");
@@ -256,7 +256,7 @@ module.exports = {
                         timestamp: InsertObject.timestamp
                     });
                 if (response) {
-                    console.log(response[0].insertId);
+                    // console.log(response[0].insertId);
                     resolve({id: response[0].insertId, msg: "success inserted data"});
                 } else {
                     reject("SQL ERROR 500 in Inserting Grow room data");

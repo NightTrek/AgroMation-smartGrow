@@ -1,10 +1,10 @@
-import React from 'react'
-import { connect } from 'react-redux'
+import React,{useEffect} from 'react'
+import { compose } from "redux";
+import { connect, useSelector, shallowEqual  } from 'react-redux'
 import { Grid, Typography, List, ListItem, Button } from '@material-ui/core'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-
-
-
+import { getRooms, setRoom } from "../../actions";
+import { withRouter } from "react-router";
 
 
 
@@ -50,12 +50,9 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const colorPicker = () => {
-    return
-}
 
 
-export const LiveDataWidget = (props) => {
+const LiveDataWidget = (props) => {
     const theme = useTheme();
     const exampleLiveData = {
         roomName: props.roomName,
@@ -71,6 +68,42 @@ export const LiveDataWidget = (props) => {
     const classes = useStyles();
     const LiveData = props.LiveData || exampleLiveData;
 
+    let { rooms, pick } = useSelector(state => ({
+        rooms: state.growRooms.rooms,
+        pick: state.growRooms.roomIndex
+
+    }), shallowEqual)
+
+    useEffect(() => {
+        if (rooms === undefined || rooms[0].stage === "loading") {
+            props.getRooms()
+        }
+    })
+
+    //check if data has loaded and if not display loading text
+    if (rooms === undefined || rooms.length === 0) {
+        console.log("loading Room data")
+        rooms = [
+            {
+                name: "Loading rooms",
+                tempSetPoint: 72,
+                humiditySetPoint: 44,
+                CO2SetPoint: 3000,
+                pressureSetPont: 1114,
+                stage: "loading",
+                dateStarted: 1597017600,
+                CloneTime: 864000,
+                VegTime: 3024000,
+                FlowerTime: 2419200,
+            },
+        ]
+        pick = 0;
+    }
+
+    const handleShowRoom = () => {
+        console.log(props)
+        props.history.push("/rooms");
+    }
 
 
     return (
@@ -81,7 +114,7 @@ export const LiveDataWidget = (props) => {
                     <Typography variant={"h5"} style={{ paddingLeft: "12px" }}>Live Data:</Typography>
                     </Grid>
                     <Grid item>
-                    <Typography variant={"h6"} style={{ paddingLeft: "12px" }}>{LiveData.roomName}</Typography>
+                    <Typography variant={"h6"} style={{ paddingLeft: "12px" }}>{rooms[pick].name}</Typography>
                     </Grid>
                 </Grid>
                 <Grid item xs>
@@ -109,20 +142,23 @@ export const LiveDataWidget = (props) => {
                     </List>
                 </Grid>
                 <Grid item xs>
-                    <Button variant="outlined" color="primary">
-                    Show Room
-                </Button></Grid>
+                    <Button variant="outlined" color="primary" onClick={handleShowRoom}>
+                        Show Room
+                    </Button>
+                </Grid>
             </Grid>
         </Grid>
     )
 }
 
-const mapStateToProps = (state) => ({
 
-})
 
-const mapDispatchToProps = {
-
+function mapStateToProps({ state }) {
+    return { state };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LiveDataWidget)
+const formedComponent = compose(
+    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom })
+)(LiveDataWidget);
+
+export default withRouter(formedComponent);

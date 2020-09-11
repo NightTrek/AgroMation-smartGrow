@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { useDispatch, useEffect } from 'react';
 import { compose } from "redux";
-import { connect } from "react-redux";
+import { connect, useSelector, shallowEqual  } from "react-redux";
 import { reduxForm } from "redux-form";
 //import axios from "axios";
 //redux actions
-import { addGrowRoom, fetchUserGrowRoomsAndStatus } from "../../actions";
+import { getRooms, setRoom } from "../../actions";
 //auth
 import requireAuth from "../../hoc/requireAuth";
 
@@ -17,62 +17,60 @@ import DashboardSummery from "../../components/DashboardSummery/DashboardSummry"
 //import styling
 import "./style.css"
 import { SystemNotifications } from '../SystemNotificationWidget/SystemNotifications';
-import { HighestProgress } from '../../components/HighestProgressWidget/HighestProgress';
-import { LiveDataWidget } from '../../components/LiveDataDashBoardWidget/LiveDataWidget';
+import  HighestProgress from '../../components/HighestProgressWidget/HighestProgress';
+import  LiveDataWidget  from '../../components/LiveDataDashBoardWidget/LiveDataWidget';
 
 
 
 
 
-class Dashboard2 extends Component {
+const Dashboard2 = (props) => {
+    let offset = 256;
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            loading: true,
-            offset: 256,
-            rooms:["Room Alpha", "Room beta", "clone Room", "flower one", "flower two", "veg room a"],
-            roomIndex:0
-        }
 
-        this.setRoom = this.setRoom.bind(this);
-    }
+    const [state, setState] = React.useState({
+        loading: true,
+        offset: 256,
+        rooms: ["Room Alpha", "Room beta", "clone Room", "flower one", "flower two", "veg room a"],
+        roomIndex: 0
+    });
 
-    setRoom(index){
-        let cstate = this.state;
+
+    
+
+    const setRoom = (index) => {
+        const cstate = state;
         cstate.roomIndex = index
-        this.setState(cstate);
-        
-    }
-
-    checkOffset() {
+        setState(cstate);
 
     }
 
-    render() {
-        return (
-            <Container className={"containerMain"}>
-                <Grid container direction={'column'} spacing={6}>
-                    <Grid
-                        container item direction="row"  
-                        spacing={3} xs>
-                        <DashboardSummery setRoom={this.setRoom} roomName={this.state.rooms[this.state.roomIndex]}/>
-                    </Grid>
-                    <Grid container item direction="row"  
-                        spacing={3} xs >
-                        <SystemNotifications/> 
-                        <Grid item></Grid>
-                        <HighestProgress roomName={this.state.rooms[this.state.roomIndex]}/>
-                    </Grid>
-                    <Grid container item direction="row"  
-                        spacing={3} xs >
-                        <LiveDataWidget roomName={this.state.rooms[this.state.roomIndex]}/>
-                    </Grid>
-                    {/* <Grid item direction="row" justify="center" alignItems="stretch" xs={12} spacing={3}> */}
+    const checkOffset = () => {
+
+    }
+
+    return (
+        <Container className={"containerMain"}>
+            <Grid container direction={'column'} spacing={6}>
+                <Grid
+                    container item direction="row"
+                    spacing={3} xs>
+                    <DashboardSummery setRoom={setRoom} />
                 </Grid>
-            </Container>
-        );
-    }
+                <Grid container item direction="row"
+                    spacing={3} xs >
+                    <SystemNotifications />
+                    <Grid item></Grid>
+                    <HighestProgress roomName={state.rooms[state.roomIndex]} />
+                </Grid>
+                <Grid container item direction="row"
+                    spacing={3} xs >
+                    <LiveDataWidget roomName={state.rooms[state.roomIndex]} />
+                </Grid>
+                {/* <Grid item direction="row" justify="center" alignItems="stretch" xs={12} spacing={3}> */}
+            </Grid>
+        </Container>
+    );
 
 }
 
@@ -85,8 +83,7 @@ function mapStateToProps({ state }) {
 }
 
 const formedComponent = compose(
-    connect(mapStateToProps, { addGrowRoom: addGrowRoom, fetchGrowRooms: fetchUserGrowRoomsAndStatus }),
-    reduxForm({ form: 'Add todo' })
+    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom })
 )(Dashboard2);
 
 export default requireAuth(formedComponent);

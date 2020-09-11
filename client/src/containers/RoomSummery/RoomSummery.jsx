@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 // import moment from "moment";
+import { connect, useSelector, shallowEqual } from 'react-redux';
+import { compose } from "redux";
 import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles'; //useTheme
-import { Grid, Typography, Select, Divider, MenuItem, ListItemText, List, ListItem, ListItemIcon, Button, Modal, Backdrop, Fade, Box, Slider, Input, IconButton } from '@material-ui/core'
+import { Grid, Typography, Select, MenuItem, ListItemText, List, ListItem, ListItemIcon, Button, Modal, Backdrop, Fade, Box, Slider, Input, IconButton } from '@material-ui/core'
 import ReactSpeedometer from "react-d3-speedometer"
 import ErrorIcon from '@material-ui/icons/Error';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
@@ -14,6 +16,8 @@ import { ExampleRoomData } from "../../exampleDataTypes/clientExamlpeDataTypes";
 import CancelIcon from '@material-ui/icons/Cancel';
 // import VerticleDividerStyled from "../../components/VerticalDivider/VerticalDivider";
 
+//Redux actions
+import { getRooms, setRoom } from "../../actions";
 
 
 function DiagnosticColorBar(props) {
@@ -969,13 +973,41 @@ function RoomSummery(props) {
         <StageMeter state={state} theme={theme} classes={classes} key={40} />,
         <PressureMeter state={state} theme={theme} classes={classes} key={30} />];
 
+        let { rooms, pick } = useSelector(state => ({
+            rooms: state.growRooms.rooms,
+            pick: state.growRooms.roomIndex
+
+        }), shallowEqual)
+
+        useEffect(() => {
+            if (rooms === undefined || rooms[0].stage === "loading") {
+                props.getRooms()
+            }
+        })
+
+        //check if data has loaded and if not display loading text
+        if (rooms === undefined || rooms.length === 0) {
+            rooms = [
+                {
+                    name: "Loading rooms",
+                    tempSetPoint: 72,
+                    humiditySetPoint: 44,
+                    CO2SetPoint: 3000,
+                    pressureSetPont: 1114,
+                    stage: "loading",
+                    dateStarted: 1597017600,
+                    CloneTime: 864000,
+                    VegTime: 3024000,
+                    FlowerTime: 2419200,
+                },
+            ]
+            pick = 0;
+        }
+    
     const handleChange = (event) => {
         const name = event.target.name;
         // console.log(name);
-        setState({
-            ...state,
-            [name]: event.target.value,
-        });
+        props.setRoom(event.target.value)
         // props.setRoom(event.target.value);
     };
 
@@ -1006,13 +1038,12 @@ function RoomSummery(props) {
                     <StandardRoundSelectForm className={classes.formControl} hiddenLabel >
 
                         <Select
-                            value={state.pick}
+                            value={pick}
                             onChange={handleChange}
                             inputProps={{
                                 name: 'pick',
                                 id: 'Room-Name',
                             }}
-                            defaultValue={0}
                         >
                             {state.rooms.map((Item, Index) => (
                                 <MenuItem key={Index} value={Index}>{Item.name}</MenuItem>
@@ -1026,27 +1057,27 @@ function RoomSummery(props) {
                     <LeftRightButton color={"primary"} onClick={handleRightShift}><KeyboardArrowLeftIcon style={{ fontSize: 48 }} /></LeftRightButton>
                 </Grid>
                 {/* <Grid item container direction={"column"} xs lg> */}
-                    <Grid item container direction={'row'} xs lg={10}>
-                        {/* <VerticleDividerStyled orientation={'vertical'} flexItem /> */}
-                        {MeterArray.map((Component, index) => {
-                            if (state.MeterArrayIndexStart === 1) {
-                                if (index > 0) {
-                                    return (
-                                        Component
-                                    );
-                                }
-                                return (<div key={index}></div>);
-                            } else {
-                                if (index < MeterArray.length - 1) {
-                                    return (
-                                        Component
-                                    );
-                                }
-                                return (<div key={index}></div>);
+                <Grid item container direction={'row'} xs lg={10}>
+                    {/* <VerticleDividerStyled orientation={'vertical'} flexItem /> */}
+                    {MeterArray.map((Component, index) => {
+                        if (state.MeterArrayIndexStart === 1) {
+                            if (index > 0) {
+                                return (
+                                    Component
+                                );
                             }
-                        })}
-                        {/* <VerticleDividerStyled orientation={'vertical'} flexItem /> */}
-                    </Grid>
+                            return (<div key={index}></div>);
+                        } else {
+                            if (index < MeterArray.length - 1) {
+                                return (
+                                    Component
+                                );
+                            }
+                            return (<div key={index}></div>);
+                        }
+                    })}
+                    {/* <VerticleDividerStyled orientation={'vertical'} flexItem /> */}
+                </Grid>
                 {/* </Grid> */}
                 <Grid item container direction={'column'} justify={"center"} xs={1} lg={1}>
                     <LeftRightButton color={"primary"} onClick={handleRightShift}><KeyboardArrowRightIcon style={{ fontSize: 48 }} /></LeftRightButton>
@@ -1056,4 +1087,13 @@ function RoomSummery(props) {
     )
 }
 
-export default RoomSummery
+
+function mapStateToProps({ state }) {
+    return { state };
+}
+
+const formedComponent = compose(
+    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom })
+)(RoomSummery);
+
+export default formedComponent;

@@ -1,11 +1,14 @@
-import React from 'react'
-import { connect } from 'react-redux'
+import React,{useEffect} from 'react'
+import { connect, useSelector, shallowEqual  } from 'react-redux';
+import { compose } from "redux";
 import { Grid, Typography, Button } from '@material-ui/core'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { VictoryPie } from "victory";
 
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+
+import { getRooms, setRoom } from "../../actions";
 
 
 const exampleProgressData = {
@@ -60,15 +63,50 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export const HighestProgress = (props) => {
+const HighestProgress = (props) => {
 
     const classes = useStyles();
     const Progress = props.Progress || exampleProgressData;
     const theme = useTheme();
     const progressColorScale = [ theme.palette.roomStatus.warning, theme.palette.primary.main,];
+    
+    
+    let { rooms, pick } = useSelector(state => ({
+        rooms: state.growRooms.rooms,
+        pick: state.growRooms.roomIndex
+
+    }), shallowEqual)
+
+    useEffect(() => {
+        if (rooms === undefined || rooms[0].stage === "loading") {
+            props.getRooms()
+        }
+    })
+
+    //check if data has loaded and if not display loading text
+    if (rooms === undefined || rooms.length === 0) {
+        console.log("loading Room data")
+        rooms = [
+            {
+                name: "Loading rooms",
+                tempSetPoint: 72,
+                humiditySetPoint: 44,
+                CO2SetPoint: 3000,
+                pressureSetPont: 1114,
+                stage: "loading",
+                dateStarted: 1597017600,
+                CloneTime: 864000,
+                VegTime: 3024000,
+                FlowerTime: 2419200,
+            },
+        ]
+        pick = 0;
+    }
+
     const data= [{ x: "Current", y: Progress.currentData },
     { x: "Total", y: Progress.stageCompletion-Progress.currentData},
-    ]
+    ];
+    
     return (
         <Grid item container className={classes.ProgressWidget} direction={"column"}>
             {/* widget Top bar menu */}
@@ -104,7 +142,7 @@ export const HighestProgress = (props) => {
                         </VictoryPie>
                         <Typography className={classes.PieLabelPrimary}>{Progress.currentData}</Typography>
                         <Typography className={classes.PieLabel}>{Progress.currentData}/{Progress.stageCompletion} days</Typography>
-    <Typography className={classes.PieRoomLabel}>{props.roomName}</Typography>
+    <Typography className={classes.PieRoomLabel}>{rooms[pick].name}</Typography>
                 </Grid>
             </Grid>
             <Grid container item xs direction={"row"} justify={"center"}>
@@ -118,12 +156,13 @@ export const HighestProgress = (props) => {
     )
 }
 
-const mapStateToProps = (state) => ({
 
-})
-
-const mapDispatchToProps = {
-
+function mapStateToProps({ state }) {
+    return { state };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HighestProgress)
+const formedComponent = compose(
+    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom })
+)(HighestProgress);
+
+export default formedComponent;

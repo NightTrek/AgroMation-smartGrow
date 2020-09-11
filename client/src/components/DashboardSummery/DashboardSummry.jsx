@@ -1,6 +1,7 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import PropTypes from 'prop-types'
-
+import { connect, useSelector, shallowEqual  } from "react-redux";
+import { compose } from "redux";
 import { VictoryPie, VictoryLabel } from "victory";
 import { Grid, Typography, List} from "@material-ui/core"
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -14,8 +15,8 @@ import {StandardRoundSelectForm} from "../StandardSelect/StandardSelect.js";
 import {sampleTempData,sampleHumidityData,sampleProgressData,sampleCO2Data} from "../../exampleDataTypes/clientExamlpeDataTypes";
 import './style.css';
 import VerticleDividerStyled from "../VerticalDivider/VerticalDivider"
-
-
+import { getRooms, setRoom } from "../../actions";
+import requireAuth from "../../hoc/requireAuth";
 
 
 
@@ -113,24 +114,46 @@ DashboardSummry.propTypes = {
     colorScale: PropTypes.arrayOf(PropTypes.object),
 }
 
-function DashboardSummry(props) {
+function DashboardSummry (props){
     const classes = useStyles();
     const theme = useTheme();
     const defaultColorScale = [theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main];
     const progressColorScale = [theme.palette.roomStatus.clone, theme.palette.roomStatus.veg, theme.palette.roomStatus.flower];
 
-    const [state, setState] = React.useState({
-        rooms: ["Room Alpha", "Room beta", "clone Room", "flower one", "flower two", "veg room a"],
-        pick: 0
-    });
+
+    let { rooms, pick } = useSelector(state => ({
+        rooms: state.growRooms.rooms,
+        pick: state.growRooms.roomIndex
+
+    }), shallowEqual)
+
+    useEffect(() => {
+        if (rooms === undefined || rooms[0].stage === "loading") {
+            props.getRooms()
+        }
+    })
+
+    //check if data has loaded and if not display loading text
+    if (rooms === undefined || rooms.length === 0) {
+        rooms = [
+            {
+                name: "Loading rooms",
+                tempSetPoint: 72,
+                humiditySetPoint: 44,
+                CO2SetPoint: 3000,
+                pressureSetPont: 1114,
+                stage: "loading",
+                dateStarted: 1597017600,
+                CloneTime: 864000,
+                VegTime: 3024000,
+                FlowerTime: 2419200,
+            },
+        ]
+        pick = 0;
+    }
 
     const handleChange = (event) => {
         const name = event.target.name;
-        // console.log(name);
-        setState({
-            ...state,
-            [name]: event.target.value,
-        });
         props.setRoom(event.target.value);
     };
 
@@ -145,7 +168,7 @@ function DashboardSummry(props) {
                     <StandardRoundSelectForm className={classes.formControl} >
                         
                         <Select
-                            value={state.pick}
+                            value={pick}
                             onChange={handleChange}
                             inputProps={{
                                 name: 'pick',
@@ -153,8 +176,8 @@ function DashboardSummry(props) {
                             }}
                             defaultValue={0}
                         >
-                            {state.rooms.map((Item, Index) => (
-                                <MenuItem key={Index} value={Index}>{Item || Item.name}</MenuItem>
+                            {rooms.map((Item, Index) => (
+                                <MenuItem key={Index} value={Index}>{Item.name}</MenuItem>
                             ))}
                         </Select>
                     </StandardRoundSelectForm>
@@ -180,5 +203,12 @@ DashboardSummry.propTypes = {
 }
 
 
-export default DashboardSummry
+function mapStateToProps({ state }) {
+    return { state };
+}
 
+const formedComponent = compose(
+    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom })
+)(DashboardSummry);
+
+export default requireAuth(formedComponent);

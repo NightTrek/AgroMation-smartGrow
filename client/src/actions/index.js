@@ -7,10 +7,16 @@ import {
     ADD_GROWROOM,
     GROWROOM_ERROR,
     FETCH_USER,
-    SET_LOCATION
+    SET_LOCATION,
+    GET_ROOMS,
+    SET_ROOM
 } from "./types";
 import axios from "axios";
-import {exampleAccount} from "../exampleDataTypes/clientExamlpeDataTypes.js"
+import {
+    exampleAccount,
+    ExampleRoomData
+} from "../exampleDataTypes/clientExamlpeDataTypes.js"
+
 export const incrementCounter = () => {
     return {
         type: INCREMENT_COUNTER
@@ -68,6 +74,17 @@ export const setLocation = (formProps) => async dispatch => {
     //or dispatch API error if it doesnt work
     
 };
+
+export const getRooms = (formProps) => async dispatch => {
+    //try and get the rooms usingthe location ID provided
+    let result = ExampleRoomData;
+    console.log("dispatching room data")
+    dispatch({type: GET_ROOMS, payload:result})
+}
+export const setRoom = (formProps) => async dispatch => {
+    console.log("dispatching room index")
+    dispatch({type:SET_ROOM, payload: formProps})
+}
 
 export const fetchUserGrowRoomsAndStatus = () => async dispatch => {
     try {

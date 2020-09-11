@@ -1,7 +1,8 @@
-import {ADD_GROWROOM, GROWROOM_ERROR, FETCH_GROWROOMS, FETCH_RECENT, } from "../actions/types";
+import {ADD_GROWROOM, GROWROOM_ERROR, GET_ROOMS, FETCH_RECENT, SET_ROOM, } from "../actions/types";
 
 const INITIAL_STATE = {
-  growRooms: [],
+  rooms: [],
+  roomIndex:0,
   Recent:[],
   errorMessage: ''
 };
@@ -12,8 +13,10 @@ export default function(state = INITIAL_STATE, action) {
       return {...state, growRooms: action.payload };
     case GROWROOM_ERROR:
       return {...state, errorMessage: action.payload };
-    case FETCH_GROWROOMS:
-      return {...state, growRooms: action.payload };
+    case GET_ROOMS:
+      return {...state, rooms: action.payload };
+    case SET_ROOM:
+      return {...state, roomIndex: action.payload };
     case FETCH_RECENT:
       return {...state, recent: action.payload };
     default:

@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { Grid, Button } from '@material-ui/core'
+import { Grid, Button, Typography } from '@material-ui/core'
 import { makeStyles, useTheme } from '@material-ui/core/styles'; //useTheme
 import { VictoryChart, VictoryLine, VictoryAxis, VictoryVoronoiContainer,VictoryTooltip } from 'victory';
 
@@ -165,7 +165,7 @@ export const PrimaryLineChart = (props) => {
     const pressureDomain = [950, 1200]
     const [state, setState] = useState({
         dataSet: tempData,
-        dataType:"temp",
+        dataType:"Temprature",
         domain:tempDomain,
         unit:" °F",
     });
@@ -203,12 +203,11 @@ export const PrimaryLineChart = (props) => {
             
 
 
-    console.log(`vw ${width}`);
-    console.log(adjustedWidth);
+    
     return (
         <Grid container item direction={"column"}>
-            <Grid container item direction={"row"} xs={1}>
-
+            <Grid container item direction={"row"} xs style={{marginLeft:"24px", marginTop:"12px"}}>
+                <Typography variant={"h4"}>{state.dataType}</Typography>
             </Grid>
             <Grid container item direction={"row"} xs>
                 <Grid item className={classes.ChartContainer}>

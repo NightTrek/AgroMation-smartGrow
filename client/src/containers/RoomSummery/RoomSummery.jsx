@@ -91,39 +91,51 @@ function TempMeter(props) {
 
     //setPointStuff
     const [meterState, setMeterState] = React.useState({
-        setPoint:roomState.rooms[roomState.pick].tempSetPoint,
-        max:roomState.rooms[roomState.pick].tempMax,
-        min:roomState.rooms[roomState.pick].tempMin,
+        setPoint: roomState.rooms[roomState.pick].tempSetPoint,
+        max: roomState.rooms[roomState.pick].tempMax,
+        min: roomState.rooms[roomState.pick].tempMin,
+        minMax: [roomState.rooms[roomState.pick].tempMin, roomState.rooms[roomState.pick].tempMax]
     });
     //slider handlers
     const handleSetPointSliderChange = (event, newValue) => {
-        setMeterState({...meterState, setPoint:newValue});
+        setMeterState({ ...meterState, setPoint: newValue });
     };
-    const handleMaxSliderChange = (event, newValue) => {
-        setMeterState({...meterState, max:newValue});
-    };
-    const handleMinSliderChange = (event, newValue) => {
-        setMeterState({...meterState, min:newValue});
+
+    const handleMinMaxSliderChange = (event, newValue) => {
+        if (newValue[0] < meterState.setPoint && newValue[1] > meterState.setPoint) {
+            setMeterState({ ...meterState, minMax: newValue });
+        }
+
     };
     //input handlers
     const handleSetPointInputChange = (event) => {
-        setMeterState({...meterState, setPoint:event.target.value === '' ? '' : Number(event.target.value)});
+        setMeterState({ ...meterState, setPoint: event.target.value === '' ? '' : Number(event.target.value) });
     };
-    const handleMaxInputChange = (event) => {
-        setMeterState({...meterState, max:event.target.value === '' ? '' : Number(event.target.value)});
-    };
+    
     const handleMinInputChange = (event) => {
-        setMeterState({...meterState, min:event.target.value === '' ? '' : Number(event.target.value)});
+        let cMeterState = meterState.minMax;
+        if (event.target.value < meterState.setPoint) {
+            setMeterState({ ...meterState, minMax: [event.target.value, cMeterState[1]] });
+        }
+
     };
+
+    const handleMaxInputChange = (event) => {
+        let cMeterState = meterState.minMax;
+        if (event.target.value > meterState.setPoint) {
+            setMeterState({ ...meterState, minMax: [cMeterState[0], event.target.value] });
+        }
+
+    };
+
     const handleBlur = (event) => {
         if (meterState.setPoint < 0) {
-            setMeterState({...meterState, setPoint:0});
+            setMeterState({ ...meterState, setPoint: 0 });
         } else if (meterState.setPoint > 100) {
-            setMeterState({...meterState, setPoint:100});
+            setMeterState({ ...meterState, setPoint: 100 });
         }
     };
-    console.log(meterState);
-    
+
 
     //modal stuff
     const [open, setOpen] = React.useState(false);
@@ -236,40 +248,6 @@ function TempMeter(props) {
                                     </Grid>
                                     <Grid item container direction={'row'}>
                                         <Grid item xs>
-                                            <Typography variant={"body1"}>Maximum</Typography>
-                                            <Slider
-                                                value={typeof meterState.max === 'number' ? meterState.max : 0}
-                                                onChange={handleMaxSliderChange}
-                                                aria-labelledby="maxPoint-slider"
-                                                min={0}
-                                                max={120}
-                                                metertype={'max'}
-                                                style={{width:"95%"}}
-                                            />
-                                        </Grid>
-                                        <Grid item>
-                                            <Input
-                                                className={classes.input}
-                                                value={meterState.max}
-                                                margin="dense"
-                                                onChange={handleMaxInputChange}
-                                                // onBlur={handleBlur}
-                                                metertype={'max'}
-                                                inputProps={{
-                                                    step: 1,
-                                                    min: 0,
-                                                    max: 120,
-                                                    type: 'number',
-                                                    'aria-labelledby': 'input-slider',
-                                                }}
-                                            />
-                                        </Grid>
-                                        <Grid item style={{position:"relative"}}>
-                                            <Typography variant={"caption"} style={{ padding: "4px",position:"absolute", top:"24px" }}> {tempUnitString}</Typography>
-                                        </Grid>
-                                    </Grid>
-                                    <Grid item container direction={'row'}>
-                                        <Grid item xs>
                                             <Typography variant={"body1"}>SetPoint</Typography>
                                             <Slider
                                                 value={typeof meterState.setPoint === 'number' ? meterState.setPoint : 0}
@@ -278,7 +256,7 @@ function TempMeter(props) {
                                                 min={0}
                                                 max={120}
                                                 metertype={'setPoint'}
-                                                style={{width:"95%"}}
+                                                style={{ width: "95%" }}
                                             />
                                         </Grid>
                                         <Grid item>
@@ -298,29 +276,49 @@ function TempMeter(props) {
                                                 }}
                                             />
                                         </Grid>
-                                        <Grid item style={{position:"relative"}}>
-                                            <Typography variant={"caption"} style={{ padding: "4px",position:"absolute", top:"24px" }}> {tempUnitString}</Typography>
+                                        <Grid item style={{ position: "relative" }}>
+                                            <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "24px" }}> {tempUnitString}</Typography>
                                         </Grid>
                                     </Grid>
-                                    <Grid item container direction={'row'}>
-                                        <Grid item xs>
+                                    <Grid item container direction={'row'} style={{marginTop:"24px"}}>
+                                        <Grid item>
                                             <Typography variant={"body1"}>Minimum</Typography>
+                                            <Input
+                                                className={classes.input}
+                                                value={meterState.minMax[0]}
+                                                margin="dense"
+                                                onChange={handleMinInputChange}
+                                                onBlur={handleBlur}
+                                                inputProps={{
+                                                    step: 1,
+                                                    min: 0,
+                                                    max: 120,
+                                                    type: 'number',
+                                                    'aria-labelledby': 'min-input-slider',
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item style={{ position: "relative" }}>
+                                            <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "48px" }}> {tempUnitString}</Typography>
+                                        </Grid>
+                                        <Grid item xs>
+                                            
                                             <Slider
-                                                value={typeof meterState.min === 'number' ? meterState.min : 0}
-                                                onChange={handleMinSliderChange}
+                                                value={meterState.minMax}
+                                                onChange={handleMinMaxSliderChange}
                                                 aria-labelledby="min-slider"
                                                 min={0}
                                                 max={120}
-                                                metertype={'min'}
-                                                style={{width:"95%"}}
+                                                style={{ width: "95%", marginTop:"24px" }}
                                             />
                                         </Grid>
                                         <Grid item>
+                                        <Typography variant={"body1"}>Maximum</Typography>
                                             <Input
                                                 className={classes.input}
-                                                value={meterState.min}
+                                                value={meterState.minMax[1]}
                                                 margin="dense"
-                                                onChange={handleMinInputChange}
+                                                onChange={handleMaxInputChange}
                                                 onBlur={handleBlur}
                                                 metertype={'min'}
                                                 inputProps={{
@@ -332,8 +330,8 @@ function TempMeter(props) {
                                                 }}
                                             />
                                         </Grid>
-                                        <Grid item style={{position:"relative"}}>
-                                            <Typography variant={"caption"} style={{ padding: "4px",position:"absolute", top:"24px" }}> {tempUnitString}</Typography>
+                                        <Grid item style={{ position: "relative" }}>
+                                            <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "48px" }}> {tempUnitString}</Typography>
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -352,7 +350,7 @@ function TempMeter(props) {
 };
 
 function HumidityMeter(props) {
-    const state = props.state;
+    const roomState = props.state;
     const classes = props.classes;
     const theme = props.theme;
     const [open, setOpen] = React.useState(false);
@@ -366,18 +364,49 @@ function HumidityMeter(props) {
         setOpen(false);
     };
     //setPointStuff
-    const [setPoint, setValue] = React.useState(state.rooms[state.pick].humiditySetPoint);
-    const handleSliderChange = (event, newValue) => {
-        setValue(newValue);
+    const [meterState, setMeterState] = React.useState({
+        setPoint: roomState.rooms[roomState.pick].humiditySetPoint,
+        max: roomState.rooms[roomState.pick].humidityMax,
+        min: roomState.rooms[roomState.pick].humidityMin,
+        minMax: [roomState.rooms[roomState.pick].humidityMin, roomState.rooms[roomState.pick].humidityMax]
+    });
+    //slider handlers
+    const handleSetPointSliderChange = (event, newValue) => {
+        setMeterState({ ...meterState, setPoint: newValue });
     };
-    const handleInputChange = (event) => {
-        setValue(event.target.value === '' ? '' : Number(event.target.value));
+
+    const handleMinMaxSliderChange = (event, newValue) => {
+        if (newValue[0] < meterState.setPoint && newValue[1] > meterState.setPoint) {
+            setMeterState({ ...meterState, minMax: newValue });
+        }
+
     };
-    const handleBlur = () => {
-        if (setPoint < 0) {
-            setValue(0);
-        } else if (setPoint > 100) {
-            setValue(100);
+    //input handlers
+    const handleSetPointInputChange = (event) => {
+        setMeterState({ ...meterState, setPoint: event.target.value === '' ? '' : Number(event.target.value) });
+    };
+    
+    const handleMinInputChange = (event) => {
+        let cMeterState = meterState.minMax;
+        if (event.target.value < meterState.setPoint) {
+            setMeterState({ ...meterState, minMax: [event.target.value, cMeterState[1]] });
+        }
+
+    };
+
+    const handleMaxInputChange = (event) => {
+        let cMeterState = meterState.minMax;
+        if (event.target.value > meterState.setPoint) {
+            setMeterState({ ...meterState, minMax: [cMeterState[0], event.target.value] });
+        }
+
+    };
+
+    const handleBlur = (event) => {
+        if (meterState.setPoint < 0) {
+            setMeterState({ ...meterState, setPoint: 0 });
+        } else if (meterState.setPoint > 100) {
+            setMeterState({ ...meterState, setPoint: 100 });
         }
     };
 
@@ -388,12 +417,12 @@ function HumidityMeter(props) {
     const handleMouseEnter = () => {
         console.log("mouse Enter CO2")
         setLabels([{
-            text: `${state.rooms[state.pick].humiditySetPoint - 20}%`,
+            text: `${roomState.rooms[roomState.pick].humiditySetPoint - 20}%`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         }, {
-            text: `${state.rooms[state.pick].humiditySetPoint - 5}%`,
+            text: `${roomState.rooms[roomState.pick].humiditySetPoint - 5}%`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
@@ -405,13 +434,13 @@ function HumidityMeter(props) {
             color: "white"
         },
         {
-            text: `${state.rooms[state.pick].humiditySetPoint + 5}%`,
+            text: `${roomState.rooms[roomState.pick].humiditySetPoint + 5}%`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         },
         {
-            text: `${state.rooms[state.pick].humiditySetPoint + 20}%`,
+            text: `${roomState.rooms[roomState.pick].humiditySetPoint + 20}%`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
@@ -433,21 +462,21 @@ function HumidityMeter(props) {
                         needleHeightRatio={0.7}
                         needleTransitionDuration={2000}
                         needleTransition="easeElastic"
-                        value={state.liveData.humidty}
-                        currentValueText={`${state.liveData.humidty} %`}
-                        minValue={state.rooms[state.pick].humiditySetPoint - 50}
-                        maxValue={state.rooms[state.pick].humiditySetPoint + 50}
+                        value={roomState.liveData.humidty}
+                        currentValueText={`${roomState.liveData.humidty} %`}
+                        minValue={roomState.rooms[roomState.pick].humiditySetPoint - 50}
+                        maxValue={roomState.rooms[roomState.pick].humiditySetPoint + 50}
                         segments={5}
-                        customSegmentStops={[state.rooms[state.pick].humiditySetPoint - 50,
-                        state.rooms[state.pick].humiditySetPoint - 30,
-                        state.rooms[state.pick].humiditySetPoint - 10,
-                        state.rooms[state.pick].humiditySetPoint + 10, state.rooms[state.pick].humiditySetPoint + 30,
-                        state.rooms[state.pick].humiditySetPoint + 50]}
+                        customSegmentStops={[roomState.rooms[roomState.pick].humiditySetPoint - 50,
+                        roomState.rooms[roomState.pick].humiditySetPoint - 30,
+                        roomState.rooms[roomState.pick].humiditySetPoint - 10,
+                        roomState.rooms[roomState.pick].humiditySetPoint + 10, roomState.rooms[roomState.pick].humiditySetPoint + 30,
+                        roomState.rooms[roomState.pick].humiditySetPoint + 50]}
                         segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]}
                         customSegmentLabels={Labels} />
                 </div>
-                <DiagnosticColorBar handleOpen={handleOpen} datapoint={state.liveData.humidty} min={state.rooms[state.pick].humiditySetPoint - 10} superMin={state.rooms[state.pick].humiditySetPoint - 30}
-                    max={state.rooms[state.pick].humiditySetPoint + 10} superMax={state.rooms[state.pick].humiditySetPoint + 30} setPoint={state.rooms[state.pick].humiditySetPoint + " %"} />
+                <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.humidty} min={roomState.rooms[roomState.pick].humiditySetPoint - 10} superMin={roomState.rooms[roomState.pick].humiditySetPoint - 30}
+                    max={roomState.rooms[roomState.pick].humiditySetPoint + 10} superMax={roomState.rooms[roomState.pick].humiditySetPoint + 30} setPoint={roomState.rooms[roomState.pick].humiditySetPoint + " %"} />
                 <Modal
                     aria-labelledby="transition-modal-title"
                     aria-describedby="transition-modal-description"
@@ -470,40 +499,97 @@ function HumidityMeter(props) {
 
                                 <Grid item container direction={"column"} className={classes.sliderRow}>
                                     <Grid item container direction={"row"} style={{ padding: "6px", marginBottom: "24px" }}>
-                                        <Grid item> <h4>Humidity</h4></Grid>
+                                        <Grid item> <h4>Humidty</h4></Grid>
                                         <Grid item xs> </Grid>
                                     </Grid>
                                     <Grid item container direction={'row'}>
                                         <Grid item xs>
+                                            <Typography variant={"body1"}>SetPoint</Typography>
                                             <Slider
-                                                value={typeof setPoint === 'number' ? setPoint : 0}
-                                                onChange={handleSliderChange}
+                                                value={typeof meterState.setPoint === 'number' ? meterState.setPoint : 0}
+                                                onChange={handleSetPointSliderChange}
                                                 aria-labelledby="setPoint-slider"
                                                 min={0}
-                                                max={100}
+                                                max={120}
+                                                metertype={'setPoint'}
+                                                style={{ width: "95%" }}
                                             />
                                         </Grid>
                                         <Grid item>
                                             <Input
                                                 className={classes.input}
-                                                value={setPoint}
+                                                value={meterState.setPoint}
                                                 margin="dense"
-                                                onChange={handleInputChange}
+                                                onChange={handleSetPointInputChange}
                                                 onBlur={handleBlur}
+                                                metertype={'setPoint'}
                                                 inputProps={{
                                                     step: 1,
                                                     min: 0,
-                                                    max: 100,
+                                                    max: 120,
                                                     type: 'number',
                                                     'aria-labelledby': 'input-slider',
                                                 }}
                                             />
                                         </Grid>
-                                        <Grid item>
-                                            <Typography variant={"caption"} style={{ padding: "4px" }}> %</Typography>
+                                        <Grid item style={{ position: "relative" }}>
+                                            <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "24px" }}> %</Typography>
                                         </Grid>
                                     </Grid>
-
+                                    <Grid item container direction={'row'} style={{marginTop:"24px"}}>
+                                        <Grid item>
+                                            <Typography variant={"body1"}>Minimum</Typography>
+                                            <Input
+                                                className={classes.input}
+                                                value={meterState.minMax[0]}
+                                                margin="dense"
+                                                onChange={handleMinInputChange}
+                                                onBlur={handleBlur}
+                                                inputProps={{
+                                                    step: 1,
+                                                    min: 0,
+                                                    max: 120,
+                                                    type: 'number',
+                                                    'aria-labelledby': 'min-input-slider',
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item style={{ position: "relative" }}>
+                                            <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "48px" }}> %</Typography>
+                                        </Grid>
+                                        <Grid item xs>
+                                            
+                                            <Slider
+                                                value={meterState.minMax}
+                                                onChange={handleMinMaxSliderChange}
+                                                aria-labelledby="min-slider"
+                                                min={0}
+                                                max={120}
+                                                style={{ width: "95%", marginTop:"24px" }}
+                                            />
+                                        </Grid>
+                                        <Grid item>
+                                        <Typography variant={"body1"}>Maximum</Typography>
+                                            <Input
+                                                className={classes.input}
+                                                value={meterState.minMax[1]}
+                                                margin="dense"
+                                                onChange={handleMaxInputChange}
+                                                onBlur={handleBlur}
+                                                metertype={'min'}
+                                                inputProps={{
+                                                    step: 1,
+                                                    min: 0,
+                                                    max: 120,
+                                                    type: 'number',
+                                                    'aria-labelledby': 'min-input-slider',
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item style={{ position: "relative" }}>
+                                            <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "48px" }}> %</Typography>
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
                                 <Grid item container direction={"row"}>
                                     <Button variant={"outlined"} color={"primary"}>
@@ -522,7 +608,7 @@ function HumidityMeter(props) {
 
 
 function CO2LevelMeter(props) {
-    const state = props.state;
+    const roomState = props.state;
     const classes = props.classes;
     const theme = props.theme;
     const [open, setOpen] = React.useState(false);
@@ -536,18 +622,49 @@ function CO2LevelMeter(props) {
     };
 
     //setPointStuff
-    const [setPoint, setValue] = React.useState(state.rooms[state.pick].CO2SetPoint);
-    const handleSliderChange = (event, newValue) => {
-        setValue(newValue);
+    const [meterState, setMeterState] = React.useState({
+        setPoint: roomState.rooms[roomState.pick].CO2SetPoint,
+        max: roomState.rooms[roomState.pick].CO2Min,
+        min: roomState.rooms[roomState.pick].CO2Max,
+        minMax: [roomState.rooms[roomState.pick].CO2Min, roomState.rooms[roomState.pick].CO2Max]
+    });
+    //slider handlers
+    const handleSetPointSliderChange = (event, newValue) => {
+        setMeterState({ ...meterState, setPoint: newValue });
     };
-    const handleInputChange = (event) => {
-        setValue(event.target.value === '' ? '' : Number(event.target.value));
+
+    const handleMinMaxSliderChange = (event, newValue) => {
+        if (newValue[0] < meterState.setPoint && newValue[1] > meterState.setPoint) {
+            setMeterState({ ...meterState, minMax: newValue });
+        }
+
     };
-    const handleBlur = () => {
-        if (setPoint < 0) {
-            setValue(0);
-        } else if (setPoint > 100) {
-            setValue(6000);
+    //input handlers
+    const handleSetPointInputChange = (event) => {
+        setMeterState({ ...meterState, setPoint: event.target.value === '' ? '' : Number(event.target.value) });
+    };
+    
+    const handleMinInputChange = (event) => {
+        let cMeterState = meterState.minMax;
+        if (event.target.value < meterState.setPoint) {
+            setMeterState({ ...meterState, minMax: [event.target.value, cMeterState[1]] });
+        }
+
+    };
+
+    const handleMaxInputChange = (event) => {
+        let cMeterState = meterState.minMax;
+        if (event.target.value > meterState.setPoint) {
+            setMeterState({ ...meterState, minMax: [cMeterState[0], event.target.value] });
+        }
+
+    };
+
+    const handleBlur = (event) => {
+        if (meterState.setPoint < 0) {
+            setMeterState({ ...meterState, setPoint: 0 });
+        } else if (meterState.setPoint > 100) {
+            setMeterState({ ...meterState, setPoint: 100 });
         }
     };
 
@@ -558,12 +675,12 @@ function CO2LevelMeter(props) {
     const handleMouseEnter = () => {
         console.log("mouse Enter CO2")
         setLabels([{
-            text: `${state.rooms[state.pick].CO2SetPoint - 1000}`,
+            text: `${roomState.rooms[roomState.pick].CO2SetPoint - 1000}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         }, {
-            text: `${state.rooms[state.pick].CO2SetPoint - 200}`,
+            text: `${roomState.rooms[roomState.pick].CO2SetPoint - 200}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
@@ -575,13 +692,13 @@ function CO2LevelMeter(props) {
             color: "white"
         },
         {
-            text: `${state.rooms[state.pick].CO2SetPoint + 200}`,
+            text: `${roomState.rooms[roomState.pick].CO2SetPoint + 200}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         },
         {
-            text: `${state.rooms[state.pick].CO2SetPoint + 1000}`,
+            text: `${roomState.rooms[roomState.pick].CO2SetPoint + 1000}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
@@ -602,17 +719,17 @@ function CO2LevelMeter(props) {
                         needleTransitionDuration={2000}
                         needleTransition="easeElastic"
                         needleHeightRatio={0.7}
-                        value={state.liveData.CO2level}
-                        currentValueText={`${state.liveData.CO2level} ppm`}
-                        minValue={state.rooms[state.pick].CO2SetPoint - 2000}
-                        maxValue={state.rooms[state.pick].CO2SetPoint + 2000}
+                        value={roomState.liveData.CO2level}
+                        currentValueText={`${roomState.liveData.CO2level} ppm`}
+                        minValue={roomState.rooms[roomState.pick].CO2SetPoint - 2000}
+                        maxValue={roomState.rooms[roomState.pick].CO2SetPoint + 2000}
                         segments={5}
-                        customSegmentStops={[state.rooms[state.pick].CO2SetPoint - 2000, state.rooms[state.pick].CO2SetPoint - 1000, state.rooms[state.pick].CO2SetPoint - 200, state.rooms[state.pick].CO2SetPoint + 200, state.rooms[state.pick].CO2SetPoint + 1000, state.rooms[state.pick].CO2SetPoint + 2000]}
+                        customSegmentStops={[roomState.rooms[roomState.pick].CO2SetPoint - 2000, roomState.rooms[roomState.pick].CO2SetPoint - 1000, roomState.rooms[roomState.pick].CO2SetPoint - 200, roomState.rooms[roomState.pick].CO2SetPoint + 200, roomState.rooms[roomState.pick].CO2SetPoint + 1000, roomState.rooms[roomState.pick].CO2SetPoint + 2000]}
                         segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]}
                         customSegmentLabels={Labels} />
                 </div>
-                <DiagnosticColorBar handleOpen={handleOpen} datapoint={state.liveData.CO2level} min={state.rooms[state.pick].CO2SetPoint - 200} superMin={state.rooms[state.pick].CO2SetPoint - 1000}
-                    max={state.rooms[state.pick].CO2SetPoint + 200} superMax={state.rooms[state.pick].CO2SetPoint + 1000} setPoint={state.rooms[state.pick].CO2SetPoint + " ppm"} />
+                <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.CO2level} min={roomState.rooms[roomState.pick].CO2SetPoint - 200} superMin={roomState.rooms[roomState.pick].CO2SetPoint - 1000}
+                    max={roomState.rooms[roomState.pick].CO2SetPoint + 200} superMax={roomState.rooms[roomState.pick].CO2SetPoint + 1000} setPoint={roomState.rooms[roomState.pick].CO2SetPoint + " ppm"} />
                 <Modal
                     aria-labelledby="transition-modal-title"
                     aria-describedby="transition-modal-description"
@@ -640,21 +757,25 @@ function CO2LevelMeter(props) {
                                     </Grid>
                                     <Grid item container direction={'row'}>
                                         <Grid item xs>
+                                            <Typography variant={"body1"}>SetPoint</Typography>
                                             <Slider
-                                                value={typeof setPoint === 'number' ? setPoint : 0}
-                                                onChange={handleSliderChange}
+                                                value={typeof meterState.setPoint === 'number' ? meterState.setPoint : 0}
+                                                onChange={handleSetPointSliderChange}
                                                 aria-labelledby="setPoint-slider"
                                                 min={0}
                                                 max={6000}
+                                                metertype={'setPoint'}
+                                                style={{ width: "95%" }}
                                             />
                                         </Grid>
                                         <Grid item>
                                             <Input
                                                 className={classes.input}
-                                                value={setPoint}
+                                                value={meterState.setPoint}
                                                 margin="dense"
-                                                onChange={handleInputChange}
+                                                onChange={handleSetPointInputChange}
                                                 onBlur={handleBlur}
+                                                metertype={'setPoint'}
                                                 inputProps={{
                                                     step: 1,
                                                     min: 0,
@@ -664,11 +785,64 @@ function CO2LevelMeter(props) {
                                                 }}
                                             />
                                         </Grid>
-                                        <Grid item>
-                                            <Typography variant={"caption"} style={{ padding: "4px" }}> ppm</Typography>
+                                        <Grid item style={{ position: "relative" }}>
+                                            <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "24px" }}> ppm</Typography>
                                         </Grid>
                                     </Grid>
-
+                                    <Grid item container direction={'row'} style={{marginTop:"24px"}}>
+                                        <Grid item>
+                                            <Typography variant={"body1"}>Minimum</Typography>
+                                            <Input
+                                                className={classes.input}
+                                                value={meterState.minMax[0]}
+                                                margin="dense"
+                                                onChange={handleMinInputChange}
+                                                onBlur={handleBlur}
+                                                inputProps={{
+                                                    step: 1,
+                                                    min: 0,
+                                                    max: 6000,
+                                                    type: 'number',
+                                                    'aria-labelledby': 'min-input-slider',
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item style={{ position: "relative" }}>
+                                            <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "48px" }}> ppm</Typography>
+                                        </Grid>
+                                        <Grid item xs>
+                                            
+                                            <Slider
+                                                value={meterState.minMax}
+                                                onChange={handleMinMaxSliderChange}
+                                                aria-labelledby="min-slider"
+                                                min={0}
+                                                max={6000}
+                                                style={{ width: "95%", marginTop:"24px" }}
+                                            />
+                                        </Grid>
+                                        <Grid item>
+                                        <Typography variant={"body1"}>Maximum</Typography>
+                                            <Input
+                                                className={classes.input}
+                                                value={meterState.minMax[1]}
+                                                margin="dense"
+                                                onChange={handleMaxInputChange}
+                                                onBlur={handleBlur}
+                                                metertype={'min'}
+                                                inputProps={{
+                                                    step: 1,
+                                                    min: 0,
+                                                    max: 6000,
+                                                    type: 'number',
+                                                    'aria-labelledby': 'min-input-slider',
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item style={{ position: "relative" }}>
+                                            <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "48px" }}> ppm</Typography>
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
                                 <Grid item container direction={"row"}>
                                     <Button variant={"outlined"} color={"primary"}>
@@ -686,7 +860,7 @@ function CO2LevelMeter(props) {
 
 
 function PressureMeter(props) {
-    const state = props.state;
+    const roomState = props.state;
     const classes = props.classes;
     const theme = props.theme;
     const [open, setOpen] = React.useState(false);
@@ -699,18 +873,49 @@ function PressureMeter(props) {
         setOpen(false);
     };
     //setPointStuff
-    const [setPoint, setValue] = React.useState(state.rooms[state.pick].pressureSetPont);
-    const handleSliderChange = (event, newValue) => {
-        setValue(newValue);
+    const [meterState, setMeterState] = React.useState({
+        setPoint: roomState.rooms[roomState.pick].pressureSetPont,
+        max: roomState.rooms[roomState.pick].pressureMin,
+        min: roomState.rooms[roomState.pick].pressureMax,
+        minMax: [roomState.rooms[roomState.pick].pressureMin, roomState.rooms[roomState.pick].pressureMax]
+    });
+    //slider handlers
+    const handleSetPointSliderChange = (event, newValue) => {
+        setMeterState({ ...meterState, setPoint: newValue });
     };
-    const handleInputChange = (event) => {
-        setValue(event.target.value === '' ? '' : Number(event.target.value));
+
+    const handleMinMaxSliderChange = (event, newValue) => {
+        if (newValue[0] < meterState.setPoint && newValue[1] > meterState.setPoint) {
+            setMeterState({ ...meterState, minMax: newValue });
+        }
+
     };
-    const handleBlur = () => {
-        if (setPoint < 500) {
-            setValue(500);
-        } else if (setPoint > 1500) {
-            setValue(1500);
+    //input handlers
+    const handleSetPointInputChange = (event) => {
+        setMeterState({ ...meterState, setPoint: event.target.value === '' ? '' : Number(event.target.value) });
+    };
+    
+    const handleMinInputChange = (event) => {
+        let cMeterState = meterState.minMax;
+        if (event.target.value < meterState.setPoint) {
+            setMeterState({ ...meterState, minMax: [event.target.value, cMeterState[1]] });
+        }
+
+    };
+
+    const handleMaxInputChange = (event) => {
+        let cMeterState = meterState.minMax;
+        if (event.target.value > meterState.setPoint) {
+            setMeterState({ ...meterState, minMax: [cMeterState[0], event.target.value] });
+        }
+
+    };
+
+    const handleBlur = (event) => {
+        if (meterState.setPoint < 0) {
+            setMeterState({ ...meterState, setPoint: 0 });
+        } else if (meterState.setPoint > 100) {
+            setMeterState({ ...meterState, setPoint: 100 });
         }
     };
 
@@ -720,30 +925,30 @@ function PressureMeter(props) {
 
     const handleMouseEnter = () => {
         setLabels([{
-            text: `${state.rooms[state.pick].pressureSetPont - 300}`,
+            text: `${roomState.rooms[roomState.pick].pressureSetPont - 300}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         }, {
-            text: `${state.rooms[state.pick].pressureSetPont - 100}`,
+            text: `${roomState.rooms[roomState.pick].pressureSetPont - 100}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         },
         {
-            text: `${state.rooms[state.pick].pressureSetPont - 20}`,
+            text: `${roomState.rooms[roomState.pick].pressureSetPont - 20}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         },
         {
-            text: `${state.rooms[state.pick].pressureSetPont + 20}`,
+            text: `${roomState.rooms[roomState.pick].pressureSetPont + 20}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         },
         {
-            text: `${state.rooms[state.pick].pressureSetPont + 100}`,
+            text: `${roomState.rooms[roomState.pick].pressureSetPont + 100}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
@@ -764,17 +969,17 @@ function PressureMeter(props) {
                         needleTransitionDuration={2000}
                         needleTransition="easeElastic"
                         needleHeightRatio={0.7}
-                        value={state.liveData.pressure}
-                        minValue={state.rooms[state.pick].pressureSetPont - 300}
-                        maxValue={state.rooms[state.pick].pressureSetPont + 300}
+                        value={roomState.liveData.pressure}
+                        minValue={roomState.rooms[roomState.pick].pressureSetPont - 300}
+                        maxValue={roomState.rooms[roomState.pick].pressureSetPont + 300}
                         segments={5}
-                        currentValueText={`${state.liveData.pressure} mbar`}
-                        customSegmentStops={[state.rooms[state.pick].pressureSetPont - 300, state.rooms[state.pick].pressureSetPont - 100, state.rooms[state.pick].pressureSetPont - 20, state.rooms[state.pick].pressureSetPont + 20, state.rooms[state.pick].pressureSetPont + 100, state.rooms[state.pick].pressureSetPont + 300]}
+                        currentValueText={`${roomState.liveData.pressure} mbar`}
+                        customSegmentStops={[roomState.rooms[roomState.pick].pressureSetPont - 300, roomState.rooms[roomState.pick].pressureSetPont - 100, roomState.rooms[roomState.pick].pressureSetPont - 20, roomState.rooms[roomState.pick].pressureSetPont + 20, roomState.rooms[roomState.pick].pressureSetPont + 100, roomState.rooms[roomState.pick].pressureSetPont + 300]}
                         segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]}
                         customSegmentLabels={Labels} />
                 </div>
-                <DiagnosticColorBar handleOpen={handleOpen} datapoint={state.liveData.pressure} min={state.rooms[state.pick].pressureSetPont - 20} superMin={state.rooms[state.pick].pressureSetPont - 100}
-                    max={state.rooms[state.pick].pressureSetPont + 20} superMax={state.rooms[state.pick].pressureSetPont + 100} setPoint={state.rooms[state.pick].pressureSetPont + " mbar"} />
+                <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.pressure} min={roomState.rooms[roomState.pick].pressureSetPont - 20} superMin={roomState.rooms[roomState.pick].pressureSetPont - 100}
+                    max={roomState.rooms[roomState.pick].pressureSetPont + 20} superMax={roomState.rooms[roomState.pick].pressureSetPont + 100} setPoint={roomState.rooms[roomState.pick].pressureSetPont + " mbar"} />
                 <Modal
                     aria-labelledby="transition-modal-title"
                     aria-describedby="transition-modal-description"
@@ -797,40 +1002,97 @@ function PressureMeter(props) {
 
                                 <Grid item container direction={"column"} className={classes.sliderRow}>
                                     <Grid item container direction={"row"} style={{ padding: "6px", marginBottom: "24px" }}>
-                                        <Grid item> <h4>Pressure level</h4></Grid>
+                                        <Grid item> <h4>Pressure Level</h4></Grid>
                                         <Grid item xs> </Grid>
                                     </Grid>
                                     <Grid item container direction={'row'}>
                                         <Grid item xs>
+                                            <Typography variant={"body1"}>SetPoint</Typography>
                                             <Slider
-                                                value={typeof setPoint === 'number' ? setPoint : 0}
-                                                onChange={handleSliderChange}
+                                                value={typeof meterState.setPoint === 'number' ? meterState.setPoint : 0}
+                                                onChange={handleSetPointSliderChange}
                                                 aria-labelledby="setPoint-slider"
                                                 min={0}
-                                                max={1500}
+                                                max={2000}
+                                                metertype={'setPoint'}
+                                                style={{ width: "95%" }}
                                             />
                                         </Grid>
                                         <Grid item>
                                             <Input
                                                 className={classes.input}
-                                                value={setPoint}
+                                                value={meterState.setPoint}
                                                 margin="dense"
-                                                onChange={handleInputChange}
+                                                onChange={handleSetPointInputChange}
                                                 onBlur={handleBlur}
+                                                metertype={'setPoint'}
                                                 inputProps={{
                                                     step: 1,
                                                     min: 0,
-                                                    max: 1500,
+                                                    max: 2000,
                                                     type: 'number',
                                                     'aria-labelledby': 'input-slider',
                                                 }}
                                             />
                                         </Grid>
-                                        <Grid item>
-                                            <Typography variant={"caption"} style={{ padding: "4px" }}> mbar</Typography>
+                                        <Grid item style={{ position: "relative" }}>
+                                            <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "24px" }}> ppm</Typography>
                                         </Grid>
                                     </Grid>
-
+                                    <Grid item container direction={'row'} style={{marginTop:"24px"}}>
+                                        <Grid item>
+                                            <Typography variant={"body1"}>Minimum</Typography>
+                                            <Input
+                                                className={classes.input}
+                                                value={meterState.minMax[0]}
+                                                margin="dense"
+                                                onChange={handleMinInputChange}
+                                                onBlur={handleBlur}
+                                                inputProps={{
+                                                    step: 1,
+                                                    min: 0,
+                                                    max: 2000,
+                                                    type: 'number',
+                                                    'aria-labelledby': 'min-input-slider',
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item style={{ position: "relative" }}>
+                                            <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "48px" }}> ppm</Typography>
+                                        </Grid>
+                                        <Grid item xs>
+                                            
+                                            <Slider
+                                                value={meterState.minMax}
+                                                onChange={handleMinMaxSliderChange}
+                                                aria-labelledby="min-slider"
+                                                min={0}
+                                                max={2000}
+                                                style={{ width: "95%", marginTop:"24px" }}
+                                            />
+                                        </Grid>
+                                        <Grid item>
+                                        <Typography variant={"body1"}>Maximum</Typography>
+                                            <Input
+                                                className={classes.input}
+                                                value={meterState.minMax[1]}
+                                                margin="dense"
+                                                onChange={handleMaxInputChange}
+                                                onBlur={handleBlur}
+                                                metertype={'min'}
+                                                inputProps={{
+                                                    step: 1,
+                                                    min: 0,
+                                                    max: 2000,
+                                                    type: 'number',
+                                                    'aria-labelledby': 'min-input-slider',
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item style={{ position: "relative" }}>
+                                            <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "48px" }}> ppm</Typography>
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
                                 <Grid item container direction={"row"}>
                                     <Button variant={"outlined"} color={"primary"}>
@@ -1021,13 +1283,13 @@ const useStyles = makeStyles((theme) => ({
     sliderRow: {
         marginTop: "32px",
         marginBottom: "32px",
-        padding: "24px",
+        padding: "48px",
         background: theme.palette.secondary.dark,
         borderRadius: "12px",
         // border:`solid 2px ${theme.palette.secondary.dark}`
     },
     input: {
-        marginTop:"24px",
+        marginTop: "24px",
         background: theme.palette.secondary.main,
     }
 
@@ -1065,37 +1327,37 @@ function RoomSummery(props) {
         <StageMeter state={state} theme={theme} classes={classes} key={40} />,
         <PressureMeter state={state} theme={theme} classes={classes} key={30} />];
 
-        let { rooms, pick } = useSelector(state => ({
-            rooms: state.growRooms.rooms,
-            pick: state.growRooms.roomIndex
+    let { rooms, pick } = useSelector(state => ({
+        rooms: state.growRooms.rooms,
+        pick: state.growRooms.roomIndex
 
-        }), shallowEqual)
+    }), shallowEqual)
 
-        useEffect(() => {
-            if (rooms === undefined || rooms[0].stage === "loading") {
-                props.getRooms()
-            }
-        })
-
-        //check if data has loaded and if not display loading text
-        if (rooms === undefined || rooms.length === 0) {
-            rooms = [
-                {
-                    name: "Loading rooms",
-                    tempSetPoint: 72,
-                    humiditySetPoint: 44,
-                    CO2SetPoint: 3000,
-                    pressureSetPont: 1114,
-                    stage: "loading",
-                    dateStarted: 1597017600,
-                    CloneTime: 864000,
-                    VegTime: 3024000,
-                    FlowerTime: 2419200,
-                },
-            ]
-            pick = 0;
+    useEffect(() => {
+        if (rooms === undefined || rooms[0].stage === "loading") {
+            props.getRooms()
         }
-    
+    })
+
+    //check if data has loaded and if not display loading text
+    if (rooms === undefined || rooms.length === 0) {
+        rooms = [
+            {
+                name: "Loading rooms",
+                tempSetPoint: 72,
+                humiditySetPoint: 44,
+                CO2SetPoint: 3000,
+                pressureSetPont: 1114,
+                stage: "loading",
+                dateStarted: 1597017600,
+                CloneTime: 864000,
+                VegTime: 3024000,
+                FlowerTime: 2419200,
+            },
+        ]
+        pick = 0;
+    }
+
     const handleChange = (event) => {
         // console.log(name);
         props.setRoom(event.target.value)

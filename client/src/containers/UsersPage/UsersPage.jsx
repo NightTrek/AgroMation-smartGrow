@@ -334,30 +334,10 @@ const UserWidget = (props) => {
 export default requireAuth(function UsersPage(props) {
     const classes = useStyles();
 
-    const [state, setState] = React.useState({ //setState
+    const [state, ] = React.useState({ //setState
         Users: props.Users || exampleUsers,
         pick: 1,
     });
-
-    const handleChange = (event) => {
-        console.log(state.pick)
-        const name = event.target.name;
-        // console.log(name);
-        setState({
-            ...state,
-            [name]: event.target.value,
-        });
-        // props.setRoom(event.target.value);
-    };
-
-    const handleTabChange = (event, newValue) => {
-        setState({
-            ...state,
-            pick: newValue
-        });
-    }
-
-
 
     return (
         <Container className={"containerMain"}>

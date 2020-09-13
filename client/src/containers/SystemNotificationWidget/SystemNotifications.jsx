@@ -162,9 +162,7 @@ const NotificationsListItems = (props, style) => {
             }
         }))
 }
-const Row = ({ index, style }) => (
-    <div style={style}>Row {index}</div>
-);
+
 
 export const SystemNotifications = () => {
     const classes = useStyles();

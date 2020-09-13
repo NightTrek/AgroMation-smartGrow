@@ -1,8 +1,8 @@
 import React, { useLayoutEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { Grid, Button } from '@material-ui/core'
-import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles'; //useTheme
-import { VictoryChart, VictoryLine, VictoryAxis, VictoryContainer, VictoryVoronoiContainer,VictoryTooltip } from 'victory';
+import { makeStyles, useTheme } from '@material-ui/core/styles'; //useTheme
+import { VictoryChart, VictoryLine, VictoryAxis, VictoryVoronoiContainer,VictoryTooltip } from 'victory';
 
 const exampleTempData = [
     { x: 1300, y: 74 , sp: 74 },
@@ -133,6 +133,7 @@ const getDomain = (tempData, min, max) =>{
     tempData.map((item, Index) => {
         sum+= item;
         index = Index
+        return item;
     });
     return [sum/index-min,sum/index+max]
 }
@@ -144,7 +145,6 @@ const useStyles = makeStyles((theme) => ({
         color: theme.palette.text.main,
         minWidth: "624px",
         maxHeight: "442px",
-        color: "white",
     },
 
 }));
@@ -172,7 +172,7 @@ export const PrimaryLineChart = (props) => {
     // console.log(state.dataSet);
     //react media queries that decide if the chart is responsive or static using a custom hook to get window size
 
-    const [width, height] = useWindowSize();
+    const [width] = useWindowSize(); //also has height available if needed
     let adjustedWidth = 0;    
     let responsiveChart = false;
     if(width>1400){

@@ -153,7 +153,6 @@ function DashboardSummry (props){
     }
 
     const handleChange = (event) => {
-        const name = event.target.name;
         props.setRoom(event.target.value);
     };
 

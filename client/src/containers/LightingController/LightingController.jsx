@@ -1,6 +1,6 @@
-import React, { useState, PropTypes } from 'react'
+import React, { useState } from 'react'
 import { connect } from 'react-redux'
-import { Grid, FormControl, InputLabel, Select, MenuItem, makeStyles, useTheme, withStyles, Slider, Typography, Button, Divider, IconButton, Box } from '@material-ui/core'
+import { Grid, Select, MenuItem, makeStyles, useTheme, withStyles, Slider, Typography, Button, Divider, IconButton } from '@material-ui/core'
 import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
 import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect";
 

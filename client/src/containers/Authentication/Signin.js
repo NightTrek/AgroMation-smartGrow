@@ -4,7 +4,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { signin } from "../../actions";
 import InputField from "../InputField";
-import {Typography} from "@material-ui/core";
+// import {Typography} from "@material-ui/core";
 
 class Signin extends Component {
   renderInput = ({ input }) => {

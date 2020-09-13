@@ -1,7 +1,6 @@
-import React, { useDispatch, useEffect } from 'react';
+import React from 'react';
 import { compose } from "redux";
-import { connect, useSelector, shallowEqual  } from "react-redux";
-import { reduxForm } from "redux-form";
+import { connect  } from "react-redux";
 //import axios from "axios";
 //redux actions
 import { getRooms, setRoom } from "../../actions";
@@ -11,26 +10,23 @@ import requireAuth from "../../hoc/requireAuth";
 //import components
 import { Container, Grid } from "@material-ui/core";
 import DashboardSummery from "../../components/DashboardSummery/DashboardSummry";
-
+import { SystemNotifications } from '../SystemNotificationWidget/SystemNotifications';
+import  HighestProgress from '../../components/HighestProgressWidget/HighestProgress';
+import  LiveDataWidget  from '../../components/LiveDataDashBoardWidget/LiveDataWidget';
 
 
 //import styling
 import "./style.css"
-import { SystemNotifications } from '../SystemNotificationWidget/SystemNotifications';
-import  HighestProgress from '../../components/HighestProgressWidget/HighestProgress';
-import  LiveDataWidget  from '../../components/LiveDataDashBoardWidget/LiveDataWidget';
+
 
 
 
 
 
 const Dashboard2 = (props) => {
-    let offset = 256;
 
 
     const [state, setState] = React.useState({
-        loading: true,
-        offset: 256,
         rooms: ["Room Alpha", "Room beta", "clone Room", "flower one", "flower two", "veg room a"],
         roomIndex: 0
     });
@@ -42,10 +38,6 @@ const Dashboard2 = (props) => {
         const cstate = state;
         cstate.roomIndex = index
         setState(cstate);
-
-    }
-
-    const checkOffset = () => {
 
     }
 

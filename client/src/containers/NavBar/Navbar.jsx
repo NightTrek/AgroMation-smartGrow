@@ -1,4 +1,4 @@
-import React, {useDispatch, useEffect} from 'react';
+import React, { useEffect} from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { compose } from "redux";
 import { connect, useSelector, shallowEqual } from "react-redux";
@@ -26,7 +26,6 @@ import agroLogo from "./../../img/AgroMationLogosquare512.png";
 import GroupIcon from '@material-ui/icons/Group';
 import agroLogoCombined from '../../img/AgroMationCombined.png';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import InputLabel from '@material-ui/core/InputLabel';
 // import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';

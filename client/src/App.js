@@ -1,50 +1,16 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { Provider } from "react-redux";
-import { createStore, applyMiddleware, compose } from "redux";
-import reduxThunk from "redux-thunk";
-
+// import NavBarHeader from "./NavBarHeader";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {TextField} from '@material-ui/core'
-// Import Containers
-import Navbar from "./containers/NavBar/Navbar";
-// import Signup from "./containers/Authentication/Signup";
-// import Signin from "./containers/Authentication/Signin";
-import Signout from "./containers/Authentication/Signout";
-import Dashboard2 from './containers/dashboard2/Dashboard2';
-
-import Wrapper from "./containers/Wrapper";
-
-import './style.css';
-
-import App from "./App"
-
-// Import components
-import Settings from "./components/Settings";
-// import Dashboard from "./components/Dashboard";
-import Welcome from "./components/Welcome";
-
-import reducers from "./reducers";
-import IndividualRoom from "./containers/IndividualRoom/IndividualRoom";
-import UsersPage from "./containers/UsersPage/UsersPage";
-
-// configure redux dev tools
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
-const store = createStore(
-  reducers,
-  {
-    auth: { authenticated: localStorage.getItem("token") }
-  },
-  composeEnhancers(applyMiddleware(reduxThunk))
-);
-
-
-
 
 
 // Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
+// const top100Films = [
+//   { title: 'The Shawshank Redemption', year: 1994 },
+//   { title: 'The hello Redemption', year: 1994 },
+// ];
+//
+
 const top100Films = [
   { title: 'The Shawshank Redemption', year: 1994 },
   { title: 'The Godfather', year: 1972 },
@@ -161,26 +127,13 @@ const ComboBox = () => {
 }
 
 
-ReactDOM.render(
-  <Provider store={store}>
-    <Router>
-      <Wrapper>
-        <Navbar>
-          <Switch>
-          <Route exact path="/" component={Welcome} />
-          <Route exact path="/Dashboard" component={Dashboard2} />
-          <Route exact path="/Rooms" component={IndividualRoom} />
-          <Route exact path="/Settings" component={Settings} />
-          {/* <Route exact path="/signup" component={Signup} />
-          <Route exact path="/signin" component={Signin} /> */}
-          <Route exact path="/signout" component={Signout} />
-          <Route exact path="/Users" component={UsersPage} />
-          </Switch>
-          
-        </Navbar>
-      </Wrapper>
-    </Router>
-  </Provider>
-  ,
-  document.getElementById("root")
-);
+
+export default ({ children }) => {
+  return (
+    <div>
+      {/* <NavBarHeader/>
+        {children} */}
+        <ComboBox/>
+    </div>
+  )
+};

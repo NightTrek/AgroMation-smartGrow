@@ -1,72 +1,20 @@
-import React, { useState } from 'react'
-import { connect } from 'react-redux'
-import { Grid, Select, MenuItem, makeStyles, useTheme, withStyles, Slider, Typography, Button, Divider, IconButton } from '@material-ui/core'
-import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect";
+import { AgGridColumn, AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
+import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
+import { Grid, TextField, makeStyles, useTheme, withStyles, Slider, Typography, Button, Divider, IconButton, Backdrop, Modal, Fade, Box } from '@material-ui/core'
+//icons
+import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
+import WavesIcon from '@material-ui/icons/Waves';
+import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
+import ScheduleIcon from '@material-ui/icons/Schedule';
+import CancelIcon from '@material-ui/icons/Cancel';
+//my imports 
+import { exampleLightZoneArray } from "../../exampleDataTypes/clientExamlpeDataTypes";
 
-
-const exampleLightZoneArray = [
-    {
-        name: "zone one",
-        active: true,
-        activeCount: 6,
-        fault: 0,
-        intensity: 50,
-        red: 50,
-        yellow: 50,
-        green: 50,
-    },
-    {
-        name: "zone two",
-        active: true,
-        activeCount: 6,
-        fault: 0,
-        intensity: 50,
-        red: 50,
-        yellow: 50,
-        green: 50,
-    },
-    {
-        name: "zone three",
-        active: true,
-        activeCount: 6,
-        fault: 0,
-        intensity: 50,
-        red: 50,
-        yellow: 50,
-        green: 50,
-    },
-    {
-        name: "zone four",
-        active: true,
-        activeCount: 6,
-        fault: 0,
-        intensity: 50,
-        red: 50,
-        yellow: 50,
-        green: 50,
-    },
-    {
-        name: "zone five",
-        active: true,
-        activeCount: 6,
-        fault: 0,
-        intensity: 50,
-        red: 50,
-        yellow: 50,
-        green: 50,
-    },
-    {
-        name: "zone six",
-        active: true,
-        activeCount: 6,
-        fault: 0,
-        intensity: 50,
-        red: 50,
-        yellow: 50,
-        green: 50,
-    },
-]
 
 
 function valuetext(value) {
@@ -83,7 +31,7 @@ const PowerIntensitySlider = withStyles({
         height: 48,
         width: 56,
         backgroundColor: '#fff',
-        border: '2px solid currentColor',
+        border: '2px solid black',
         marginTop: -8,
         marginLeft: -12,
         '&:focus, &:hover, &$active': {
@@ -109,18 +57,18 @@ const PowerIntensitySlider = withStyles({
         "& .MuiSlider-track": {
             width: 32,
             background: 'linear-gradient(white, black)',
-            borderRadius:" 0 0 24px 24px",
+            borderRadius: " 0 0 24px 24px",
         },
         "& .MuiSlider-rail": {
             width: 30,
             background: 'linear-gradient(white, black)',
-            borderRadius:"24px",
+            borderRadius: "24px",
         },
         "& .MuiSlider-markLabel": {
             left: '64px',
             color: "white",
         },
-        "& .MuiSlider-thumb":{
+        "& .MuiSlider-thumb": {
             // marginTop: -320,
             marginLeft: -12,
         }
@@ -161,18 +109,18 @@ const RedIntensitySlider = withStyles({
         "& .MuiSlider-track": {
             width: 32,
             background: 'linear-gradient(red, black)',
-            borderRadius:" 0 0 24px 24px",
+            borderRadius: " 0 0 24px 24px",
         },
         "& .MuiSlider-rail": {
             width: 30,
             background: 'linear-gradient(red, black)',
-            borderRadius:"24px",
+            borderRadius: "24px",
         },
         "& .MuiSlider-markLabel": {
             left: '64px',
             color: "white",
         },
-        "& .MuiSlider-thumb":{
+        "& .MuiSlider-thumb": {
             marginTop: -320,
             marginLeft: -12,
         }
@@ -212,18 +160,18 @@ const YellowIntensitySlider = withStyles({
         "& .MuiSlider-track": {
             width: 32,
             background: 'linear-gradient(yellow, black)',
-            borderRadius:" 0 0 24px 24px",
+            borderRadius: " 0 0 24px 24px",
         },
         "& .MuiSlider-rail": {
             width: 30,
             background: 'linear-gradient(yellow, black)',
-            borderRadius:"24px",
+            borderRadius: "24px",
         },
         "& .MuiSlider-markLabel": {
             left: '64px',
             color: "white",
         },
-        "& .MuiSlider-thumb":{
+        "& .MuiSlider-thumb": {
             marginTop: -320,
             marginLeft: -12,
         }
@@ -232,7 +180,7 @@ const YellowIntensitySlider = withStyles({
 const GreenIntensitySlider = withStyles({
     root: {
         color: '#52af77',
-        
+
     },
     thumb: {
         height: 48,
@@ -254,18 +202,18 @@ const GreenIntensitySlider = withStyles({
         "& .MuiSlider-track": {
             width: 32,
             background: 'linear-gradient(green, black)',
-            borderRadius:" 0 0 24px 24px",
+            borderRadius: " 0 0 24px 24px",
         },
         "& .MuiSlider-rail": {
             width: 30,
             background: 'linear-gradient(green, black)',
-            borderRadius:"24px",
+            borderRadius: "24px",
         },
         "& .MuiSlider-markLabel": {
             left: '64px',
             color: "white",
         },
-        "& .MuiSlider-thumb":{
+        "& .MuiSlider-thumb": {
             marginTop: -320,
             marginLeft: -12,
         }
@@ -336,7 +284,21 @@ const useStyles = makeStyles((theme) => ({
         width: "56px",
         height: "56px",
         position: "relative",
-    }
+    },
+    modal: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    paper: {
+        position: "absolute",
+        minWidth: "512px",
+        color: theme.palette.text.main,
+        backgroundColor: theme.palette.secondary.main,
+        border: `2px solid ${theme.palette.secondary.dark}`,
+        boxShadow: theme.shadows[5],
+        padding: "12px",
+    },
 
 }));
 
@@ -415,28 +377,87 @@ const PowerIntensity = (props) => {
                     </div>
                 </Grid>
             </Grid>
-            <Grid item container direction={"row"} justify={"center"}>
+            {/* <Grid item container direction={"row"} justify={"center"}>
                 <Grid item className={classes.SliderBottomLabel}>
 
                     <Button style={{ color: color }}><Typography variant={"button"} align={"center"} >set {bottomHeading}</Typography></Button>
                 </Grid>
-            </Grid>
+            </Grid> */}
 
         </Grid>
     );
 }
 
 const RGBInensities = (props) => {
+    const { red, yellow, blue } = props;
     return (
-        <Grid item container direction={"row"} xs={5} wrap={'nowrap'}>
+        <Grid item container direction={"row"} xs={5} wrap={'nowrap'} style={{ marginLeft: "48px", marginBottom: "24px" }}>
             <PowerIntensity type={1} topCaption={"Color Spectrum"} bottomHeading={"Red"} color={"red"} />
             <Divider orientation={"vertical"} flexItem></Divider>
             <PowerIntensity type={2} topCaption={" "} bottomHeading={"Yellow"} color={"yellow"} />
             <Divider orientation={"vertical"} flexItem></Divider>
-            <PowerIntensity type={3} topCaption={" "} bottomHeading={"Green"} color={"green"} />
+            <PowerIntensity type={3} topCaption={" "} bottomHeading={"Blue"} color={"blue"} />
         </Grid>
     );
 };
+const oldLightRoomRow = (props) => {
+    //     <Grid item container direction={"row"} spacing={5}>
+    //                 <Divider orientation={"vertical"} variant={"middle"} flexItem></Divider>
+    //                 <PowerIntensity />
+    //                 <RGBInensities />
+    //                 <Grid container item xs={4} direction={"column"} justify={"center"} className={classes.lightZoneWidget}>
+    //                     <Grid item container direction={'row'} justify={"center"} style={{ marginLeft: '24px' }}>
+    //                         {state.lightZoneArray.map((item, index) => {
+    //                             let color = "black";
+    //                             let textColor = "red";
+    //                             let active = "inactive";
+    //                             if (item.activeCount === 6) {
+    //                                 color = theme.palette.primary.main;
+    //                                 active = "active"
+    //                                 textColor = theme.palette.roomStatus.veg;
+    //                             }
+    //                             return (
+    //                                 <Grid item container direction={"column"} justify={"center"} xs={6} spacing={0} key={index} className={classes.LightZoneButtonOuterBox}>
+    //                                     <Grid item>
+    //                                         <Typography variant={"subtitle2"}>{item.name}</Typography>
+    //                                     </Grid>
+    //                                     <Grid item className={classes.lightZoneButtonBox} style={{ positon: "relative", background: color, }}>
+    //                                         <ZoneIconButton><EmojiObjectsIcon style={{ fontSize: "36px", color: "white" }} /></ZoneIconButton>
+    //                                     </Grid>
+    //                                     <Grid item>
+    //                                         <Typography variant={"caption"} align={"right"} style={{ color: textColor }}>{active}</Typography>
+
+    //                                     </Grid>
+    //                                 </Grid>
+    //                             );
+    //                         })}
+    //                     </Grid>
+    //                 </Grid>
+    //                 <Grid item xs={1}></Grid>
+    //             </Grid>
+};
+
+const activeIndicator = (props) => {
+    const active = props.value;
+    const { nominal, fault } = props;
+
+    const mainStyle = {
+        width: "12px",
+        height: "12px",
+        borderRadius: "6px",
+        margin: "8px"
+    }
+
+    switch (active) {
+        case true:
+            return (<div style={{ ...mainStyle, background: "#31B461" }}></div>);
+        case false:
+            return (<div style={{ ...mainStyle, background: "#121315" }}></div>)
+    }
+};
+
+
+
 
 
 export const LightingController = (props) => {
@@ -447,18 +468,92 @@ export const LightingController = (props) => {
     const [state, setState] = useState({
         lightZoneArray: lightZoneArray,
         currentZone: 0,
+        selectedZones: [],
+        spectrumModal: false,
+        powerModal: false,
+        scheduleModal: false,
+
     });
 
+    ///Grid stuff
+    const [gridApi, setGridApi] = useState(null);
+    const [gridColumnApi, setGridColumnApi] = useState(null);
+
+    const [rowData, setRowData] = useState(exampleLightZoneArray);
+
+    function onGridReady(params) {
+        setGridApi(params.api);
+        setGridColumnApi(params.columnApi);
+    }
+    // const printState = () => {
+    //     var filterState = gridApi.getFilterModel();
+    //     console.log('filterState: ', filterState);
+
+    // };
+
     const handleChange = (event) => {
-        console.log(state.pick)
-        const name = event.target.name;
-        // console.log(name);
+        gridApi.setFilterModel({
+            name: {
+                filterType: "string",
+                type: 'startsWith',
+                filter: event.target.value
+            }
+        });
+        var filterState = gridApi.getFilterModel();
+        console.log('filterState: ', filterState);
+        // props.setRoom(event.target.value);
+        gridApi.onFilterChanged();
+    };
+
+    const openSpectrumControl = (event) => {
+
+        let selectedRows = gridApi.getSelectedRows()
+        console.log(selectedRows)
+        if (selectedRows !== undefined && selectedRows.length > 0) {
+            setState({
+                ...state,
+                spectrumModal: true,
+                selectedZones: selectedRows
+            })
+        }
+        else {
+            // TODO nothing selected warning
+            console.log("provide warning that nothing is selected");
+        }
+
+    };
+
+    const openPowerControl = (event) => {
+
+        let selectedRows = gridApi.getSelectedRows()
+        console.log(selectedRows)
+        if (selectedRows !== undefined && selectedRows.length > 0) {
+            setState({
+                ...state,
+                powerModal: true,
+                selectedZones: selectedRows
+            })
+        }
+        else {
+            // TODO nothing selected warning
+            console.log("provide warning that nothing is selected");
+        }
+
+    };
+
+    const handleClose = () => {
         setState({
             ...state,
-            [name]: event.target.value,
-        });
-        // props.setRoom(event.target.value);
-    };
+            spectrumModal: false,
+            powerModal: false,
+            scheduleModal: false,
+        })
+    }
+
+    const postSpectrumValues = (values) => {
+
+        console.log(values)
+    }
 
     return (
         <Grid item container direction={"column"} >
@@ -468,60 +563,170 @@ export const LightingController = (props) => {
                     <Typography variant={"h5"}>{`(${state.lightZoneArray[state.currentZone].activeCount}) Lights Active`}</Typography>
                 </Grid>
                 <Grid item xs></Grid>
-                <Grid item xs={2}>
-                    <StandardRoundSelectForm>
-                        <Select
-                            value={state.currentZone}
-                            onChange={handleChange}
-                            inputProps={{
-                                name: 'currentZone',
-                                id: 'Room-Name',
-                            }}
-                            defaultValue={0}
-                        >
-                            {state.lightZoneArray.map((Item, Index) => (
-                                <MenuItem key={Index} value={Index}>{Item.name}</MenuItem>
-                            ))}
-                        </Select>
-                    </StandardRoundSelectForm>
+                <Grid item><IconButton onClick={openSpectrumControl}><WavesIcon color={"primary"} /></IconButton></Grid>
+                <Grid item><IconButton onClick={openPowerControl}><WbIncandescentIcon color={"primary"} /></IconButton></Grid>
+                <Grid item><IconButton><ScheduleIcon color={"primary"} /></IconButton></Grid>
+                <Grid item >
+                    <TextField id="filled-search" label="Search field" type="search" variant="filled" onChange={handleChange} />
                 </Grid>
-                <Grid item xs={4}></Grid>
             </Grid>
             {/*this is the main bar  */}
-            <Grid item container direction={"row"} spacing={5}>
-                <Divider orientation={"vertical"} variant={"middle"} flexItem></Divider>
-                <PowerIntensity />
-                <RGBInensities />
-                <Grid container item xs={4} direction={"column"} justify={"center"} className={classes.lightZoneWidget}>
-                    <Grid item container direction={'row'} justify={"center"} style={{marginLeft:'24px'}}>
-                        {state.lightZoneArray.map((item, index) => {
-                            let color = "black";
-                            let textColor = "red";
-                            let active = "inactive";
-                            if (item.activeCount === 6) {
-                                color = theme.palette.primary.main;
-                                active = "active"
-                                textColor = theme.palette.roomStatus.veg;
-                            }
-                            return (
-                                <Grid item container direction={"column"} justify={"center"} xs={6} spacing={0} key={index} className={classes.LightZoneButtonOuterBox}>
-                                    <Grid item>
-                                        <Typography variant={"subtitle2"}>{item.name}</Typography>
-                                    </Grid>
-                                    <Grid item className={classes.lightZoneButtonBox} style={{ positon: "relative", background: color, }}>
-                                        <ZoneIconButton><EmojiObjectsIcon style={{ fontSize: "36px", color: "white" }} /></ZoneIconButton>
-                                    </Grid>
-                                    <Grid item>
-                                        <Typography variant={"caption"} align={"right"} style={{ color: textColor }}>{active}</Typography>
+            <Grid item container direction={'row'} style={{ marginLeft: "24px", marginTop: "24px" }}>
+                <div className="ag-theme-alpine-dark" style={{ minHeight: '300px', minWidth: '200px', width: "98%" }}>
+                    <AgGridReact
+                        rowData={rowData}
+                        rowSelection="multiple"
+                        rowMultiSelectWithClick={true}
+                        animateRows={true}
+                        defaultColDef={{
+                            flex: 1,
+                            minWidth: 150,
+                            sortable: true,
+                            filter: true,
+                        }}
+                        onGridReady={onGridReady}
+                        frameworkComponents={{
+                            activeRenderer: activeIndicator,
+                        }}
+                    >
 
-                                    </Grid>
-                                </Grid>
-                            );
-                        })}
-                    </Grid>
-                </Grid>
-                <Grid item xs={1}></Grid>
+                        <AgGridColumn field="name" sortable={true} filter={true} checkboxSelection={true}></AgGridColumn>
+                        <AgGridColumn field="active" sortable={true} cellRenderer={"activeRenderer"}></AgGridColumn>
+                        <AgGridColumn field="timeOn" sortable={true}></AgGridColumn>
+                        <AgGridColumn field="timeOff" sortable={true}></AgGridColumn>
+                        <AgGridColumn field="totalRuntime" sortable={true}></AgGridColumn>
+                    </AgGridReact>
+                </div>
             </Grid>
+            {/* spectrum modal */}
+            <Modal
+                aria-labelledby="transition-modal-title"
+                aria-describedby="transition-modal-description"
+                className={classes.modal}
+                open={state.spectrumModal}
+                onClose={handleClose}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                    timeout: 500,
+                }}
+            >
+                <Fade in={state.spectrumModal}>
+                    <Box className={classes.paper}>
+                        <Grid item container direction={"column"} className={classes.setPointWidget}>
+                            <Grid item container direction={"row"}>
+                                <Grid item> <Typography variant={"h5"}>Light Spectrum Control</Typography></Grid>
+                                <Grid item xs> </Grid>
+                                <Grid item> <IconButton onClick={handleClose} ><CancelIcon style={{ color: theme.palette.text.main }} /></IconButton></Grid>
+                            </Grid>
+                            <Grid item container direction={'row'}>
+                                <div className="ag-theme-balham-dark" style={{ width: "90%", height: "128px", marginLeft: "24px" }}>
+                                    <AgGridReact
+                                        rowData={state.selectedZones}
+                                        defaultColDef={{
+                                            flex: 1,
+                                            minWidth: 48,
+                                        }}>
+                                        <AgGridColumn field="name"></AgGridColumn>
+                                        <AgGridColumn field="red" ></AgGridColumn>
+                                        <AgGridColumn field="yellow" ></AgGridColumn>
+                                        <AgGridColumn field="blue" ></AgGridColumn>
+                                    </AgGridReact>
+                                </div>
+                            </Grid>
+                            <Grid item container direction={"row"}>
+                                <RGBInensities />
+                            </Grid>
+                            <Grid item container direction={"row"}>
+                                <Button variant={"outlined"} color={"primary"}>
+                                    Set
+                                    </Button>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                </Fade>
+            </Modal>
+            {/* power  */}
+            <Modal
+                aria-labelledby="transition-modal-Power"
+                aria-describedby="transition-modal-description"
+                className={classes.modal}
+                open={state.powerModal}
+                onClose={handleClose}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                    timeout: 500,
+                }}
+            >
+                <Fade in={state.powerModal}>
+                    <Box className={classes.paper}>
+                        <Grid item container direction={"column"} className={classes.setPointWidget}>
+                            <Grid item container direction={"row"}>
+                                <Grid item> <Typography variant={"h5"}>Light Intensity Control</Typography></Grid>
+                                <Grid item xs> </Grid>
+                                <Grid item> <IconButton onClick={handleClose} ><CancelIcon style={{ color: theme.palette.text.main }} /></IconButton></Grid>
+                            </Grid>
+                            {/* <Grid item container direction={'row'}>
+                                
+                            </Grid> */}
+                            <Grid item container direction={"row"}>
+                                <Box style={{ marginLeft: "48px", marginBottom: "24px" }}>
+                                    <PowerIntensity />
+                                </Box>
+                                <div className="ag-theme-balham-dark" style={{ width: "50%", height: "256px", marginLeft: "24px", marginTop:"28px" }}>
+                                    <AgGridReact
+                                        rowData={state.selectedZones}
+                                        defaultColDef={{
+                                            flex: 1,
+                                            minWidth: 48,
+                                        }}>
+                                        <AgGridColumn field="name"></AgGridColumn>
+                                        <AgGridColumn field="intensity" ></AgGridColumn>
+                                    </AgGridReact>
+                                </div>
+                            </Grid>
+                            <Grid item container direction={"row"}>
+                                <Button variant={"outlined"} color={"primary"}>
+                                    Set
+                                    </Button>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                </Fade>
+            </Modal>
+            {/* Time Scheduler */}
+            <Modal
+                aria-labelledby="transition-modal-scheduler"
+                aria-describedby="transition-modal-scheduler"
+                className={classes.modal}
+                open={state.scheduleModal}
+                onClose={handleClose}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                    timeout: 500,
+                }}
+            >
+                <Fade in={state.scheduleModal}>
+                    <Box className={classes.paper}>
+                        <Grid item container direction={"column"} className={classes.setPointWidget}>
+                            <Grid item container direction={"row"}>
+                                <Grid item xs> </Grid>
+                                <Grid item> <IconButton onClick={handleClose} ><CancelIcon style={{ color: theme.palette.text.main }} /></IconButton></Grid>
+                            </Grid>
+                            <Grid item container direction={"row"} >
+                                <PowerIntensity />
+                            </Grid>
+                            <Grid item container direction={"row"}>
+                                <Button variant={"outlined"} color={"primary"}>
+                                    Set
+                                    </Button>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                </Fade>
+            </Modal>
         </Grid >
     )
 }

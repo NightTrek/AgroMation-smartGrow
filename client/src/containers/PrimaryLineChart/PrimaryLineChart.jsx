@@ -127,16 +127,16 @@ function useWindowSize() {
 }
 
 
-const getDomain = (tempData, min, max) =>{
-    let sum = 0;
-    let index = 0;
-    tempData.map((item, Index) => {
-        sum+= item;
-        index = Index
-        return item;
-    });
-    return [sum/index-min,sum/index+max]
-}
+// const getDomain = (tempData, min, max) =>{
+//     let sum = 0;
+//     let index = 0;
+//     tempData.map((item, Index) => {
+//         sum+= item;
+//         index = Index
+//         return item;
+//     });
+//     return [sum/index-min,sum/index+max]
+// }
 
 
 const useStyles = makeStyles((theme) => ({
@@ -151,7 +151,6 @@ const useStyles = makeStyles((theme) => ({
 
 
 export const PrimaryLineChart = (props) => {
-    console.log(getDomain(exampleTempData,20,20))
     const classes = useStyles();
     const theme = useTheme();
     const tempData = props.tempData || exampleTempData;
@@ -176,17 +175,17 @@ export const PrimaryLineChart = (props) => {
     let adjustedWidth = 0;    
     let responsiveChart = false;
     if(width>1400){
-        console.log("1200");
+        // console.log("1200");
         adjustedWidth = 1200;
         responsiveChart=false;
     }
     else if(width>1200){
-        console.log("1000");
+        // console.log("1000");
         adjustedWidth = 1100;
         responsiveChart=false;
     }
     else if(width>1000){
-        console.log("900");
+        // console.log("900");
         adjustedWidth = 900
         responsiveChart=false;
     }
@@ -198,7 +197,7 @@ export const PrimaryLineChart = (props) => {
     }
     else{
         adjustedWidth = 400;
-        console.log("base case")
+        // console.log("base case")
     }
             
 

@@ -3,6 +3,8 @@ import "./style.css";
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
+
+
 const theme = createMuiTheme({
   palette: {
     primary: {
@@ -20,7 +22,8 @@ const theme = createMuiTheme({
         veg:'#32B561',
         flower:'#843FA0',
         warning:'#DC4346',
-        fault:"#121315"
+        fault:"#121315",
+        nominal:"#31B461"
     },
     text:{
       main:"white",
@@ -30,7 +33,7 @@ const theme = createMuiTheme({
 });
 
 //<div className={"backgroundPattern"}></div>
-
+///
 const Wrapper = props => <div className="wrapper"><ThemeProvider theme={theme}>{props.children}</ThemeProvider></div>;
 
 export default Wrapper;

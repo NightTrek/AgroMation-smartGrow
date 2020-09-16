@@ -1386,7 +1386,7 @@ function RoomSummery(props) {
         <Grid item container direction={"column"} className={classes.roomSummeryWidget} spacing={3}>
             <Grid container item direction="row" xs>
                 <Grid item xs style={{ paddingLeft: "24px" }}>
-                    <Typography variant={"h4"}>Room</Typography>
+                    <Typography variant={"h4"}>Summary</Typography>
                 </Grid>
                 <Grid item xs ></Grid>
                 <Grid item>

@@ -7,7 +7,7 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
 import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
 import { Grid, TextField, makeStyles, useTheme, withStyles, Slider, Typography, Button, Divider, IconButton, Backdrop, Modal, Fade, Box } from '@material-ui/core'
 //icons
-import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
+// import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
 import WavesIcon from '@material-ui/icons/Waves';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
 import ScheduleIcon from '@material-ui/icons/Schedule';
@@ -222,15 +222,15 @@ const GreenIntensitySlider = withStyles({
 })(Slider);
 
 
-const ZoneIconButton = withStyles({
+
+const ZoneSearchInput = withStyles((theme) => ({
+
     root: {
-        borderRadius: "30%",
-        position: "absolute",
-        top: "-4px",
-        left: "-4px",
+        background: theme.palette.secondary.dark,
+        color:theme.palette.text.main
     },
 
-})(IconButton);
+}))(TextField);
 
 
 const useStyles = makeStyles((theme) => ({
@@ -567,7 +567,7 @@ export const LightingController = (props) => {
                 <Grid item><IconButton onClick={openPowerControl}><WbIncandescentIcon color={"primary"} /></IconButton></Grid>
                 <Grid item><IconButton><ScheduleIcon color={"primary"} /></IconButton></Grid>
                 <Grid item >
-                    <TextField id="filled-search" label="Search field" type="search" variant="filled" onChange={handleChange} />
+                    <ZoneSearchInput id="filled-search" label="Search field" type="search" variant="filled" onChange={handleChange} />
                 </Grid>
             </Grid>
             {/*this is the main bar  */}

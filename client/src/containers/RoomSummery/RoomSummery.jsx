@@ -198,7 +198,7 @@ function TempMeter(props) {
 
             <Typography variant={"h6"} align={'center'}>Temp</Typography>
             <Grid item xs className={classes.meterContainer}>
-                <div className={"speedometer1"} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                     <ReactSpeedometer
                         forceRender
                         width={256}
@@ -214,8 +214,8 @@ function TempMeter(props) {
                         customSegmentStops={[roomState.rooms[roomState.pick].tempSetPoint - 50,
                         roomState.rooms[roomState.pick].tempSetPoint - 20, roomState.rooms[roomState.pick].tempSetPoint - 5, roomState.rooms[roomState.pick].tempSetPoint + 5,
                         roomState.rooms[roomState.pick].tempSetPoint + 20, roomState.rooms[roomState.pick].tempSetPoint + 50]}
-                        segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning,
-                        theme.palette.roomStatus.fault]}
+                        segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main , theme.palette.roomStatus.nominal, theme.palette.primary.main,
+                            theme.palette.roomStatus.warning]}
                         customSegmentLabels={Labels}
                     />
                 </div>
@@ -455,7 +455,7 @@ function HumidityMeter(props) {
         <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'}>
             <Typography variant={"h6"} align={'center'}>Humidty</Typography>
             <Grid item xs className={classes.meterContainer}>
-                <div className={"speedometer1"} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                     <ReactSpeedometer
                         forceRender
                         width={256}
@@ -472,7 +472,8 @@ function HumidityMeter(props) {
                         roomState.rooms[roomState.pick].humiditySetPoint - 10,
                         roomState.rooms[roomState.pick].humiditySetPoint + 10, roomState.rooms[roomState.pick].humiditySetPoint + 30,
                         roomState.rooms[roomState.pick].humiditySetPoint + 50]}
-                        segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]}
+                        segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main , theme.palette.roomStatus.nominal, theme.palette.primary.main,
+                            theme.palette.roomStatus.warning]}
                         customSegmentLabels={Labels} />
                 </div>
                 <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.humidty} min={roomState.rooms[roomState.pick].humiditySetPoint - 10} superMin={roomState.rooms[roomState.pick].humiditySetPoint - 30}
@@ -712,7 +713,7 @@ function CO2LevelMeter(props) {
         <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'}>
             <Typography variant={"h6"} align={'center'}>CO2 Level</Typography>
             <Grid item xs className={classes.meterContainer}>
-                <div className={"speedometer1"} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                     <ReactSpeedometer
                         width={256}
                         forceRender
@@ -725,7 +726,8 @@ function CO2LevelMeter(props) {
                         maxValue={roomState.rooms[roomState.pick].CO2SetPoint + 2000}
                         segments={5}
                         customSegmentStops={[roomState.rooms[roomState.pick].CO2SetPoint - 2000, roomState.rooms[roomState.pick].CO2SetPoint - 1000, roomState.rooms[roomState.pick].CO2SetPoint - 200, roomState.rooms[roomState.pick].CO2SetPoint + 200, roomState.rooms[roomState.pick].CO2SetPoint + 1000, roomState.rooms[roomState.pick].CO2SetPoint + 2000]}
-                        segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]}
+                        segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main , theme.palette.roomStatus.nominal, theme.palette.primary.main,
+                            theme.palette.roomStatus.warning]}
                         customSegmentLabels={Labels} />
                 </div>
                 <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.CO2level} min={roomState.rooms[roomState.pick].CO2SetPoint - 200} superMin={roomState.rooms[roomState.pick].CO2SetPoint - 1000}
@@ -962,7 +964,7 @@ function PressureMeter(props) {
         <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'}>
             <Typography variant={"h6"} align={'center'}>Pressure level</Typography>
             <Grid item xs className={classes.meterContainer}>
-                <div className={"speedometer1"} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                <div  onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                     <ReactSpeedometer
                         forceRender
                         width={256}
@@ -975,7 +977,8 @@ function PressureMeter(props) {
                         segments={5}
                         currentValueText={`${roomState.liveData.pressure} mbar`}
                         customSegmentStops={[roomState.rooms[roomState.pick].pressureSetPont - 300, roomState.rooms[roomState.pick].pressureSetPont - 100, roomState.rooms[roomState.pick].pressureSetPont - 20, roomState.rooms[roomState.pick].pressureSetPont + 20, roomState.rooms[roomState.pick].pressureSetPont + 100, roomState.rooms[roomState.pick].pressureSetPont + 300]}
-                        segmentColors={[theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.warning, theme.palette.roomStatus.fault]}
+                        segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main , theme.palette.roomStatus.nominal, theme.palette.primary.main,
+                            theme.palette.roomStatus.warning]}
                         customSegmentLabels={Labels} />
                 </div>
                 <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.pressure} min={roomState.rooms[roomState.pick].pressureSetPont - 20} superMin={roomState.rooms[roomState.pick].pressureSetPont - 100}
@@ -1253,7 +1256,6 @@ const useStyles = makeStyles((theme) => ({
         // -moz-filter: grayscale(100%);
         // -ms-filter: grayscale(100%);
         // -o-filter: grayscale(100%);
-        filter: "grayscale(1)",
         // filter: url(grayscale.svg);
         /* Firefox 4+ */
         // filter: gray;

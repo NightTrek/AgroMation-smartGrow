@@ -11,6 +11,8 @@ import requireAuth from '../../hoc/requireAuth';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect";
 
+
+
 const exampleUsers = [
     {
         id: 1,
@@ -346,7 +348,8 @@ export default requireAuth(function UsersPage(props) {
                     <Grid item xs>
                         <Typography variant={"h4"}>Manage Users</Typography>
                     </Grid>
-                    <Grid item xs></Grid>
+                    <Grid item xs>
+                    </Grid>
                 </Grid>
                 <Grid item container direction={"row"} spacing={5} style={{ marginLeft: "48px" }} justify={"flex-start"}>
                     {state.Users.map((item, index) => {

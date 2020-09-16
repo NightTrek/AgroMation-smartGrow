@@ -71,6 +71,8 @@ const PowerIntensitySlider = withStyles({
         "& .MuiSlider-thumb": {
             // marginTop: -320,
             marginLeft: -12,
+            border: '2px solid #2D2F33',
+            color:"black"
         }
     }
 })(Slider);
@@ -123,6 +125,8 @@ const RedIntensitySlider = withStyles({
         "& .MuiSlider-thumb": {
             marginTop: -320,
             marginLeft: -12,
+            border: '2px solid #2D2F33',
+            color:"black"
         }
     }
 })(Slider);
@@ -174,6 +178,8 @@ const YellowIntensitySlider = withStyles({
         "& .MuiSlider-thumb": {
             marginTop: -320,
             marginLeft: -12,
+            border: '2px solid #2D2F33',
+            color:"black"
         }
     }
 })(Slider);
@@ -216,6 +222,8 @@ const GreenIntensitySlider = withStyles({
         "& .MuiSlider-thumb": {
             marginTop: -320,
             marginLeft: -12,
+            border: '2px solid #2D2F33',
+            color:"black"
         }
 
     }

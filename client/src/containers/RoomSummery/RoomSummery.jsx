@@ -243,7 +243,7 @@ function TempMeter(props) {
 
                                 <Grid item container direction={"column"} className={classes.sliderRow}>
                                     <Grid item container direction={"row"} style={{ padding: "6px", marginBottom: "24px" }}>
-                                        <Grid item> <h4>Temprature</h4></Grid>
+                                        <Grid item> <h4>Temperature</h4></Grid>
                                         <Grid item xs> </Grid>
                                     </Grid>
                                     <Grid item container direction={'row'}>

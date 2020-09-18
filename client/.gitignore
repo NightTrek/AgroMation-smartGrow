@@ -30,3 +30,5 @@ error.log
 
 .idea/workspace.xml
 .idea/
+
+.consts/

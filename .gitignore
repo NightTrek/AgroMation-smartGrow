@@ -13,4 +13,4 @@ error.log
 /config
 
 
-.client/src/consts/
+.client/src/consts/firebase.js

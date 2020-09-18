@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import UserSettings from "./UserSettings";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import requireAuth from "../../hoc/requireAuth";
+
 import agroLogo from  "./../../img/AgroMationLogosquare512.png"
 const exampleData = {
   userName:"Daniels",
@@ -73,4 +73,4 @@ function mapStateToProps(state) {
 const formedComponent = compose(connect(mapStateToProps, {}))(Settings);
 
 
-export default requireAuth(formedComponent);
+export default formedComponent;

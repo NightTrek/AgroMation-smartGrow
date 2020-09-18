@@ -16,7 +16,7 @@ import {sampleTempData,sampleHumidityData,sampleProgressData,sampleCO2Data} from
 import './style.css';
 import VerticleDividerStyled from "../VerticalDivider/VerticalDivider"
 import { getRooms, setRoom } from "../../actions/rooms";
-import requireAuth from "../../hoc/requireAuth";
+
 
 
 
@@ -210,4 +210,4 @@ const formedComponent = compose(
     connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom })
 )(DashboardSummry);
 
-export default requireAuth(formedComponent);
+export default formedComponent;

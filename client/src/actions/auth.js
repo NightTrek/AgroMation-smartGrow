@@ -27,14 +27,15 @@ export const startListeningToAuth = () => async dispatch => {
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
           // User is signed in.
-          var displayName = user.displayName;
-          var email = user.email;
-          var emailVerified = user.emailVerified;
-          var photoURL = user.photoURL;
-          var isAnonymous = user.isAnonymous;
-          var uid = user.uid;
-          var providerData = user.providerData;
+          // var displayName = user.displayName;
+          // var email = user.email;
+          // var emailVerified = user.emailVerified;
+          // var photoURL = user.photoURL;
+          // var isAnonymous = user.isAnonymous;
+          // var uid = user.uid;
+          // var providerData = user.providerData;
           // ...
+          localStorage.setItem("token", JSON.stringify(user));
           dispatch({type:AUTH_USER, payload: user})
         } else {
           // User is signed out.
@@ -48,6 +49,7 @@ export const startListeningToAuth = () => async dispatch => {
 export const firebaseSignOut = () => async dispatch => {
     firebase.auth().signOut().then(function() {
         // Sign-out successful.
+        localStorage.setItem("token", "");
         dispatch({type:AUTH_USER, payload: ``})
       }).catch(function(error) {
         // An error happened.

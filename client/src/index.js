@@ -19,7 +19,7 @@ import Settings from "./components/Settings";
 import Welcome from "./components/Welcome";
 import IndividualRoom from "./containers/IndividualRoom/IndividualRoom";
 import UsersPage from "./containers/UsersPage/UsersPage";
-
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 
 import './style.css';
 
@@ -46,15 +46,14 @@ ReactDOM.render(
         <Navbar>
           <Switch>
             <Route exact path="/" component={Welcome} />
-            <Route exact path="/Dashboard" component={Dashboard2} />
-            <Route exact path="/Rooms" component={IndividualRoom} />
-            <Route exact path="/Settings" component={Settings} />
-            {/* <Route exact path="/signup" component={Signup} />
-          <Route exact path="/signin" component={Signin} /> */}
             <Route exact path="/signout" component={Signout} />
-            <Route exact path="/Users" component={UsersPage} />
+            <PrivateRoute exact path="/Dashboard" component={Dashboard2} />
+            <PrivateRoute exact path="/Rooms" component={IndividualRoom} />
+            <PrivateRoute exact path="/Settings" component={Settings} />
+            {/* <Route exact path="/signup" component={Signup} />
+            <Route exact path="/signin" component={Signin} /> */}
+            <PrivateRoute exact path="/Users" component={UsersPage} />
           </Switch>
-
         </Navbar>
       </Wrapper>
     </Router>

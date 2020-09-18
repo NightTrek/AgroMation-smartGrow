@@ -4,7 +4,7 @@ import { Container, Grid, makeStyles, withStyles, Tab, Tabs } from '@material-ui
 import RoomSummery from '../RoomSummery/RoomSummery'
 import { PrimaryLineChart } from '../PrimaryLineChart/PrimaryLineChart';
 import { LightingController } from '../LightingController/LightingController';
-import requireAuth from '../../hoc/requireAuth';
+
 
 
 
@@ -126,4 +126,4 @@ const IndividualRoom = () => {
     )
 }
 
-export default requireAuth(IndividualRoom)
+export default IndividualRoom;

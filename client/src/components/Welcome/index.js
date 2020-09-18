@@ -3,13 +3,17 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 
 //component import
+import Dashboard from "../../containers/dashboard2/Dashboard2";
+//old auth
 import Auth from "../../containers/Authentication";
+//new Auth
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebase from "../../consts/firebase";
-import * as firebaseUI from "firebaseui";
+
 //import css
 import "./index.css";
 // import FirebaseAuth from "../../containers/Authentication/FirebaseAuth"
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -50,21 +54,19 @@ class Welcome extends Component {
   componentWillUnmount() {
     this.unregisterAuthObserver();
   }
-
-  render() {
-    if (!this.state.isSignedIn) {
+    render() {
+      if(this.state.isSignedIn){
+        return(<Dashboard/>)
+      }
       return (
         <div>
-          <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} history={this.props.history} />
+          <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
 
           {/* <Auth history={this.props.history}></Auth> */}
         </div>
       )
     }
-    // this.props.history.push('dashboard')
-    return <div></div>
-  }
-
+  
 }
 
 function mapStateToProps(state) {

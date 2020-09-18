@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from "redux";
-import requireAuth from '../../hoc/requireAuth';
 import { Grid, Typography, ListItem, List, ListItemIcon, ListItemText, Menu, MenuItem } from '@material-ui/core';
 import { makeStyles, } from '@material-ui/core/styles'; //useTheme
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -248,4 +247,4 @@ function mapStateToProps({ state }) {
 
 const formedComponent = compose(connect(mapStateToProps, {  }))(SystemNotifications);
 
-export default requireAuth(formedComponent);
+export default formedComponent;

@@ -1,5 +1,5 @@
 import React, { useEffect} from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, withRouter} from 'react-router-dom';
 import { compose } from "redux";
 import { connect, useSelector, shallowEqual } from "react-redux";
 import { reduxForm } from "redux-form";
@@ -35,6 +35,7 @@ import "./style.css";
 import { Grid, withStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import { fetchUser, setLocation } from "../../actions/User";
+import {firebaseSignOut} from "../../actions/auth";
 
 //
 
@@ -90,7 +91,10 @@ const useStyles = makeStyles((theme) => ({
     },
     drawerOpen: {
         width: drawerWidth,
-        background: theme.palette.secondary.dark,
+        // background: theme.palette.secondary.dark,
+        background: `url('https://cdn.discordapp.com/attachments/370759274621698048/755271571181928459/unknown.png')`,
+        backgroundSize: "cover",
+        backgroundPosition:"bottom center",
         color: "white",
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
@@ -126,6 +130,7 @@ const useStyles = makeStyles((theme) => ({
     },
     drawerBox: {
         background: theme.palette.secondary.main,
+        
         width: "200px",
         height: "128px",
         margin: "20px",
@@ -137,7 +142,7 @@ const useStyles = makeStyles((theme) => ({
 
     },
     bottomdrawerBox: {
-        background: theme.palette.secondary.main,
+        background: theme.palette.secondary.main, 
         width: "200px",
         height: "160px",
         margin: "20px",
@@ -218,7 +223,7 @@ const useStyles = makeStyles((theme) => ({
             setOpen(true);
         }
     };
-
+    
     const handleDrawerClose = () => {
         setOpen(false);
     };
@@ -318,11 +323,15 @@ const useStyles = makeStyles((theme) => ({
                 <Divider />
                 <List>
                     {['Dashboard', 'Rooms', 'Users', 'Settings','signout'].map((text, index) => (
-                        <NavLink to={"/" + text} key={text}> 
-                            <ListItem button data-index={text} value={text}>
+                        <NavLink to={"/" + text} key={text} onClick={(e) =>{
+                            if(auth == undefined || auth === ""){
+                                e.preventDefault()
+                            }
+                        }}> 
+                            <ListItem button data-index={text} key={text} value={text}>
 
-                                <ListItemIcon data-index={text} >{menuIcons[index]}</ListItemIcon>
-                                <ListItemText data-index={text} primary={text} />
+                                <ListItemIcon data-index={text} value={text} >{menuIcons[index]}</ListItemIcon>
+                                <ListItemText data-index={text} value={text} primary={text} />
 
                             </ListItem>
                         </NavLink>
@@ -346,4 +355,4 @@ const formedComponent = compose(
     reduxForm({ form: 'Add todo' })
 )(MiniDrawer);
 
-export default formedComponent;
+export default withRouter(formedComponent);

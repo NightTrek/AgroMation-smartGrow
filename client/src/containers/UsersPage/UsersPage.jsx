@@ -7,7 +7,7 @@ import {
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import { FixedSizeList } from 'react-window';
 import CheckCircleRoundedIcon from '@material-ui/icons/CheckCircleRounded';
-import requireAuth from '../../hoc/requireAuth';
+
 import CancelIcon from '@material-ui/icons/Cancel';
 import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect";
 
@@ -334,7 +334,7 @@ const UserWidget = (props) => {
     );
 }
 
-export default requireAuth(function UsersPage(props) {
+export default function UsersPage(props) {
     const classes = useStyles();
 
     const [state, ] = React.useState({ //setState
@@ -362,4 +362,4 @@ export default requireAuth(function UsersPage(props) {
             </Grid>
         </Container>
     )
-})
+}

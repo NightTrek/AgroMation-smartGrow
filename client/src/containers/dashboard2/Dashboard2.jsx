@@ -4,8 +4,7 @@ import { connect  } from "react-redux";
 //import axios from "axios";
 //redux actions
 import { getRooms, setRoom } from "../../actions/rooms";
-//auth
-import requireAuth from "../../hoc/requireAuth";
+
 
 //import components
 import { Container, Grid } from "@material-ui/core";
@@ -24,8 +23,6 @@ import "./style.css"
 
 
 const Dashboard2 = (props) => {
-
-
     const [state, setState] = React.useState({
         rooms: ["Room Alpha", "Room beta", "clone Room", "flower one", "flower two", "veg room a"],
         roomIndex: 0
@@ -78,4 +75,4 @@ const Dashboard2 = (props) => {
 //     connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom })
 // )(Dashboard2);
 
-export default requireAuth(Dashboard2);
+export default Dashboard2;

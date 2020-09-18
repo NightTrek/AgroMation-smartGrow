@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect";
 import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
@@ -307,6 +306,14 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: theme.shadows[5],
         padding: "12px",
     },
+    sliderRow: {
+        marginTop: "32px",
+        marginBottom: "32px",
+        padding: "48px",
+        background: theme.palette.secondary.dark,
+        borderRadius: "12px",
+        // border:`solid 2px ${theme.palette.secondary.dark}`
+    },
 
 }));
 
@@ -319,8 +326,8 @@ const PowerIntensity = (props) => {
 
     const topCaption = props.topCaption || "power";
     const type = props.type || 0;
-    const bottomHeading = props.bottomHeading || "Intensity";
-    const color = props.color || "white";
+    // const bottomHeading = props.bottomHeading || "Intensity";
+    // const color = props.color || "white";
 
     const handleSliderChange = (event, newValue) => {
         setValue(newValue);
@@ -397,7 +404,7 @@ const PowerIntensity = (props) => {
 }
 
 const RGBInensities = (props) => {
-    const { red, yellow, blue } = props;
+    // const { red, yellow, blue } = props;
     return (
         <Grid item container direction={"row"} xs={5} wrap={'nowrap'} style={{ marginLeft: "48px", marginBottom: "24px" }}>
             <PowerIntensity type={1} topCaption={"Color Spectrum"} bottomHeading={"Red"} color={"red"} />
@@ -408,46 +415,11 @@ const RGBInensities = (props) => {
         </Grid>
     );
 };
-const oldLightRoomRow = (props) => {
-    //     <Grid item container direction={"row"} spacing={5}>
-    //                 <Divider orientation={"vertical"} variant={"middle"} flexItem></Divider>
-    //                 <PowerIntensity />
-    //                 <RGBInensities />
-    //                 <Grid container item xs={4} direction={"column"} justify={"center"} className={classes.lightZoneWidget}>
-    //                     <Grid item container direction={'row'} justify={"center"} style={{ marginLeft: '24px' }}>
-    //                         {state.lightZoneArray.map((item, index) => {
-    //                             let color = "black";
-    //                             let textColor = "red";
-    //                             let active = "inactive";
-    //                             if (item.activeCount === 6) {
-    //                                 color = theme.palette.primary.main;
-    //                                 active = "active"
-    //                                 textColor = theme.palette.roomStatus.veg;
-    //                             }
-    //                             return (
-    //                                 <Grid item container direction={"column"} justify={"center"} xs={6} spacing={0} key={index} className={classes.LightZoneButtonOuterBox}>
-    //                                     <Grid item>
-    //                                         <Typography variant={"subtitle2"}>{item.name}</Typography>
-    //                                     </Grid>
-    //                                     <Grid item className={classes.lightZoneButtonBox} style={{ positon: "relative", background: color, }}>
-    //                                         <ZoneIconButton><EmojiObjectsIcon style={{ fontSize: "36px", color: "white" }} /></ZoneIconButton>
-    //                                     </Grid>
-    //                                     <Grid item>
-    //                                         <Typography variant={"caption"} align={"right"} style={{ color: textColor }}>{active}</Typography>
 
-    //                                     </Grid>
-    //                                 </Grid>
-    //                             );
-    //                         })}
-    //                     </Grid>
-    //                 </Grid>
-    //                 <Grid item xs={1}></Grid>
-    //             </Grid>
-};
 
 const activeIndicator = (props) => {
     const active = props.value;
-    const { nominal, fault } = props;
+    // const { nominal, fault } = props;
 
     const mainStyle = {
         width: "12px",
@@ -459,7 +431,7 @@ const activeIndicator = (props) => {
     switch (active) {
         case true:
             return (<div style={{ ...mainStyle, background: "#31B461" }}></div>);
-        case false:
+        default:
             return (<div style={{ ...mainStyle, background: "#121315" }}></div>)
     }
 };
@@ -549,6 +521,24 @@ export const LightingController = (props) => {
 
     };
 
+    const openScheduleControl = (event) => {
+
+        let selectedRows = gridApi.getSelectedRows()
+        console.log(selectedRows)
+        if (selectedRows !== undefined && selectedRows.length > 0) {
+            setState({
+                ...state,
+                scheduleModal: true,
+                selectedZones: selectedRows
+            })
+        }
+        else {
+            // TODO nothing selected warning
+            console.log("provide warning that nothing is selected");
+        }
+
+    };
+
     const handleClose = () => {
         setState({
             ...state,
@@ -573,7 +563,7 @@ export const LightingController = (props) => {
                 <Grid item xs></Grid>
                 <Grid item><IconButton onClick={openSpectrumControl}><WavesIcon color={"primary"} /></IconButton></Grid>
                 <Grid item><IconButton onClick={openPowerControl}><WbIncandescentIcon color={"primary"} /></IconButton></Grid>
-                <Grid item><IconButton><ScheduleIcon color={"primary"} /></IconButton></Grid>
+                <Grid item><IconButton onClick={openScheduleControl}><ScheduleIcon color={"primary"} /></IconButton></Grid>
                 <Grid item >
                     <ZoneSearchInput id="filled-search" label="Search field" type="search" variant="filled" onChange={handleChange} />
                 </Grid>
@@ -718,13 +708,39 @@ export const LightingController = (props) => {
             >
                 <Fade in={state.scheduleModal}>
                     <Box className={classes.paper}>
-                        <Grid item container direction={"column"} className={classes.setPointWidget}>
+                    <Grid item container direction={"column"} className={classes.setPointWidget}>
                             <Grid item container direction={"row"}>
+                                <Grid item> <Typography variant={"h5"}>Light Schedule Control</Typography></Grid>
                                 <Grid item xs> </Grid>
                                 <Grid item> <IconButton onClick={handleClose} ><CancelIcon style={{ color: theme.palette.text.main }} /></IconButton></Grid>
                             </Grid>
-                            <Grid item container direction={"row"} >
-                                <PowerIntensity />
+                            <Grid item container direction={'row'}>
+                                <div className="ag-theme-balham-dark" style={{ width: "90%", height: "128px", marginLeft: "24px" }}>
+                                    <AgGridReact
+                                        rowData={state.selectedZones}
+                                        defaultColDef={{
+                                            flex: 1,
+                                            minWidth: 48,
+                                        }}>
+                                        <AgGridColumn field="name"></AgGridColumn>
+                                        <AgGridColumn field="timeOn" ></AgGridColumn>
+                                        <AgGridColumn field="timeOff" ></AgGridColumn>
+                                        <AgGridColumn field="totalRuntime" ></AgGridColumn>
+                                    </AgGridReact>
+                                </div>
+                            </Grid>
+                            <Grid item container direction={"row"}>
+                            <Grid item container direction={"column"} className={classes.sliderRow}>
+                                    <Grid item container direction={"row"} style={{ padding: "6px", marginBottom: "24px" }}>
+                                        <Grid item> <h4>Schedule Lighting times</h4></Grid>
+                                        <Grid item xs> </Grid>
+                                    </Grid>
+                                    <Grid item container direction={"row"} style={{ padding: "6px", marginBottom: "24px" }}>
+                                        <Grid item></Grid>
+                                        <Grid item xs> </Grid>
+                                    </Grid>
+                                    
+                                </Grid>
                             </Grid>
                             <Grid item container direction={"row"}>
                                 <Button variant={"outlined"} color={"primary"}>

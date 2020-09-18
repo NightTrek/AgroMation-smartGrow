@@ -16,8 +16,10 @@ import { ExampleRoomData } from "../../exampleDataTypes/clientExamlpeDataTypes";
 import CancelIcon from '@material-ui/icons/Cancel';
 // import VerticleDividerStyled from "../../components/VerticalDivider/VerticalDivider";
 
+
+
 //Redux actions
-import { getRooms, setRoom } from "../../actions";
+import { getRooms, setRoom } from "../../actions/rooms";
 
 
 function DiagnosticColorBar(props) {
@@ -135,7 +137,6 @@ function TempMeter(props) {
             setMeterState({ ...meterState, setPoint: 100 });
         }
     };
-
 
     //modal stuff
     const [open, setOpen] = React.useState(false);
@@ -1273,6 +1274,7 @@ const useStyles = makeStyles((theme) => ({
         position: "absolute",
         minWidth: "512px",
         color: theme.palette.text.main,
+        background:"url('https://cdn.discordapp.com/attachments/370759274621698048/755271571181928459/unknown.png')",
         backgroundColor: theme.palette.secondary.main,
         border: `2px solid ${theme.palette.secondary.dark}`,
         boxShadow: theme.shadows[5],

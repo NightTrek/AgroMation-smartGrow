@@ -1,7 +1,12 @@
-export const INCREMENT_COUNTER = 'INCREMENT_COUNTER';
-export const DECREMENT_COUNTER = 'DECREMENT_COUNTER';
+
 export const AUTH_USER = 'AUTH_USER';
 export const AUTH_ERROR = 'AUTH_ERROR';
+//firebase auth
+export const ATTEMPTING_LOGIN = 'ATTEMPTING_LOGIN';
+export const LOGIN_USER = 'LOGIN_USER';
+export const LOGOUT = "LOGOUT";
+
+//custom actions
 export const ADD_GROWROOM = 'ADD_GROWROOM';
 export const GROWROOM_ERROR = 'GROWROOM_ERROR';
 export const FETCH_GROWROOMS = 'FETCH_GROWROOMS';

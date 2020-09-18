@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { signout } from "../../actions";
+import { firebaseSignOut } from "../../actions/auth";
 import { connect } from "react-redux";
 
 class Signout extends Component {
   componentDidMount() {
-    this.props.signout();
+    this.props.firebaseSignOut();
     this.props.history.push("/");
   }
 
@@ -17,4 +17,4 @@ function mapStateToProps(state) {
   return { state };
 }
 
-export default connect(mapStateToProps, { signout })(Signout);
+export default connect(mapStateToProps, { firebaseSignOut })(Signout);

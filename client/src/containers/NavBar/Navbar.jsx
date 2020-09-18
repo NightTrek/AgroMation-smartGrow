@@ -34,7 +34,9 @@ import Select from '@material-ui/core/Select';
 import "./style.css";
 import { Grid, withStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
-import { fetchUser, setLocation } from "../../actions";
+import { fetchUser, setLocation } from "../../actions/User";
+
+//
 
 const drawerWidth = 240;
 
@@ -97,6 +99,7 @@ const useStyles = makeStyles((theme) => ({
     },
     drawerClose: {
         background: theme.palette.secondary.dark,
+        
         color: "white",
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,

@@ -3,7 +3,7 @@ import { compose } from "redux";
 import { connect, useSelector, shallowEqual  } from 'react-redux'
 import { Grid, Typography, List, ListItem, Button } from '@material-ui/core'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { getRooms, setRoom } from "../../actions";
+import { getRooms, setRoom } from "../../actions/rooms";
 import { withRouter } from "react-router";
 
 

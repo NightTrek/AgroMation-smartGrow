@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { reduxForm, Field } from "redux-form";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { signin } from "../../actions";
+import { signin } from "../../actions/oldAuth";
 import InputField from "../InputField";
 // import {Typography} from "@material-ui/core";
 

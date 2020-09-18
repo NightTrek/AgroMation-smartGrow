@@ -12,7 +12,7 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import moment from 'moment';
 // import FixedSizeList  from 'react-window/src/FixedSizeList';
-import { addGrowRoom, fetchUserGrowRoomsAndStatus } from "../../actions";
+// import { addGrowRoom, fetchUserGrowRoomsAndStatus } from "../../actions";
 import {sampleNotifications} from "../../exampleDataTypes/clientExamlpeDataTypes";
 
 
@@ -246,6 +246,6 @@ function mapStateToProps({ state }) {
     return { state };
 }
 
-const formedComponent = compose(connect(mapStateToProps, { addGrowRoom: addGrowRoom, fetchGrowRooms: fetchUserGrowRoomsAndStatus }))(SystemNotifications);
+const formedComponent = compose(connect(mapStateToProps, {  }))(SystemNotifications);
 
 export default requireAuth(formedComponent);

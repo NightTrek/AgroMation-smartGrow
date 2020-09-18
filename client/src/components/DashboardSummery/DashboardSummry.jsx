@@ -15,7 +15,7 @@ import {StandardRoundSelectForm} from "../StandardSelect/StandardSelect.js";
 import {sampleTempData,sampleHumidityData,sampleProgressData,sampleCO2Data} from "../../exampleDataTypes/clientExamlpeDataTypes";
 import './style.css';
 import VerticleDividerStyled from "../VerticalDivider/VerticalDivider"
-import { getRooms, setRoom } from "../../actions";
+import { getRooms, setRoom } from "../../actions/rooms";
 import requireAuth from "../../hoc/requireAuth";
 
 

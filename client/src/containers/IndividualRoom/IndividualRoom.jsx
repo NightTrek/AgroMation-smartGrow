@@ -74,9 +74,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-
-
-export default requireAuth(function IndividualRoom() {
+const IndividualRoom = () => {
     const classes = useStyles();
 
     const [state, setState] = React.useState({ //setState
@@ -84,16 +82,6 @@ export default requireAuth(function IndividualRoom() {
         pick: 1,
     });
 
-    // const handleChange = (event) => {
-    //     console.log(state.pick)
-    //     const name = event.target.name;
-    //     // console.log(name);
-    //     setState({
-    //         ...state,
-    //         [name]: event.target.value,
-    //     });
-    //     // props.setRoom(event.target.value);
-    // };
 
     const handleTabChange = (event, newValue) => {
         setState({
@@ -136,4 +124,6 @@ export default requireAuth(function IndividualRoom() {
             </Grid>
         </Container>
     )
-})
+}
+
+export default requireAuth(IndividualRoom)

@@ -3,7 +3,7 @@ import { compose } from "redux";
 import { connect  } from "react-redux";
 //import axios from "axios";
 //redux actions
-import { getRooms, setRoom } from "../../actions";
+import { getRooms, setRoom } from "../../actions/rooms";
 //auth
 import requireAuth from "../../hoc/requireAuth";
 
@@ -70,12 +70,12 @@ const Dashboard2 = (props) => {
 
 
 
-function mapStateToProps({ state }) {
-    return { state };
-}
+// function mapStateToProps({ state }) {
+//     return { state };
+// }
 
-const formedComponent = compose(
-    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom })
-)(Dashboard2);
+// const formedComponent = compose(
+//     connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom })
+// )(Dashboard2);
 
-export default requireAuth(formedComponent);
+export default requireAuth(Dashboard2);

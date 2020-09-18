@@ -110,8 +110,7 @@ const useStyles = makeStyles((theme) => ({
     },
     userInfoContainer: {
         background: theme.palette.secondary.dark,
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5),
-        rgba(0, 0, 0, 0.5)), url("https://ak1.picdn.net/shutterstock/videos/27265981/thumb/1.jpg")`,
+        backgroundImage: ` url("https://cdn.discordapp.com/attachments/370759274621698048/755271571181928459/unknown.png")`,
         minWidth: "412px",
         maxWidth: "412px",
 
@@ -153,6 +152,8 @@ const useStyles = makeStyles((theme) => ({
         position: "absolute",
         minWidth: "512px",
         color: theme.palette.text.main,
+        background:"url('https://cdn.discordapp.com/attachments/370759274621698048/755271239748157540/unknown.png')",
+        backgroundPosition:"top left",
         backgroundColor: theme.palette.secondary.main,
         border: `2px solid ${theme.palette.secondary.dark}`,
         boxShadow: theme.shadows[5],

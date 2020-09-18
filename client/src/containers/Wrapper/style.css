@@ -1,9 +1,11 @@
 .wrapper {
   background-color: #1A1C1E;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5),
-  rgba(0, 0, 0, 0.5)), url("https://ak1.picdn.net/shutterstock/videos/27265981/thumb/1.jpg");
+  background-image:  url("https://cdn.discordapp.com/attachments/370759274621698048/755271239748157540/unknown.png");
   background-size: cover;
-  
+  background-position: left top;
+  background-repeat: no-repeat;
+
+
   height: 100%;
   display: relative;
   flex-flow: row wrap;

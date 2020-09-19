@@ -11,6 +11,6 @@ error.log
 
 # security
 /config
-
+/publicBuild/
 
 /client/src/consts/

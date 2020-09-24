@@ -15,7 +15,7 @@ import { StandardRoundSelectForm } from "../StandardSelect/StandardSelect.js";
 import { sampleTempData, sampleHumidityData, sampleProgressData, sampleCO2Data } from "../../exampleDataTypes/clientExamlpeDataTypes";
 import './style.css';
 import VerticleDividerStyled from "../VerticalDivider/VerticalDivider"
-import { getRooms, setRoom } from "../../actions/rooms";
+import { getRooms, setRoom, setExampleRooms } from "../../actions/rooms";
 
 
 
@@ -130,8 +130,12 @@ function DashboardSummry(props) {
 
     useEffect(() => {
         if (rooms === undefined || rooms[0].stage === "loading" || user.example) {
-            console.log("getting Rooms")
-            props.getRooms(user)
+            if(user.example){
+                props.setExampleRooms()
+            }else if(rooms[0].ownerID === undefined){
+                props.getRooms(user)
+            }
+            
 
         }
     })
@@ -153,6 +157,40 @@ function DashboardSummry(props) {
             },
         ]
         pick = 0;
+    }
+
+    const generateTempData = () => {
+        return sampleTempData;
+        if(user.example){
+            return sampleTempData;
+        }
+        console.log("generating Temp data")
+        let nominal = 0;
+        let warning = 0;
+        let fault = 0;
+        for(let i = 0; i<rooms.length; i++){
+            let item = rooms[i];
+            console.log(item)
+            if(item.tempC<item.tempMax && item.tempC>item.tempMin){
+                console.log(i)
+                nominal++;
+                continue;
+                
+            }
+            if(item.tempC>item.tempMax && item.tempC<item.tempMax+10|| item.tempC<item.tempMin && item.tempC>item.tempMin-10){
+                console.log(i)
+                warning++;
+                continue;
+            }
+            if(item.tempC>item.tempMax+10 ||item.tempC<item.tempMin-10){
+                console.log(i)
+                fault++
+                continue;
+            }
+        }
+        return [{ x: "Fault", y: fault, catName: "Fault" },
+        { x: "Warning", y: warning, catName: "Warning" },
+        { x: "Nominal", y: nominal, catName: "Nominal" }];
     }
 
     const handleChange = (event) => {
@@ -188,7 +226,7 @@ function DashboardSummry(props) {
 
             {/* ========= charts start here =================================*/}
             <Grid container item direction="row" xs >
-                <DashboardPieChart chartName={"Temp"} classes={classes} theme={theme} dataSet={sampleTempData} colorScale={defaultColorScale} />
+                <DashboardPieChart chartName={"Temp"} classes={classes} theme={theme} dataSet={generateTempData()} colorScale={defaultColorScale} />
                 <VerticleDividerStyled orientation={'vertical'} flexItem />
                 <DashboardPieChart chartName={"Humidity"} classes={classes} theme={theme} dataSet={sampleHumidityData} colorScale={defaultColorScale} />
                 <VerticleDividerStyled orientation={'vertical'} flexItem />
@@ -210,7 +248,7 @@ function mapStateToProps({ state }) {
 }
 
 const formedComponent = compose(
-    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom })
+    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom, setExampleRooms:setExampleRooms })
 )(DashboardSummry);
 
 export default formedComponent;

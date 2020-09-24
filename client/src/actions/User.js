@@ -5,13 +5,11 @@ import { db } from "../consts/firebase";
 export const fetchUser = (UID) => async dispatch => {
     console.log(`Fetching User ${UID}`)
     if (UID !== undefined) {
-        console.log("querying Database");
         db.collection("Users").where("UID", "==", UID)
             .get()
             .then((querySnapshot) => {
                 if(!querySnapshot.empty){
                     querySnapshot.forEach((doc) => {
-                        console.log("inside query")
                         if (doc.exists) {
                             dispatch({ type: FETCH_USER, payload: doc.data() })
                         } else {

@@ -1,26 +1,40 @@
-import { FETCH_USER, SET_LOCATION, API_ERROR } from "./types";
+import { FETCH_USER, SET_LOCATION } from "./types";
 import { exampleAccount } from "../exampleDataTypes/clientExamlpeDataTypes";
 import { db } from "../consts/firebase";
 
 export const fetchUser = (UID) => async dispatch => {
-    console.log(UID)
-    if(UID !== undefined){
-    db.collection("Users").where("UID", "==", UID)
-        .get()
-        .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                console.log(`${doc.id}`);
-                console.log(doc.data())
-                dispatch({ type: FETCH_USER, payload: doc.data() })
+    console.log(`Fetching User ${UID}`)
+    if (UID !== undefined) {
+        console.log("querying Database");
+        db.collection("Users").where("UID", "==", UID)
+            .get()
+            .then((querySnapshot) => {
+                if(!querySnapshot.empty){
+                    querySnapshot.forEach((doc) => {
+                        console.log("inside query")
+                        if (doc.exists) {
+                            dispatch({ type: FETCH_USER, payload: doc.data() })
+                        } else {
+                            console.log("Example user dispatched")
+                            dispatch({ type: FETCH_USER, payload: exampleAccount });
+    
+                        }
+                    });
+                }
+                else{
+                    console.log("Example user dispatched")
+                    dispatch({ type: FETCH_USER, payload: exampleAccount });
+                }
+                
+            }).catch((error) => {
+                console.log(error)
+                dispatch({ type: FETCH_USER, payload: exampleAccount });
             });
-        }).catch((error) => {
-            console.log(error)
-            dispatch({ type: FETCH_USER, payload: exampleAccount });
-        });
     }
-    // else{
-    //     dispatch({type: FETCH_USER, payload: exampleAccount});
-    // }
+    else{
+        console.log("UID undefined")
+        // dispatch({type: FETCH_USER, payload: exampleAccount});
+    }
 
 };
 export const setUser = (User) => async dispatch => {

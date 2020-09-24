@@ -1,9 +1,9 @@
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { connect, useSelector, shallowEqual  } from "react-redux";
+import { connect, useSelector, shallowEqual } from "react-redux";
 import { compose } from "redux";
 import { VictoryPie, VictoryLabel } from "victory";
-import { Grid, Typography, List} from "@material-ui/core"
+import { Grid, Typography, List } from "@material-ui/core"
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 // import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -11,8 +11,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 // import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import ListItem from '@material-ui/core/ListItem';
-import {StandardRoundSelectForm} from "../StandardSelect/StandardSelect.js";
-import {sampleTempData,sampleHumidityData,sampleProgressData,sampleCO2Data} from "../../exampleDataTypes/clientExamlpeDataTypes";
+import { StandardRoundSelectForm } from "../StandardSelect/StandardSelect.js";
+import { sampleTempData, sampleHumidityData, sampleProgressData, sampleCO2Data } from "../../exampleDataTypes/clientExamlpeDataTypes";
 import './style.css';
 import VerticleDividerStyled from "../VerticalDivider/VerticalDivider"
 import { getRooms, setRoom } from "../../actions/rooms";
@@ -114,22 +114,25 @@ DashboardSummry.propTypes = {
     colorScale: PropTypes.arrayOf(PropTypes.object),
 }
 
-function DashboardSummry (props){
+function DashboardSummry(props) {
     const classes = useStyles();
     const theme = useTheme();
     const defaultColorScale = [theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main];
     const progressColorScale = [theme.palette.roomStatus.clone, theme.palette.roomStatus.veg, theme.palette.roomStatus.flower];
 
 
-    let { rooms, pick } = useSelector(state => ({
+    let { rooms, pick, user } = useSelector(state => ({
         rooms: state.growRooms.rooms,
-        pick: state.growRooms.roomIndex
+        pick: state.growRooms.roomIndex,
+        user: state.users.user
 
     }), shallowEqual)
 
     useEffect(() => {
-        if (rooms === undefined || rooms[0].stage === "loading") {
-            props.getRooms()
+        if (rooms === undefined || rooms[0].stage === "loading" || user.example) {
+            console.log("getting Rooms")
+            props.getRooms(user)
+
         }
     })
 
@@ -159,13 +162,13 @@ function DashboardSummry (props){
     return (
         <Grid container direction="column" justify={"center"} spacing={2} className={classes.dashboardSummery}>
             <Grid container item direction="row" xs>
-                <Grid item xs={2} style={{paddingLeft:"24px"}}>
+                <Grid item xs={2} style={{ paddingLeft: "24px" }}>
                     <Typography variant={"h6"}>Summery</Typography>
                 </Grid>
                 <Grid item xs ></Grid>
                 <Grid item >
                     <StandardRoundSelectForm className={classes.formControl} >
-                        
+
                         <Select
                             value={pick}
                             onChange={handleChange}
@@ -186,11 +189,11 @@ function DashboardSummry (props){
             {/* ========= charts start here =================================*/}
             <Grid container item direction="row" xs >
                 <DashboardPieChart chartName={"Temp"} classes={classes} theme={theme} dataSet={sampleTempData} colorScale={defaultColorScale} />
-                <VerticleDividerStyled orientation={'vertical'} flexItem/>
+                <VerticleDividerStyled orientation={'vertical'} flexItem />
                 <DashboardPieChart chartName={"Humidity"} classes={classes} theme={theme} dataSet={sampleHumidityData} colorScale={defaultColorScale} />
-                <VerticleDividerStyled orientation={'vertical'} flexItem/>
+                <VerticleDividerStyled orientation={'vertical'} flexItem />
                 <DashboardPieChart chartName={"CO2"} classes={classes} theme={theme} dataSet={sampleCO2Data} colorScale={defaultColorScale} />
-                <VerticleDividerStyled orientation={'vertical'} flexItem/>
+                <VerticleDividerStyled orientation={'vertical'} flexItem />
                 <DashboardPieChart chartName={"Progress"} classes={classes} theme={theme} dataSet={sampleProgressData} colorScale={progressColorScale} />
             </Grid>
         </Grid>

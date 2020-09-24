@@ -1,5 +1,3 @@
-import * as C from "../constants";
-
 import { app, db } from "../consts/firebase";
 import { AUTH_ERROR, AUTH_USER } from "./types";
 import { setUser, setExampleUser } from "./User";
@@ -27,28 +25,9 @@ export const attemptSigninEmailpass = (formProps, callback) => async dispatch =>
 export const startListeningToAuth = () => async dispatch => {
   app.auth().onAuthStateChanged(function (user) {
     if (user) {
-      console.log("checking to see if user is in the DB");
-      db.collection("Users").where("UID", "==", user.uid)
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            if(doc.exists){
-              console.log("found user")
-              //dispatch the found User data to the User store
-              setUser(doc.data())
-              //dispatch auth data to Auth provider.
-              localStorage.setItem("token", JSON.stringify(user));
-              dispatch({ type: AUTH_USER, payload: user })
-            }else{
-              setExampleUser();
-              localStorage.setItem("token", JSON.stringify(user));
-              dispatch({ type: AUTH_USER, payload: user })
-            }
-
-          });
-        }).catch((error) => {
-          console.log(error)
-        });
+      
+      localStorage.setItem("token", JSON.stringify(user));
+      dispatch({ type: AUTH_USER, payload: user })
       // User is signed in.
       // var displayName = user.displayName;
       // var email = user.email;
@@ -63,6 +42,7 @@ export const startListeningToAuth = () => async dispatch => {
     } else {
       // User is signed out.
       // ...
+      localStorage.setItem("token", "");
       dispatch({ type: AUTH_USER, payload: `` })
     }
   });

@@ -71,17 +71,21 @@ const HighestProgress = (props) => {
     const progressColorScale = [ theme.palette.roomStatus.warning, theme.palette.primary.main,];
     
     
-    let { rooms, pick } = useSelector(state => ({
+    let { rooms, pick, user } = useSelector(state => ({
         rooms: state.growRooms.rooms,
-        pick: state.growRooms.roomIndex
+        pick: state.growRooms.roomIndex,
+        user: state.users.user
 
     }), shallowEqual)
 
-    useEffect(() => {
-        if (rooms === undefined || rooms[0].stage === "loading") {
-            props.getRooms()
-        }
-    })
+    // useEffect(() => {
+    //     if (rooms === undefined || rooms[0].stage === "loading") {
+    //         console.log(user)
+    //         if(user.uid !== undefined){
+    //             props.getRooms(user.uid)
+    //         }
+    //     }
+    // })
 
     //check if data has loaded and if not display loading text
     if (rooms === undefined || rooms.length === 0) {

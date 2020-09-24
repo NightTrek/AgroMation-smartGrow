@@ -5,6 +5,7 @@
 export  const exampleAccount = {
         firstName:"Steve",
         lastName:" Coffee",
+        example:true,
         location:[
             {
                 name:"Green Gardens",

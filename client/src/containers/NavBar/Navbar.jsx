@@ -183,9 +183,10 @@ const useStyles = makeStyles((theme) => ({
     }),shallowEqual)
 
     useEffect(()=>{
+        // if(auth.uid === )
         if(user.firstName === undefined || user.location.length === undefined){
             console.log("fetching user")
-            props.fetchUser()
+            props.fetchUser(auth.uid)
         }
     })
     

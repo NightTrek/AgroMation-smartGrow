@@ -8,7 +8,7 @@ import Dashboard from "../../containers/dashboard2/Dashboard2";
 import Auth from "../../containers/Authentication";
 //new Auth
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-import firebase from "../../consts/firebase";
+import {app} from "../../consts/firebase";
 
 //import css
 import "./index.css";
@@ -23,7 +23,7 @@ const uiConfig = {
   // signInSuccessUrl: '/Dashboard',
   // We will display Google and Facebook as auth providers.
   signInOptions: [
-    firebase.firebase_.auth.EmailAuthProvider.PROVIDER_ID
+    app.firebase_.auth.EmailAuthProvider.PROVIDER_ID
   ],
   callbacks: {
     // Avoid redirects after sign-in.
@@ -45,7 +45,7 @@ class Welcome extends Component {
     if (userCheck !== "" && userCheck !== null) {
       this.props.history.push('dashboard')
     }
-    this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
+    this.unregisterAuthObserver = app.auth().onAuthStateChanged(
       (user) => this.setState({ isSignedIn: !!user })
     );
   }
@@ -60,7 +60,7 @@ class Welcome extends Component {
       }
       return (
         <div>
-          <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
+          <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={app.auth()} />
 
           {/* <Auth history={this.props.history}></Auth> */}
         </div>

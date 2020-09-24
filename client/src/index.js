@@ -28,10 +28,18 @@ import { startListeningToAuth } from "./actions/auth"
 // configure redux dev tools
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
+let token = "";
+if(localStorage.getItem("token") !== undefined){
+  try{
+    token = JSON.parse(localStorage.getItem("token"));
+  }catch(error){
+    token = ""
+  }
+}
 const store = createStore(
   reducers,
   {
-    auth: { authenticated: localStorage.getItem("token") }
+    auth: { authenticated: token }
   },
   composeEnhancers(applyMiddleware(reduxThunk))
 );

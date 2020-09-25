@@ -12,7 +12,6 @@ import HelpIcon from '@material-ui/icons/Help';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect.js";
-import { ExampleRoomData } from "../../exampleDataTypes/clientExamlpeDataTypes";
 import CancelIcon from '@material-ui/icons/Cancel';
 // import VerticalDividerStyled from "../../components/VerticalDivider/VerticalDivider";
 
@@ -459,7 +458,7 @@ function HumidityMeter(props) {
 
     return (
         <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'}>
-            <Typography variant={"h6"} align={'center'}>Humidty</Typography>
+            <Typography variant={"h6"} align={'center'}>Humidity</Typography>
             <Grid item xs className={classes.meterContainer}>
                 <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                     <ReactSpeedometer
@@ -506,7 +505,7 @@ function HumidityMeter(props) {
 
                                 <Grid item container direction={"column"} className={classes.sliderRow}>
                                     <Grid item container direction={"row"} style={{ padding: "6px", marginBottom: "24px" }}>
-                                        <Grid item> <h4>Humidty</h4></Grid>
+                                        <Grid item> <h4>Humidity</h4></Grid>
                                         <Grid item xs> </Grid>
                                     </Grid>
                                     <Grid item container direction={'row'}>

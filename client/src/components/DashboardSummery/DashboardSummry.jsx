@@ -14,7 +14,7 @@ import ListItem from '@material-ui/core/ListItem';
 import { StandardRoundSelectForm } from "../StandardSelect/StandardSelect.js";
 import { sampleTempData, sampleHumidityData, sampleProgressData, sampleCO2Data } from "../../exampleDataTypes/clientExamlpeDataTypes";
 import './style.css';
-import VerticleDividerStyled from "../VerticalDivider/VerticalDivider"
+import VerticalDividerStyled from "../VerticalDivider/VerticalDivider"
 import { getRooms, setRoom, setExampleRooms, pendingRooms } from "../../actions/rooms";
 
 
@@ -106,7 +106,7 @@ const DashboardPieChart = (props) => {
         </Grid>);
 }
 
-DashboardSummry.propTypes = {
+DashboardSummary.propTypes = {
     chartName: PropTypes.string.isRequired,
     classes: PropTypes.object.isRequired,
     theme: PropTypes.object.isRequired,
@@ -114,7 +114,7 @@ DashboardSummry.propTypes = {
     colorScale: PropTypes.arrayOf(PropTypes.object),
 }
 
-function DashboardSummry(props) {
+function DashboardSummary(props) {
     const classes = useStyles();
     const theme = useTheme();
     const defaultColorScale = [theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main];
@@ -229,18 +229,18 @@ function DashboardSummry(props) {
             {/* ========= charts start here =================================*/}
             <Grid container item direction="row" xs >
                 <DashboardPieChart chartName={"Temp"} classes={classes} theme={theme} dataSet={generateTempData()} colorScale={defaultColorScale} />
-                <VerticleDividerStyled orientation={'vertical'} flexItem />
+                <VerticalDividerStyled orientation={'vertical'} flexItem />
                 <DashboardPieChart chartName={"Humidity"} classes={classes} theme={theme} dataSet={sampleHumidityData} colorScale={defaultColorScale} />
-                <VerticleDividerStyled orientation={'vertical'} flexItem />
+                <VerticalDividerStyled orientation={'vertical'} flexItem />
                 <DashboardPieChart chartName={"CO2"} classes={classes} theme={theme} dataSet={sampleCO2Data} colorScale={defaultColorScale} />
-                <VerticleDividerStyled orientation={'vertical'} flexItem />
+                <VerticalDividerStyled orientation={'vertical'} flexItem />
                 <DashboardPieChart chartName={"Progress"} classes={classes} theme={theme} dataSet={sampleProgressData} colorScale={progressColorScale} />
             </Grid>
         </Grid>
     )
 }
 
-DashboardSummry.propTypes = {
+DashboardSummary.propTypes = {
 
 }
 
@@ -251,6 +251,6 @@ function mapStateToProps({ state }) {
 
 const formedComponent = compose(
     connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom, setExampleRooms:setExampleRooms, pendingRooms:pendingRooms })
-)(DashboardSummry);
+)(DashboardSummary);
 
 export default formedComponent;

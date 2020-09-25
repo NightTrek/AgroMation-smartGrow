@@ -48,7 +48,7 @@ export const ExampleRoomData = [
         example:true,
     },
     {
-        name: "Room beta",
+        name: "Room Beta",
         tempSetPoint: 72,
         tempMax:80,
         tempMin:65,
@@ -68,7 +68,7 @@ export const ExampleRoomData = [
         FlowerTime: 2419200,
         example:true,
     }, {
-        name: "clone Room",
+        name: "Clone Room",
         tempSetPoint: 72,
         tempMax:80,
         tempMin:65,
@@ -88,7 +88,7 @@ export const ExampleRoomData = [
         FlowerTime: 2419200,
         example:true,
     }, {
-        name: "flower one",
+        name: "Flower One",
         tempSetPoint: 83,
         tempMax:80,
         tempMin:65,
@@ -108,7 +108,7 @@ export const ExampleRoomData = [
         FlowerTime: 2419200,
         example:true,
     }, {
-        name: "flower two",
+        name: "Flower Two",
         tempSetPoint: 44,
         tempMax:80,
         tempMin:65,
@@ -127,7 +127,7 @@ export const ExampleRoomData = [
         VegTime: 3024000,
         FlowerTime: 2419200,
     }, {
-        name: "veg room a",
+        name: "Veg Room A",
         tempSetPoint: 21,
         tempMax:80,
         tempMin:65,
@@ -174,12 +174,12 @@ export const sampleNotifications = [{
 }, {
     type: "warning",
     room: "Room Beta",
-    msg: "Temprature warning",
+    msg: "Temperature warning",
     timeStamp: "1597477764"
 }, {
     type: "warning",
     room: "Clone Room",
-    msg: "Temprature Warning",
+    msg: "Temperature Warning",
     timeStamp: "1597477764"
 }, {
     type: "warning",
@@ -194,14 +194,14 @@ export const sampleNotifications = [{
 }, {
     type: "info",
     room: "Room Alpha",
-    msg: "Temprature out of range",
+    msg: "Temperature out of range",
     timeStamp: "1597477764"
 }];
 
 export const exampleLightZoneArray = [
     {
         id: 1,
-        name: "zone one",
+        name: "Zone one",
         active: true,
         activeCount: 6,
         fault: 0,
@@ -216,7 +216,7 @@ export const exampleLightZoneArray = [
     },
     {
         id: 2,
-        name: "zone two",
+        name: "Zone two",
         active: false,
         activeCount: 6,
         fault: 0,
@@ -231,7 +231,7 @@ export const exampleLightZoneArray = [
     },
     {
         id: 3,
-        name: "zone three",
+        name: "Zone three",
         active: true,
         activeCount: 6,
         fault: 0,
@@ -246,7 +246,7 @@ export const exampleLightZoneArray = [
     },
     {
         id: 4,
-        name: "zone four",
+        name: "Zone four",
         active: true,
         activeCount: 6,
         fault: 0,
@@ -261,7 +261,7 @@ export const exampleLightZoneArray = [
     },
     {
         id: 5,
-        name: "zone five",
+        name: "Zone five",
         active: true,
         activeCount: 6,
         fault: 0,
@@ -276,7 +276,7 @@ export const exampleLightZoneArray = [
     },
     {
         id: 6,
-        name: "zone six",
+        name: "Zone six",
         active: true,
         activeCount: 6,
         fault: 0,
@@ -291,7 +291,7 @@ export const exampleLightZoneArray = [
     },
     {
         id: 7,
-        name: "zone alpha",
+        name: "Zone alpha",
         active: false,
         activeCount: 6,
         fault: 0,

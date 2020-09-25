@@ -123,7 +123,7 @@ const LiveDataWidget = (props) => {
                 </Grid>
                 <Grid item xs>
                     <List>
-                        <ListItem> Temprature</ListItem>
+                        <ListItem> Temperature</ListItem>
                         <ListItem> <Typography variant={"h4"} style={{ color: LiveData.TempColor }}> {LiveData.Temp}</Typography></ListItem>
                     </List>
                 </Grid>

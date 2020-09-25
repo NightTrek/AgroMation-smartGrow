@@ -35,7 +35,7 @@ import "./style.css";
 import { Grid, withStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import { fetchUser, setLocation, fetchUserPending } from "../../actions/User";
-import {firebaseSignOut} from "../../actions/auth";
+
 
 //
 
@@ -329,7 +329,7 @@ const useStyles = makeStyles((theme) => ({
                     </Grid> : <div></div>}
                 <Divider />
                 <List>
-                    {['Dashboard', 'Rooms', 'Users', 'Settings','signout'].map((text, index) => (
+                    {['Dashboard', 'Rooms', 'Users', 'Settings','Signout'].map((text, index) => (
                         <NavLink to={"/" + text} key={text} onClick={(e) =>{
                             if(auth == undefined || auth === ""){
                                 e.preventDefault()

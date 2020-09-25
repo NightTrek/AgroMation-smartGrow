@@ -1,6 +1,12 @@
-import { FETCH_USER, SET_LOCATION } from "./types";
+import { FETCH_USER, SET_LOCATION, FETCH_USER_PENDING } from "./types";
 import { exampleAccount } from "../exampleDataTypes/clientExamlpeDataTypes";
 import { db } from "../consts/firebase";
+
+export const fetchUserPending = (user) => dispatch => {
+
+    dispatch({type: FETCH_USER_PENDING, payload: true})
+   
+}
 
 export const fetchUser = (UID) => async dispatch => {
     console.log(`Fetching User ${UID}`)
@@ -11,6 +17,7 @@ export const fetchUser = (UID) => async dispatch => {
                 if(!querySnapshot.empty){
                     querySnapshot.forEach((doc) => {
                         if (doc.exists) {
+                            // console.log("user dispatched")
                             dispatch({ type: FETCH_USER, payload: doc.data() })
                         } else {
                             console.log("Example user dispatched")

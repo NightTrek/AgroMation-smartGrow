@@ -34,7 +34,7 @@ import Select from '@material-ui/core/Select';
 import "./style.css";
 import { Grid, withStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
-import { fetchUser, setLocation } from "../../actions/User";
+import { fetchUser, setLocation, fetchUserPending } from "../../actions/User";
 import {firebaseSignOut} from "../../actions/auth";
 
 //
@@ -175,17 +175,24 @@ const useStyles = makeStyles((theme) => ({
     const PageName = useLocation();
     // const dispatch = useDispatch();
 
-    let {user,pick, auth} = useSelector( state => ({
+    let {user,pick, auth, pending} = useSelector( state => ({
         user:state.users.user,
+        pending:state.users.pending,
         pick:state.users.activeLocation,
         auth:state.auth.authenticated
 
     }),shallowEqual)
 
+    // console.log(user);
+    
+
     useEffect(()=>{
         // if(auth.uid === )
-        if(user.firstName === undefined || user.location.length === undefined){
+        if(!pending && user.firstName === undefined || user.location.length === undefined ){
+            // console.log(user);
+            props.fetchUserPending()
             props.fetchUser(auth.uid)
+            
         }
     })
     
@@ -351,7 +358,7 @@ const mapStateToProps = ( state ) => {
 }
 
 const formedComponent = compose(
-    connect(mapStateToProps, { fetchUser: fetchUser, setLocation: setLocation }),
+    connect(mapStateToProps, { fetchUser: fetchUser, setLocation: setLocation, fetchUserPending:fetchUserPending }),
     reduxForm({ form: 'Add todo' })
 )(MiniDrawer);
 

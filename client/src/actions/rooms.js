@@ -1,16 +1,19 @@
 
-import { GET_ROOMS, SET_ROOM } from "./types"
+import { GET_ROOMS, SET_ROOM, PENDING_ROOMS } from "./types"
 import { ExampleRoomData } from "../exampleDataTypes/clientExamlpeDataTypes";
 import { db } from "../consts/firebase";
 
+export const pendingRooms = () => dispatch => {
+    dispatch({type: PENDING_ROOMS, payload:true});
+}
 
 export const getRooms = (User) => async dispatch => {
-    console.log(User)
     //try and get the rooms usingthe location ID provided
+    console.log(User)
     if (User !== undefined && User.UID !== undefined) {
         if (User.accountOwner == null && User.UID !== undefined) {
             //when the Owner ID is null us the UID for the user account
-            console.log(`querying for id ${User.UID}`)
+            console.log(`querying rooms for id ${User.UID}`)
             db.collection("Rooms").where("ownerID", "==", User.UID)
                 .get()
                 .then((querySnapshot) => {

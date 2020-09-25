@@ -45,6 +45,7 @@ export const ExampleRoomData = [
         CloneTime: 864000,
         VegTime: 3024000,
         FlowerTime: 2419200,
+        example:true,
     },
     {
         name: "Room beta",
@@ -65,6 +66,7 @@ export const ExampleRoomData = [
         CloneTime: 864000,
         VegTime: 3024000,
         FlowerTime: 2419200,
+        example:true,
     }, {
         name: "clone Room",
         tempSetPoint: 72,
@@ -84,6 +86,7 @@ export const ExampleRoomData = [
         CloneTime: 864000,
         VegTime: 3024000,
         FlowerTime: 2419200,
+        example:true,
     }, {
         name: "flower one",
         tempSetPoint: 83,
@@ -103,6 +106,7 @@ export const ExampleRoomData = [
         CloneTime: 864000,
         VegTime: 3024000,
         FlowerTime: 2419200,
+        example:true,
     }, {
         name: "flower two",
         tempSetPoint: 44,

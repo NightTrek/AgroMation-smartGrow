@@ -15,7 +15,7 @@ import { StandardRoundSelectForm } from "../StandardSelect/StandardSelect.js";
 import { sampleTempData, sampleHumidityData, sampleProgressData, sampleCO2Data } from "../../exampleDataTypes/clientExamlpeDataTypes";
 import './style.css';
 import VerticleDividerStyled from "../VerticalDivider/VerticalDivider"
-import { getRooms, setRoom, setExampleRooms } from "../../actions/rooms";
+import { getRooms, setRoom, setExampleRooms, pendingRooms } from "../../actions/rooms";
 
 
 
@@ -121,18 +121,26 @@ function DashboardSummry(props) {
     const progressColorScale = [theme.palette.roomStatus.clone, theme.palette.roomStatus.veg, theme.palette.roomStatus.flower];
 
 
-    let { rooms, pick, user } = useSelector(state => ({
+    let { rooms, pick, user, pending } = useSelector(state => ({
         rooms: state.growRooms.rooms,
         pick: state.growRooms.roomIndex,
-        user: state.users.user
+        user: state.users.user,
+        pending: state.growRooms.pending
 
     }), shallowEqual)
 
+    console.log(rooms)
     useEffect(() => {
-        if (rooms === undefined || rooms[0].stage === "loading" || user.example) {
+        console.log(pending);
+        console.log(!pending && rooms === undefined  || user.example)
+        if (!pending && rooms === undefined  || user.example) {
+            
+            console.log(rooms[0].ownerID === undefined);
             if(user.example){
                 props.setExampleRooms()
-            }else if(rooms[0].ownerID === undefined){
+            }else if( rooms[0].ownerID === undefined){
+                console.log()
+                props.pendingRooms()
                 props.getRooms(user)
             }
             
@@ -248,7 +256,7 @@ function mapStateToProps({ state }) {
 }
 
 const formedComponent = compose(
-    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom, setExampleRooms:setExampleRooms })
+    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom, setExampleRooms:setExampleRooms, pendingRooms:pendingRooms })
 )(DashboardSummry);
 
 export default formedComponent;

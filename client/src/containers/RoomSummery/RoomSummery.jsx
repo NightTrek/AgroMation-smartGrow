@@ -19,7 +19,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 
 
 //Redux actions
-import { getRooms, setRoom } from "../../actions/rooms";
+import { getRooms, setRoom, setExampleRooms } from "../../actions/rooms";
 
 
 function DiagnosticColorBar(props) {
@@ -87,17 +87,20 @@ DiagnosticColorBar.propTypes = {
 
 function TempMeter(props) {
     const roomState = props.state;
+    const rooms = props.rooms;
+    const pick = props.pick;
     const classes = props.classes;
     const theme = props.theme;
     const tempUnitString = props.tempUnitString;
 
     //setPointStuff
     const [meterState, setMeterState] = React.useState({
-        setPoint: roomState.rooms[roomState.pick].tempSetPoint,
-        max: roomState.rooms[roomState.pick].tempMax,
-        min: roomState.rooms[roomState.pick].tempMin,
-        minMax: [roomState.rooms[roomState.pick].tempMin, roomState.rooms[roomState.pick].tempMax]
+        setPoint: rooms[pick].tempSetPoint,
+        max: rooms[pick].tempMax,
+        min: rooms[pick].tempMin,
+        minMax: [rooms[pick].tempMin, rooms[pick].tempMax]
     });
+
     //slider handlers
     const handleSetPointSliderChange = (event, newValue) => {
         setMeterState({ ...meterState, setPoint: newValue });
@@ -161,12 +164,12 @@ function TempMeter(props) {
     const handleMouseEnter = () => {
         console.log("mouse Enter CO2")
         setLabels([{
-            text: `${roomState.rooms[roomState.pick].tempSetPoint - 20}${tempUnitString}`,
+            text: `${rooms[pick].tempSetPoint - 20}${tempUnitString}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         }, {
-            text: `${roomState.rooms[roomState.pick].tempSetPoint - 5}${tempUnitString}`,
+            text: `${rooms[pick].tempSetPoint - 5}${tempUnitString}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
@@ -178,13 +181,13 @@ function TempMeter(props) {
             color: "white"
         },
         {
-            text: `${roomState.rooms[roomState.pick].tempSetPoint + 5}${tempUnitString}`,
+            text: `${rooms[pick].tempSetPoint + 5}${tempUnitString}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         },
         {
-            text: `${roomState.rooms[roomState.pick].tempSetPoint + 20}${tempUnitString}`,
+            text: `${rooms[pick].tempSetPoint + 20}${tempUnitString}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
@@ -209,19 +212,19 @@ function TempMeter(props) {
                         needleColor={theme.palette.text.main}
                         value={roomState.liveData.temp}
                         currentValueText={`${roomState.liveData.temp} °F`}
-                        minValue={roomState.rooms[roomState.pick].tempSetPoint - 50}
-                        maxValue={roomState.rooms[roomState.pick].tempSetPoint + 50}
+                        minValue={rooms[pick].tempSetPoint - 50}
+                        maxValue={rooms[pick].tempSetPoint + 50}
                         segments={5}
-                        customSegmentStops={[roomState.rooms[roomState.pick].tempSetPoint - 50,
-                        roomState.rooms[roomState.pick].tempSetPoint - 20, roomState.rooms[roomState.pick].tempSetPoint - 5, roomState.rooms[roomState.pick].tempSetPoint + 5,
-                        roomState.rooms[roomState.pick].tempSetPoint + 20, roomState.rooms[roomState.pick].tempSetPoint + 50]}
+                        customSegmentStops={[rooms[pick].tempSetPoint - 50,
+                        rooms[pick].tempSetPoint - 20, rooms[pick].tempSetPoint - 5, rooms[pick].tempSetPoint + 5,
+                        rooms[pick].tempSetPoint + 20, rooms[pick].tempSetPoint + 50]}
                         segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main , theme.palette.roomStatus.nominal, theme.palette.primary.main,
                             theme.palette.roomStatus.warning]}
                         customSegmentLabels={Labels}
                     />
                 </div>
-                <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.temp} min={roomState.rooms[roomState.pick].tempSetPoint - 5} superMin={roomState.rooms[roomState.pick].tempSetPoint - 20}
-                    max={roomState.rooms[roomState.pick].tempSetPoint + 5} superMax={roomState.rooms[roomState.pick].tempSetPoint + 20} setPoint={`${roomState.rooms[roomState.pick].tempSetPoint}${tempUnitString}`} />
+                <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.temp} min={rooms[pick].tempSetPoint - 5} superMin={rooms[pick].tempSetPoint - 20}
+                    max={rooms[pick].tempSetPoint + 5} superMax={rooms[pick].tempSetPoint + 20} setPoint={`${rooms[pick].tempSetPoint}${tempUnitString}`} />
                 <Modal
                     aria-labelledby="Temprature setpoint modal"
                     aria-describedby="Set the temprature of controller"
@@ -354,6 +357,8 @@ function HumidityMeter(props) {
     const roomState = props.state;
     const classes = props.classes;
     const theme = props.theme;
+    const rooms = props.rooms;
+    const pick = props.pick;
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -366,10 +371,10 @@ function HumidityMeter(props) {
     };
     //setPointStuff
     const [meterState, setMeterState] = React.useState({
-        setPoint: roomState.rooms[roomState.pick].humiditySetPoint,
-        max: roomState.rooms[roomState.pick].humidityMax,
-        min: roomState.rooms[roomState.pick].humidityMin,
-        minMax: [roomState.rooms[roomState.pick].humidityMin, roomState.rooms[roomState.pick].humidityMax]
+        setPoint: rooms[pick].humiditySetPoint,
+        max: rooms[pick].humidityMax,
+        min: rooms[pick].humidityMin,
+        minMax: [rooms[pick].humidityMin, rooms[pick].humidityMax]
     });
     //slider handlers
     const handleSetPointSliderChange = (event, newValue) => {
@@ -418,12 +423,12 @@ function HumidityMeter(props) {
     const handleMouseEnter = () => {
         console.log("mouse Enter CO2")
         setLabels([{
-            text: `${roomState.rooms[roomState.pick].humiditySetPoint - 20}%`,
+            text: `${rooms[pick].humiditySetPoint - 20}%`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         }, {
-            text: `${roomState.rooms[roomState.pick].humiditySetPoint - 5}%`,
+            text: `${rooms[pick].humiditySetPoint - 5}%`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
@@ -435,13 +440,13 @@ function HumidityMeter(props) {
             color: "white"
         },
         {
-            text: `${roomState.rooms[roomState.pick].humiditySetPoint + 5}%`,
+            text: `${rooms[pick].humiditySetPoint + 5}%`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         },
         {
-            text: `${roomState.rooms[roomState.pick].humiditySetPoint + 20}%`,
+            text: `${rooms[pick].humiditySetPoint + 20}%`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
@@ -465,20 +470,20 @@ function HumidityMeter(props) {
                         needleTransition="easeElastic"
                         value={roomState.liveData.humidty}
                         currentValueText={`${roomState.liveData.humidty} %`}
-                        minValue={roomState.rooms[roomState.pick].humiditySetPoint - 50}
-                        maxValue={roomState.rooms[roomState.pick].humiditySetPoint + 50}
+                        minValue={rooms[pick].humiditySetPoint - 50}
+                        maxValue={rooms[pick].humiditySetPoint + 50}
                         segments={5}
-                        customSegmentStops={[roomState.rooms[roomState.pick].humiditySetPoint - 50,
-                        roomState.rooms[roomState.pick].humiditySetPoint - 30,
-                        roomState.rooms[roomState.pick].humiditySetPoint - 10,
-                        roomState.rooms[roomState.pick].humiditySetPoint + 10, roomState.rooms[roomState.pick].humiditySetPoint + 30,
-                        roomState.rooms[roomState.pick].humiditySetPoint + 50]}
+                        customSegmentStops={[rooms[pick].humiditySetPoint - 50,
+                        rooms[pick].humiditySetPoint - 30,
+                        rooms[pick].humiditySetPoint - 10,
+                        rooms[pick].humiditySetPoint + 10, rooms[pick].humiditySetPoint + 30,
+                        rooms[pick].humiditySetPoint + 50]}
                         segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main , theme.palette.roomStatus.nominal, theme.palette.primary.main,
                             theme.palette.roomStatus.warning]}
                         customSegmentLabels={Labels} />
                 </div>
-                <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.humidty} min={roomState.rooms[roomState.pick].humiditySetPoint - 10} superMin={roomState.rooms[roomState.pick].humiditySetPoint - 30}
-                    max={roomState.rooms[roomState.pick].humiditySetPoint + 10} superMax={roomState.rooms[roomState.pick].humiditySetPoint + 30} setPoint={roomState.rooms[roomState.pick].humiditySetPoint + " %"} />
+                <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.humidty} min={rooms[pick].humiditySetPoint - 10} superMin={rooms[pick].humiditySetPoint - 30}
+                    max={rooms[pick].humiditySetPoint + 10} superMax={rooms[pick].humiditySetPoint + 30} setPoint={rooms[pick].humiditySetPoint + " %"} />
                 <Modal
                     aria-labelledby="transition-modal-title"
                     aria-describedby="transition-modal-description"
@@ -613,6 +618,8 @@ function CO2LevelMeter(props) {
     const roomState = props.state;
     const classes = props.classes;
     const theme = props.theme;
+    const rooms = props.rooms;
+    const pick = props.pick;
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -625,10 +632,10 @@ function CO2LevelMeter(props) {
 
     //setPointStuff
     const [meterState, setMeterState] = React.useState({
-        setPoint: roomState.rooms[roomState.pick].CO2SetPoint,
-        max: roomState.rooms[roomState.pick].CO2Min,
-        min: roomState.rooms[roomState.pick].CO2Max,
-        minMax: [roomState.rooms[roomState.pick].CO2Min, roomState.rooms[roomState.pick].CO2Max]
+        setPoint: rooms[pick].CO2SetPoint,
+        max: rooms[pick].CO2Min,
+        min: rooms[pick].CO2Max,
+        minMax: [rooms[pick].CO2Min, rooms[pick].CO2Max]
     });
     //slider handlers
     const handleSetPointSliderChange = (event, newValue) => {
@@ -677,12 +684,12 @@ function CO2LevelMeter(props) {
     const handleMouseEnter = () => {
         console.log("mouse Enter CO2")
         setLabels([{
-            text: `${roomState.rooms[roomState.pick].CO2SetPoint - 1000}`,
+            text: `${rooms[pick].CO2SetPoint - 1000}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         }, {
-            text: `${roomState.rooms[roomState.pick].CO2SetPoint - 200}`,
+            text: `${rooms[pick].CO2SetPoint - 200}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
@@ -694,13 +701,13 @@ function CO2LevelMeter(props) {
             color: "white"
         },
         {
-            text: `${roomState.rooms[roomState.pick].CO2SetPoint + 200}`,
+            text: `${rooms[pick].CO2SetPoint + 200}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         },
         {
-            text: `${roomState.rooms[roomState.pick].CO2SetPoint + 1000}`,
+            text: `${rooms[pick].CO2SetPoint + 1000}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
@@ -723,16 +730,16 @@ function CO2LevelMeter(props) {
                         needleHeightRatio={0.7}
                         value={roomState.liveData.CO2level}
                         currentValueText={`${roomState.liveData.CO2level} ppm`}
-                        minValue={roomState.rooms[roomState.pick].CO2SetPoint - 2000}
-                        maxValue={roomState.rooms[roomState.pick].CO2SetPoint + 2000}
+                        minValue={rooms[pick].CO2SetPoint - 2000}
+                        maxValue={rooms[pick].CO2SetPoint + 2000}
                         segments={5}
-                        customSegmentStops={[roomState.rooms[roomState.pick].CO2SetPoint - 2000, roomState.rooms[roomState.pick].CO2SetPoint - 1000, roomState.rooms[roomState.pick].CO2SetPoint - 200, roomState.rooms[roomState.pick].CO2SetPoint + 200, roomState.rooms[roomState.pick].CO2SetPoint + 1000, roomState.rooms[roomState.pick].CO2SetPoint + 2000]}
+                        customSegmentStops={[rooms[pick].CO2SetPoint - 2000, rooms[pick].CO2SetPoint - 1000, rooms[pick].CO2SetPoint - 200, rooms[pick].CO2SetPoint + 200, rooms[pick].CO2SetPoint + 1000, rooms[pick].CO2SetPoint + 2000]}
                         segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main , theme.palette.roomStatus.nominal, theme.palette.primary.main,
                             theme.palette.roomStatus.warning]}
                         customSegmentLabels={Labels} />
                 </div>
-                <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.CO2level} min={roomState.rooms[roomState.pick].CO2SetPoint - 200} superMin={roomState.rooms[roomState.pick].CO2SetPoint - 1000}
-                    max={roomState.rooms[roomState.pick].CO2SetPoint + 200} superMax={roomState.rooms[roomState.pick].CO2SetPoint + 1000} setPoint={roomState.rooms[roomState.pick].CO2SetPoint + " ppm"} />
+                <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.CO2level} min={rooms[pick].CO2SetPoint - 200} superMin={rooms[pick].CO2SetPoint - 1000}
+                    max={rooms[pick].CO2SetPoint + 200} superMax={rooms[pick].CO2SetPoint + 1000} setPoint={rooms[pick].CO2SetPoint + " ppm"} />
                 <Modal
                     aria-labelledby="transition-modal-title"
                     aria-describedby="transition-modal-description"
@@ -866,6 +873,8 @@ function PressureMeter(props) {
     const roomState = props.state;
     const classes = props.classes;
     const theme = props.theme;
+    const rooms = props.rooms;
+    const pick = props.pick;
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -877,10 +886,10 @@ function PressureMeter(props) {
     };
     //setPointStuff
     const [meterState, setMeterState] = React.useState({
-        setPoint: roomState.rooms[roomState.pick].pressureSetPont,
-        max: roomState.rooms[roomState.pick].pressureMin,
-        min: roomState.rooms[roomState.pick].pressureMax,
-        minMax: [roomState.rooms[roomState.pick].pressureMin, roomState.rooms[roomState.pick].pressureMax]
+        setPoint: rooms[pick].pressureSetPont,
+        max: rooms[pick].pressureMin,
+        min: rooms[pick].pressureMax,
+        minMax: [rooms[pick].pressureMin, rooms[pick].pressureMax]
     });
     //slider handlers
     const handleSetPointSliderChange = (event, newValue) => {
@@ -928,30 +937,30 @@ function PressureMeter(props) {
 
     const handleMouseEnter = () => {
         setLabels([{
-            text: `${roomState.rooms[roomState.pick].pressureSetPont - 300}`,
+            text: `${rooms[pick].pressureSetPont - 300}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         }, {
-            text: `${roomState.rooms[roomState.pick].pressureSetPont - 100}`,
+            text: `${rooms[pick].pressureSetPont - 100}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         },
         {
-            text: `${roomState.rooms[roomState.pick].pressureSetPont - 20}`,
+            text: `${rooms[pick].pressureSetPont - 20}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         },
         {
-            text: `${roomState.rooms[roomState.pick].pressureSetPont + 20}`,
+            text: `${rooms[pick].pressureSetPont + 20}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         },
         {
-            text: `${roomState.rooms[roomState.pick].pressureSetPont + 100}`,
+            text: `${rooms[pick].pressureSetPont + 100}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
@@ -973,17 +982,17 @@ function PressureMeter(props) {
                         needleTransition="easeElastic"
                         needleHeightRatio={0.7}
                         value={roomState.liveData.pressure}
-                        minValue={roomState.rooms[roomState.pick].pressureSetPont - 300}
-                        maxValue={roomState.rooms[roomState.pick].pressureSetPont + 300}
+                        minValue={rooms[pick].pressureSetPont - 300}
+                        maxValue={rooms[pick].pressureSetPont + 300}
                         segments={5}
                         currentValueText={`${roomState.liveData.pressure} mbar`}
-                        customSegmentStops={[roomState.rooms[roomState.pick].pressureSetPont - 300, roomState.rooms[roomState.pick].pressureSetPont - 100, roomState.rooms[roomState.pick].pressureSetPont - 20, roomState.rooms[roomState.pick].pressureSetPont + 20, roomState.rooms[roomState.pick].pressureSetPont + 100, roomState.rooms[roomState.pick].pressureSetPont + 300]}
+                        customSegmentStops={[rooms[pick].pressureSetPont - 300, rooms[pick].pressureSetPont - 100, rooms[pick].pressureSetPont - 20, rooms[pick].pressureSetPont + 20, rooms[pick].pressureSetPont + 100, rooms[pick].pressureSetPont + 300]}
                         segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main , theme.palette.roomStatus.nominal, theme.palette.primary.main,
                             theme.palette.roomStatus.warning]}
                         customSegmentLabels={Labels} />
                 </div>
-                <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.pressure} min={roomState.rooms[roomState.pick].pressureSetPont - 20} superMin={roomState.rooms[roomState.pick].pressureSetPont - 100}
-                    max={roomState.rooms[roomState.pick].pressureSetPont + 20} superMax={roomState.rooms[roomState.pick].pressureSetPont + 100} setPoint={roomState.rooms[roomState.pick].pressureSetPont + " mbar"} />
+                <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.pressure} min={rooms[pick].pressureSetPont - 20} superMin={rooms[pick].pressureSetPont - 100}
+                    max={rooms[pick].pressureSetPont + 20} superMax={rooms[pick].pressureSetPont + 100} setPoint={rooms[pick].pressureSetPont + " mbar"} />
                 <Modal
                     aria-labelledby="transition-modal-title"
                     aria-describedby="transition-modal-description"
@@ -1116,11 +1125,13 @@ function PressureMeter(props) {
 function StageMeter(props) {
     const state = props.state;
     const classes = props.classes;
+    const rooms = props.rooms;
+    const pick = props.pick;
 
     const theme = props.theme;
-    const cloneHours = (state.rooms[state.pick].CloneTime / 60) / 60;
-    const vegHours = (state.rooms[state.pick].VegTime / 60) / 60;
-    const flowerHours = (state.rooms[state.pick].FlowerTime / 60) / 60;
+    const cloneHours = (rooms[pick].CloneTime / 60) / 60;
+    const vegHours = (rooms[pick].VegTime / 60) / 60;
+    const flowerHours = (rooms[pick].FlowerTime / 60) / 60;
     const TotalDays = (cloneHours) / 24 + (vegHours) / 24 + (flowerHours) / 24
     // console.log(` ${cloneHours} ${vegHours} ${flowerHours} ${TotalDays}`)
     const [open, setOpen] = React.useState(false);
@@ -1179,7 +1190,7 @@ function StageMeter(props) {
                         customSegmentLabels={Labels} />
                 </div>
                 <DiagnosticColorBar handleOpen={handleOpen} datapoint={2} min={1} superMin={0}
-                    max={3} superMax={4} setPoint={state.rooms[state.pick].stage + " left in"} />
+                    max={3} superMax={4} setPoint={rooms[pick].stage + " left in"} />
                 <Modal
                     aria-labelledby="transition-modal-title"
                     aria-describedby="transition-modal-description"
@@ -1312,55 +1323,66 @@ function RoomSummery(props) {
         tempUnitString = cLogo;
     }
 
+    let { rooms, pick, user } = useSelector(state => ({
+        rooms: state.growRooms.rooms,
+        pick: state.growRooms.roomIndex,
+        user: state.users.user
+
+    }), shallowEqual)
+    console.log(rooms);
+    console.log(user)
+    console.log(pick);
+
+    useEffect(() => {
+        // if (rooms === undefined || rooms[0].stage === "loading" || user.example && user !== undefined) {
+        //     if(user.example){
+        //         props.setExampleRooms()
+        //     }else if(rooms[0].ownerID === undefined){
+        //         console.log(" Room summery getting Rooms from DB");
+        //         props.getRooms(user)
+        //     }    
+            
+
+        // }
+    })
+
+//check if data has loaded and if not display loading text
+if (rooms === undefined || rooms.length === 0) {
+    rooms = [
+        {
+            name: "Loading rooms",
+            tempSetPoint: 72,
+            humiditySetPoint: 44,
+            CO2SetPoint: 3000,
+            pressureSetPont: 1114,
+            stage: "loading",
+            dateStarted: 1597017600,
+            CloneTime: 864000,
+            VegTime: 3024000,
+            FlowerTime: 2419200,
+        },
+    ]
+    pick = 0;
+}
+
     const [state, setState] = React.useState({ //setState
         liveData: {
             temp: 74,
-            humidty: 82,
+            humidty: 45,
             CO2level: 2988,
             pressure: 1114
         },
-        rooms: ExampleRoomData,
-        pick: 0,
         MeterArrayIndexStart: 0
     });
 
     let MeterArray = [
-        <TempMeter state={state} theme={theme} classes={classes} tempUnitString={tempUnitString} key={0} />,
-        <HumidityMeter state={state} theme={theme} classes={classes} key={10} />,
-        <CO2LevelMeter state={state} theme={theme} classes={classes} key={20} />,
-        <StageMeter state={state} theme={theme} classes={classes} key={40} />,
-        <PressureMeter state={state} theme={theme} classes={classes} key={30} />];
+        <TempMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes} tempUnitString={tempUnitString} key={0} />,
+        <HumidityMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes} key={10} />,
+        <CO2LevelMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes} key={20} />,
+        <StageMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes} key={40} />,
+        <PressureMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes} key={30} />];
 
-    let { rooms, pick } = useSelector(state => ({
-        rooms: state.growRooms.rooms,
-        pick: state.growRooms.roomIndex
-
-    }), shallowEqual)
-
-    useEffect(() => {
-        if (rooms === undefined || rooms[0].stage === "loading") {
-            props.getRooms()
-        }
-    })
-
-    //check if data has loaded and if not display loading text
-    if (rooms === undefined || rooms.length === 0) {
-        rooms = [
-            {
-                name: "Loading rooms",
-                tempSetPoint: 72,
-                humiditySetPoint: 44,
-                CO2SetPoint: 3000,
-                pressureSetPont: 1114,
-                stage: "loading",
-                dateStarted: 1597017600,
-                CloneTime: 864000,
-                VegTime: 3024000,
-                FlowerTime: 2419200,
-            },
-        ]
-        pick = 0;
-    }
+        
 
     const handleChange = (event) => {
         // console.log(name);
@@ -1402,7 +1424,7 @@ function RoomSummery(props) {
                                 id: 'Room-Name',
                             }}
                         >
-                            {state.rooms.map((Item, Index) => (
+                            {rooms.map((Item, Index) => (
                                 <MenuItem key={Index} value={Index}>{Item.name}</MenuItem>
                             ))}
                         </Select>
@@ -1450,7 +1472,7 @@ function mapStateToProps({ state }) {
 }
 
 const formedComponent = compose(
-    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom })
+    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom, setExampleRooms:setExampleRooms })
 )(RoomSummery);
 
 export default formedComponent;

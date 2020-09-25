@@ -131,10 +131,6 @@ function DashboardSummry(props) {
 
     // console.log(rooms)
     useEffect(() => {
-        // console.log("use effect")
-        // console.log(pending);
-        // console.log(rooms);
-        // console.log(user)
         // console.log(pending !== true && user.UID !== undefined && rooms[0].ownerID === undefined)
         if (pending !== true && user.UID !== undefined && rooms[0].ownerID === undefined) {
             if(user.example){
@@ -143,8 +139,6 @@ function DashboardSummry(props) {
                 props.getRooms(user)
                 props.pendingRooms()
             }
-            
-
         }
     })
 
@@ -209,7 +203,7 @@ function DashboardSummry(props) {
         <Grid container direction="column" justify={"center"} spacing={2} className={classes.dashboardSummery}>
             <Grid container item direction="row" xs>
                 <Grid item xs={2} style={{ paddingLeft: "24px" }}>
-                    <Typography variant={"h6"}>Summery</Typography>
+                    <Typography variant={"h6"}>Summary</Typography>
                 </Grid>
                 <Grid item xs ></Grid>
                 <Grid item >

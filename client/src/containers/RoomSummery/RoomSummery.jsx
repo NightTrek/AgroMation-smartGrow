@@ -14,12 +14,12 @@ import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect.js";
 import { ExampleRoomData } from "../../exampleDataTypes/clientExamlpeDataTypes";
 import CancelIcon from '@material-ui/icons/Cancel';
-// import VerticleDividerStyled from "../../components/VerticalDivider/VerticalDivider";
+// import VerticalDividerStyled from "../../components/VerticalDivider/VerticalDivider";
 
 
 
 //Redux actions
-import { getRooms, setRoom, setExampleRooms } from "../../actions/rooms";
+import { getRooms, setRoom, setExampleRooms, pendingRooms } from "../../actions/rooms";
 
 
 function DiagnosticColorBar(props) {
@@ -148,7 +148,7 @@ function TempMeter(props) {
     };
 
     const handleClose = () => {
-        if (roomState.rooms[roomState.pick].tempSetPoint === meterState.setPoint) {
+        if (rooms[pick].tempSetPoint === meterState.setPoint) {
             setOpen(false);
         }
         else {
@@ -226,8 +226,8 @@ function TempMeter(props) {
                 <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.temp} min={rooms[pick].tempSetPoint - 5} superMin={rooms[pick].tempSetPoint - 20}
                     max={rooms[pick].tempSetPoint + 5} superMax={rooms[pick].tempSetPoint + 20} setPoint={`${rooms[pick].tempSetPoint}${tempUnitString}`} />
                 <Modal
-                    aria-labelledby="Temprature setpoint modal"
-                    aria-describedby="Set the temprature of controller"
+                    aria-labelledby="Temperature setpoint modal"
+                    aria-describedby="Set the temperature of controller"
                     className={classes.modal}
                     open={open}
                     onClose={handleClose}
@@ -1323,27 +1323,25 @@ function RoomSummery(props) {
         tempUnitString = cLogo;
     }
 
-    let { rooms, pick, user } = useSelector(state => ({
+    let { rooms, pick, user, pending } = useSelector(state => ({
         rooms: state.growRooms.rooms,
         pick: state.growRooms.roomIndex,
-        user: state.users.user
+        user: state.users.user,
+        pending: state.growRooms.pending
 
     }), shallowEqual)
-    console.log(rooms);
-    console.log(user)
-    console.log(pick);
 
+    // console.log(rooms)
     useEffect(() => {
-        // if (rooms === undefined || rooms[0].stage === "loading" || user.example && user !== undefined) {
-        //     if(user.example){
-        //         props.setExampleRooms()
-        //     }else if(rooms[0].ownerID === undefined){
-        //         console.log(" Room summery getting Rooms from DB");
-        //         props.getRooms(user)
-        //     }    
-            
-
-        // }
+        // console.log(pending !== true && user.UID !== undefined && rooms[0].ownerID === undefined)
+        if (pending !== true && user.UID !== undefined && rooms[0].ownerID === undefined) {
+            if(user.example){
+                props.setExampleRooms()
+            }else if( rooms[0].ownerID === undefined){
+                props.getRooms(user)
+                props.pendingRooms()
+            }
+        }
     })
 
 //check if data has loaded and if not display loading text
@@ -1472,7 +1470,7 @@ function mapStateToProps({ state }) {
 }
 
 const formedComponent = compose(
-    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom, setExampleRooms:setExampleRooms })
+    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom, setExampleRooms:setExampleRooms, pendingRooms:pendingRooms })
 )(RoomSummery);
 
 export default formedComponent;

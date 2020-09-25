@@ -78,15 +78,7 @@ const HighestProgress = (props) => {
 
     }), shallowEqual)
 
-    // useEffect(() => {
-    //     if (rooms === undefined || rooms[0].stage === "loading") {
-    //         console.log(user)
-    //         if(user.uid !== undefined){
-    //             props.getRooms(user.uid)
-    //         }
-    //     }
-    // })
-
+   
     //check if data has loaded and if not display loading text
     if (rooms === undefined || rooms.length === 0) {
         console.log("loading Room data")

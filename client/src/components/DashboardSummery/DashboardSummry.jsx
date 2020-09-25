@@ -129,19 +129,19 @@ function DashboardSummry(props) {
 
     }), shallowEqual)
 
-    console.log(rooms)
+    // console.log(rooms)
     useEffect(() => {
-        console.log(pending);
-        console.log(!pending && rooms === undefined  || user.example)
-        if (!pending && rooms === undefined  || user.example) {
-            
-            console.log(rooms[0].ownerID === undefined);
+        // console.log("use effect")
+        // console.log(pending);
+        // console.log(rooms);
+        // console.log(user)
+        // console.log(pending !== true && user.UID !== undefined && rooms[0].ownerID === undefined)
+        if (pending !== true && user.UID !== undefined && rooms[0].ownerID === undefined) {
             if(user.example){
                 props.setExampleRooms()
             }else if( rooms[0].ownerID === undefined){
-                console.log()
-                props.pendingRooms()
                 props.getRooms(user)
+                props.pendingRooms()
             }
             
 

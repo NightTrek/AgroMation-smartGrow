@@ -9,7 +9,6 @@ export const pendingRooms = () => dispatch => {
 
 export const getRooms = (User) => async dispatch => {
     //try and get the rooms usingthe location ID provided
-    console.log(User)
     if (User !== undefined && User.UID !== undefined) {
         if (User.accountOwner == null && User.UID !== undefined) {
             //when the Owner ID is null us the UID for the user account

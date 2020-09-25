@@ -206,12 +206,12 @@ const GreenIntensitySlider = withStyles({
         minHeight: "192px",
         "& .MuiSlider-track": {
             width: 32,
-            background: 'linear-gradient(green, black)',
+            background: 'linear-gradient(blue, black)',
             borderRadius: " 0 0 24px 24px",
         },
         "& .MuiSlider-rail": {
             width: 30,
-            background: 'linear-gradient(green, black)',
+            background: 'linear-gradient(blue, black)',
             borderRadius: "24px",
         },
         "& .MuiSlider-markLabel": {

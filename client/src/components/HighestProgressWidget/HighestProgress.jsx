@@ -8,7 +8,7 @@ import { VictoryPie } from "victory";
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 
-import { getRooms, setRoom } from "../../actions/rooms";
+import { getRooms, setRoom } from "../../actions/roomActions";
 
 
 const exampleProgressData = {

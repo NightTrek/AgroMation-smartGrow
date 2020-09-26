@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector, shallowEqual } from "react-redux";
 import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
@@ -182,7 +182,7 @@ const YellowIntensitySlider = withStyles({
         }
     }
 })(Slider);
-const GreenIntensitySlider = withStyles({
+const BlueIntensitySlider = withStyles({
     root: {
         color: '#52af77',
 
@@ -257,7 +257,7 @@ const useStyles = makeStyles((theme) => ({
         maxHeight: "256px",
         position: "relative",
     },
-    sliderBackround: {
+    sliderBackground: {
         background: theme.palette.secondary.dark,
         minWidth: "64px",
         maxWidth: "192px",
@@ -369,7 +369,7 @@ const PowerIntensity = (props) => {
             ThumbComponent={ThumbComponent}
             onChange={handleSliderChange}
         />,
-        <GreenIntensitySlider
+        <BlueIntensitySlider
             orientation="vertical"
             defaultValue={defaultValue}
             aria-labelledby="vertical-slider"
@@ -445,6 +445,14 @@ export const LightingController = (props) => {
     const theme = useTheme();
     const lightZoneArray = props.lightZoneArray || exampleLightZoneArray;
 
+    let { rooms, pick, user, pending } = useSelector(state => ({
+        rooms: state.growRooms.rooms,
+        pick: state.growRooms.roomIndex,
+        user: state.users.user,
+        pending: state.growRooms.pending
+
+    }), shallowEqual)
+
     const [state, setState] = useState({
         lightZoneArray: lightZoneArray,
         currentZone: 0,
@@ -465,11 +473,8 @@ export const LightingController = (props) => {
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
     }
-    // const printState = () => {
-    //     var filterState = gridApi.getFilterModel();
-    //     console.log('filterState: ', filterState);
 
-    // };
+    
 
     const handleChange = (event) => {
         gridApi.setFilterModel({

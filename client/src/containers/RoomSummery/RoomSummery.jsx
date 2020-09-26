@@ -18,7 +18,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 
 
 //Redux actions
-import { getRooms, setRoom, setExampleRooms, pendingRooms } from "../../actions/rooms";
+import { getRooms, setRoom, setExampleRooms, pendingRooms } from "../../actions/roomActions";
 
 
 function DiagnosticColorBar(props) {

@@ -1,16 +1,12 @@
-
-import { GET_ROOMS, SET_ROOM, PENDING_ROOMS } from "./types"
-import { ExampleRoomData } from "../exampleDataTypes/clientExamlpeDataTypes";
+import {FETCH_ZONES, PENDING_ZONES } from "./types";
 import { db } from "../consts/firebase";
+import {exampleLightZoneArray} from "../exampleDataTypes/clientExamlpeDataTypes"
 
-export const pendingRooms = () => dispatch => {
-    dispatch({type: PENDING_ROOMS, payload:true});
-}
 
-export const getRooms = (User) => async dispatch => {
-    //try and get the rooms usingthe location ID provided
-    if (User !== undefined && User.UID !== undefined) {
-        if (User.accountOwner == null && User.UID !== undefined) {
+export const fetchZones = (room) => async dispatch => {
+    //try and get the rooms using the location ID provided
+    if (room !== undefined ) {
+        if (!room.example  && room.Zones !== undefined) {
             //when the Owner ID is null us the UID for the user account
             console.log(`querying rooms for id ${User.UID}`)
             db.collection("Rooms").where("ownerID", "==", User.UID)
@@ -40,19 +36,15 @@ export const getRooms = (User) => async dispatch => {
                 });
         }
         else {
+
             //try and Use the Owner ID as the UID
         }
     }
 
 };
 
-export const setExampleRooms = () => dispatch => {
+export const setExampleZones = () => dispatch => {
     let result = ExampleRoomData;
     console.log("dispatching Example room data")
     dispatch({ type: GET_ROOMS, payload: result })
 }
-
-export const setRoom = (formProps) => async dispatch => {
-    console.log("dispatching room index")
-    dispatch({ type: SET_ROOM, payload: formProps })
-};

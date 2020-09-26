@@ -11,7 +11,7 @@ export const ADD_GROWROOM = 'ADD_GROWROOM';
 export const GROWROOM_ERROR = 'GROWROOM_ERROR';
 
 
-export const FETCH_RECENT = 'FETCH_RECENT';
+
 export const FETCH_USER = 'FETCH_USER';
 export const FETCH_USER_PENDING = 'FETCH_USER_PENDING';
 
@@ -21,3 +21,7 @@ export const SET_LOCATION = 'SET_LOCATION';
 export const SET_ROOM = 'SET_ROOM';
 export const GET_ROOMS = 'GET_ROOMS';
 export const PENDING_ROOMS = 'PENDING_ROOMS';
+export const FETCH_RECENT = 'FETCH_RECENT';
+
+export const FETCH_ZONES = 'FETCH_ZONES';
+export const PENDING_ZONES = "PENDING_ZONES";

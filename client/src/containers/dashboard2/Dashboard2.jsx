@@ -1,9 +1,7 @@
 import React from 'react';
-import { compose } from "redux";
-import { connect  } from "react-redux";
 //import axios from "axios";
 //redux actions
-import { getRooms, setRoom } from "../../actions/rooms";
+// import { getRooms, setRoom } from "../../actions/roomActions";
 
 
 //import components

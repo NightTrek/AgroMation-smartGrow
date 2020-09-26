@@ -20,7 +20,8 @@ export const getRooms = (User) => async dispatch => {
                         let roomArray = [];
                         querySnapshot.forEach((doc) => {
                             if (doc.exists) {
-                                roomArray.push(doc.data());
+                                roomArray.push({doc:doc.id, ...doc.data()}
+                                    );
                                 
                             } else {
                                 console.log("Error doc OUT OF RANGE")

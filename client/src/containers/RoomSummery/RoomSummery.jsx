@@ -19,6 +19,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 
 //Redux actions
 import { getRooms, setRoom, setExampleRooms, pendingRooms } from "../../actions/roomActions";
+import {resetPendingZones, resetZones} from "../../actions/LightZoneActions";
 
 
 function DiagnosticColorBar(props) {
@@ -1390,7 +1391,8 @@ if (rooms === undefined || rooms.length === 0) {
     const handleChange = (event) => {
         // console.log(name);
         props.setRoom(event.target.value)
-        // props.setRoom(event.target.value);
+        props.resetPendingZones();
+        props.resetZones();
     };
 
     const handleRightShift = () => {
@@ -1469,13 +1471,14 @@ if (rooms === undefined || rooms.length === 0) {
     )
 }
 
+const roomSummeryActions = { getRooms: getRooms, setRoom: setRoom, setExampleRooms:setExampleRooms, pendingRooms:pendingRooms, resetPendingZones:resetPendingZones, resetZones:resetZones }
 
 function mapStateToProps({ state }) {
     return { state };
 }
 
 const formedComponent = compose(
-    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom, setExampleRooms:setExampleRooms, pendingRooms:pendingRooms })
+    connect(mapStateToProps, roomSummeryActions)
 )(RoomSummery);
 
 export default formedComponent;

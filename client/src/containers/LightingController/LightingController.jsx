@@ -450,15 +450,15 @@ const LightingController = (props) => {
         rooms: state.growRooms.rooms,
         pick: state.growRooms.roomIndex,
         user: state.users.user,
-        lightZones: state.lightZones,
-        pending: state.lightZones
+        lightZones: state.LightZones.zoneArray,
+        pending: state.LightZones.pendingZones
 
     }), shallowEqual)
 
     useEffect(() => {
         // console.log(pending !== true && user !== undefined && rooms[0].ownerID === undefined)
         // console.log(user)
-        if (pending !== true && user !== undefined && rooms[pick].Zones !== undefined) {
+        if (pending !== true && user !== undefined && rooms[pick] !== undefined) {
             if(user.example){
                 props.setExampleZones()
             }else if(user.UID !== undefined  && rooms[pick].Zones !== undefined){
@@ -468,6 +468,7 @@ const LightingController = (props) => {
             }
         }
     })
+    
 
     if (rooms === undefined || rooms.length === 0) {
         rooms = [
@@ -486,28 +487,53 @@ const LightingController = (props) => {
         ]
         pick = 0;
     }
-
+    // console.log(lightZones.length)
     //check if zones are undefined and put loading data
-    if(lightZones === undefined || lightZones.length === 0){
-        lightZones = [
-            {
-                id: 1,
-                name: "Loading Zones",
-                active: false,
-                activeCount: 6,
-                fault: 0,
-                intensity: 50,
-                red: 50,
-                yellow: 50,
-                blue: 50,
-                timeOn:"1111",
-                timeOff:"1111",
-                dateFirstStarted:0,
-                totalRuntime:0
-            },
-        ]
+    
+    if(lightZones.length === 0){
+        if(rooms.Zones === undefined){
+            lightZones = [
+                {
+                    id: 1,
+                    example:true,
+                    name: "No Zones set up in this room",
+                    active: false,
+                    activeCount: 0,
+                    fault: 0,
+                    intensity: 50,
+                    red: 50,
+                    yellow: 50,
+                    blue: 50,
+                    timeOn:"NaN",
+                    timeOff:"NaN",
+                    dateFirstStarted:0,
+                    totalRuntime:0
+                },
+            ]
+        }
+        else{
+            lightZones = [
+                {
+                    id: 1,
+                    example:true,
+                    name: "Loading Zones",
+                    active: false,
+                    activeCount: 6,
+                    fault: 0,
+                    intensity: 50,
+                    red: 50,
+                    yellow: 50,
+                    blue: 50,
+                    timeOn:"1111",
+                    timeOff:"1111",
+                    dateFirstStarted:0,
+                    totalRuntime:0
+                },
+            ]
+        }
+        
     }
-
+    
     
 
     const [state, setState] = useState({
@@ -524,7 +550,6 @@ const LightingController = (props) => {
     const [gridApi, setGridApi] = useState(null);
     const [gridColumnApi, setGridColumnApi] = useState(null);
 
-    const [rowData, setRowData] = useState(exampleLightZoneArray);
 
     function onGridReady(params) {
         setGridApi(params.api);
@@ -610,9 +635,18 @@ const LightingController = (props) => {
         })
     }
 
-    const postSpectrumValues = (values) => {
-
-        console.log(values)
+    const numberOfActiveZones = () => {
+        let count = 0;
+        if(lightZones.length >0){
+            lightZones.forEach((item) =>{
+                if(item.active){
+                    count++
+                }
+            })
+            return count;
+        }
+        else{return 0}
+        
     }
 
     return (
@@ -620,7 +654,7 @@ const LightingController = (props) => {
             {/* This is the topBar */}
             <Grid item container direction={"row"} spacing={5} style={{ paddingTop: "12px" }}>
                 <Grid item xs style={{ marginLeft: "24px" }}>
-                    <Typography variant={"h5"}>{`(${state.lightZoneArray[state.currentZone].activeCount}) Lights Active`}</Typography>
+                    <Typography variant={"h5"}>{`(${numberOfActiveZones()}) Light Zones Active`}</Typography>
                 </Grid>
                 <Grid item xs></Grid>
                 <Grid item><IconButton onClick={openSpectrumControl}><WavesIcon color={"primary"} /></IconButton></Grid>
@@ -634,7 +668,7 @@ const LightingController = (props) => {
             <Grid item container direction={'row'} style={{ marginLeft: "24px", marginTop: "24px" }}>
                 <div className="ag-theme-alpine-dark" style={{ minHeight: '300px', minWidth: '200px', width: "98%" }}>
                     <AgGridReact
-                        rowData={rowData}
+                        rowData={lightZones}
                         rowSelection="multiple"
                         rowMultiSelectWithClick={true}
                         animateRows={true}

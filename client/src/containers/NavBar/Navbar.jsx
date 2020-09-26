@@ -188,7 +188,7 @@ const useStyles = makeStyles((theme) => ({
 
     useEffect(()=>{
         // if(auth.uid === )
-        if(!pending && user.firstName === undefined || user.location.length === undefined ){
+        if(!pending && user.firstName === undefined && auth.uid !== undefined){
             // console.log(user);
             props.fetchUserPending()
             props.fetchUser(auth.uid)
@@ -237,7 +237,8 @@ const useStyles = makeStyles((theme) => ({
     
     const getPageNameFromAddress = () => {
         const array = PageName.pathname.split('/');
-        return array[1];
+        const name =array[1]
+        return name.charAt(0).toUpperCase()+name.slice(1);
     }
 
     const menuIcons = [<DashboardIcon data-index={"dashboard"} color={"primary"} />, <BusinessIcon data-index={"rooms"} color={"primary"} />, <GroupIcon data-index={"users"} color={"primary"} />, <SettingsIcon data-index={"settings"} color={"primary"} />, <ExitToAppIcon data-index={'signout'} color={"primary"}/>]

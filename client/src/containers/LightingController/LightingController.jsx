@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect, useSelector, shallowEqual } from "react-redux";
+import { compose } from "redux";
 import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
@@ -13,7 +14,7 @@ import ScheduleIcon from '@material-ui/icons/Schedule';
 import CancelIcon from '@material-ui/icons/Cancel';
 //my imports 
 import { exampleLightZoneArray } from "../../exampleDataTypes/clientExamlpeDataTypes";
-
+import { fetchZones, pendingZones, setExampleZones, resetPendingZones} from "../../actions/LightZoneActions";
 
 
 function valuetext(value) {
@@ -440,18 +441,74 @@ const activeIndicator = (props) => {
 
 
 
-export const LightingController = (props) => {
+const LightingController = (props) => {
     const classes = useStyles();
     const theme = useTheme();
     const lightZoneArray = props.lightZoneArray || exampleLightZoneArray;
 
-    let { rooms, pick, user, pending } = useSelector(state => ({
+    let { rooms, pick, user, lightZones, pending } = useSelector(state => ({
         rooms: state.growRooms.rooms,
         pick: state.growRooms.roomIndex,
         user: state.users.user,
-        pending: state.growRooms.pending
+        lightZones: state.lightZones,
+        pending: state.lightZones
 
     }), shallowEqual)
+
+    useEffect(() => {
+        // console.log(pending !== true && user !== undefined && rooms[0].ownerID === undefined)
+        // console.log(user)
+        if (pending !== true && user !== undefined && rooms[pick].Zones !== undefined) {
+            if(user.example){
+                props.setExampleZones()
+            }else if(user.UID !== undefined  && rooms[pick].Zones !== undefined){
+                console.log("fetching zones from db")
+                props.fetchZones(rooms[pick])
+                props.pendingZones()
+            }
+        }
+    })
+
+    if (rooms === undefined || rooms.length === 0) {
+        rooms = [
+            {
+                name: "Loading rooms",
+                tempSetPoint: 72,
+                humiditySetPoint: 44,
+                CO2SetPoint: 3000,
+                pressureSetPont: 1114,
+                stage: "loading",
+                dateStarted: 1597017600,
+                CloneTime: 864000,
+                VegTime: 3024000,
+                FlowerTime: 2419200,
+            },
+        ]
+        pick = 0;
+    }
+
+    //check if zones are undefined and put loading data
+    if(lightZones === undefined || lightZones.length === 0){
+        lightZones = [
+            {
+                id: 1,
+                name: "Loading Zones",
+                active: false,
+                activeCount: 6,
+                fault: 0,
+                intensity: 50,
+                red: 50,
+                yellow: 50,
+                blue: 50,
+                timeOn:"1111",
+                timeOff:"1111",
+                dateFirstStarted:0,
+                totalRuntime:0
+            },
+        ]
+    }
+
+    
 
     const [state, setState] = useState({
         lightZoneArray: lightZoneArray,
@@ -760,12 +817,13 @@ export const LightingController = (props) => {
     )
 }
 
-const mapStateToProps = (state) => ({
 
-})
-
-const mapDispatchToProps = {
-
+function mapStateToProps({ state }) {
+    return { state };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LightingController)
+const formedComponent = compose(
+    connect(mapStateToProps, {fetchZones:fetchZones, pendingZones:pendingZones, resetPendingZones:resetPendingZones, setExampleZones:setExampleZones})
+)(LightingController);
+
+export default formedComponent;

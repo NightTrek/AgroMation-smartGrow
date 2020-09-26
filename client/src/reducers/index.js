@@ -4,10 +4,11 @@ import { reducer as form } from 'redux-form';
 import auth from './auth';
 import users from './Users';
 import growRooms from './GrowRooms';
+import LightZones from './LightZones';
 
 export default combineReducers({
   auth,
-  form,
   growRooms,
-  users
+  users,
+  LightZones
 });

@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 class Signout extends Component {
   componentDidMount() {
     this.props.firebaseSignOut();
-    this.props.history.push("/");
+    this.props.history.push("/Dashboard");
   }
 
   render() {

@@ -3,7 +3,7 @@ import React from 'react'
 import { Container, Grid, makeStyles, withStyles, Tab, Tabs } from '@material-ui/core'
 import RoomSummery from '../RoomSummery/RoomSummery'
 import { PrimaryLineChart } from '../PrimaryLineChart/PrimaryLineChart';
-import { LightingController } from '../LightingController/LightingController';
+import LightingController  from '../LightingController/LightingController';
 
 
 

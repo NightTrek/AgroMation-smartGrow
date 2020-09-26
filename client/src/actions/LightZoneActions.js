@@ -1,50 +1,47 @@
-import {FETCH_ZONES, PENDING_ZONES } from "./types";
+import { FETCH_ZONES, PENDING_ZONES } from "./types";
 import { db } from "../consts/firebase";
-import {exampleLightZoneArray} from "../exampleDataTypes/clientExamlpeDataTypes"
+import { exampleLightZoneArray } from "../exampleDataTypes/clientExamlpeDataTypes"
 
+export const pendingZones = () => dispatch => {
+    console.log("pending zones")
+    dispatch({ type: PENDING_ZONES, payload: true });
+}
+export const resetPendingZones = () => dispatch => {
+    dispatch({ type: PENDING_ZONES, payload: false });
+}
 
 export const fetchZones = (room) => async dispatch => {
     //try and get the rooms using the location ID provided
-    if (room !== undefined ) {
-        if (!room.example  && room.Zones !== undefined) {
-            //when the Owner ID is null us the UID for the user account
-            console.log(`querying rooms for id ${User.UID}`)
-            db.collection("Rooms").where("ownerID", "==", User.UID)
-                .get()
-                .then((querySnapshot) => {
-                    if (!querySnapshot.empty) {
-                        let roomArray = [];
-                        querySnapshot.forEach((doc) => {
-                            if (doc.exists) {
-                                roomArray.push(doc.data());
-                                
-                            } else {
-                                console.log("Error doc OUT OF RANGE")
-                            }
-                        });
+    
+    console.log(room);
+    if (room !== undefined && room.Zones !== undefined) {
+        //when the Owner ID is null us the UID for the user account
+        console.log(`querying zones for room for id ${room.name}`)
+        let newZoneArray = [];
+        room.Zones.forEach((item, index) => {
+            item.zoneRef.get().then((doc) => {
+                if(doc.exists){
+                    newZoneArray.push(doc.data())
+                }else{
+                    console.log("zone undefined")
+                }
 
-                        dispatch({ type: GET_ROOMS, payload: roomArray })
-                    }
-                    else {
-                        console.log("Nothing found for that User account")
-                        // dispatch({ type: FETCH_USER, payload: exampleAccount });
-                    }
+            }).catch((err) => {
+                console.log(err);
+            })
+        })
+        dispatch({type:FETCH_ZONES, payload:newZoneArray});
+        // if(newZoneArray.length === room.Zones.length){
+            
+        // }
 
-                }).catch((error) => {
-                    console.log(error)
-                    // dispatch({ type: FETCH_USER, payload: exampleAccount });
-                });
-        }
-        else {
-
-            //try and Use the Owner ID as the UID
-        }
     }
 
 };
 
+
 export const setExampleZones = () => dispatch => {
-    let result = ExampleRoomData;
+    let result = exampleLightZoneArray;
     console.log("dispatching Example room data")
-    dispatch({ type: GET_ROOMS, payload: result })
+    dispatch({ type: FETCH_ZONES, payload: result })
 }

@@ -16,6 +16,7 @@ import { sampleTempData, sampleHumidityData, sampleProgressData, sampleCO2Data }
 import './style.css';
 import VerticalDividerStyled from "../VerticalDivider/VerticalDivider"
 import { getRooms, setRoom, setExampleRooms, pendingRooms } from "../../actions/roomActions";
+import {resetPendingZones} from "../../actions/LightZoneActions";
 
 
 
@@ -199,6 +200,7 @@ function DashboardSummary(props) {
 
     const handleChange = (event) => {
         props.setRoom(event.target.value);
+        props.resetPendingZones();
     };
 
     return (
@@ -252,7 +254,7 @@ function mapStateToProps({ state }) {
 }
 
 const formedComponent = compose(
-    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom, setExampleRooms:setExampleRooms, pendingRooms:pendingRooms })
+    connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom, setExampleRooms:setExampleRooms, pendingRooms:pendingRooms, resetPendingZones:resetPendingZones })
 )(DashboardSummary);
 
 export default formedComponent;

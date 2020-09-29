@@ -187,12 +187,13 @@ const useStyles = makeStyles((theme) => ({
     
 
     useEffect(()=>{
-        // if(auth.uid === )
-        if(!pending && user.firstName === undefined && auth !== undefined&& auth.uid !== undefined){
-            // console.log(user);
-            props.fetchUserPending()
-            props.fetchUser(auth.uid)
-            
+        if(auth !== null  ){
+            if(!pending && user.firstName === undefined &&  auth.uid !== undefined){
+                // console.log(user);
+                props.fetchUserPending()
+                props.fetchUser(auth.uid)
+                
+            }
         }
     })
     

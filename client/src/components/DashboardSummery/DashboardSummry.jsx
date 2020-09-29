@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
             maxWidth: "256px",
             
         },
-        '@media (max-width: 320px)':{
+        '@media (max-width: 330px)':{
             maxWidth: "212px",
             
         }
@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
             fontSize: 14,
             
         },
-        '@media (max-width: 320px)':{
+        '@media (max-width: 330px)':{
             fontSize: 12,
             
         }

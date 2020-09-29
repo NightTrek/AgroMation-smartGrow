@@ -1,6 +1,6 @@
-import React,{useEffect} from 'react'
+import React, { useEffect } from 'react'
 import { compose } from "redux";
-import { connect, useSelector, shallowEqual  } from 'react-redux'
+import { connect, useSelector, shallowEqual } from 'react-redux'
 import { Grid, Typography, List, ListItem, Button } from '@material-ui/core'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { getRooms, setRoom } from "../../actions/roomActions";
@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     LiveDataWidget: {
         background: theme.palette.secondary.main,
         color: theme.palette.text.main,
-        minWidth: "256px",
+        minWidth: "128px",
         maxWidth: "1248px",
         minHeight: "128px",
         // marginLeft:"32px",
@@ -113,39 +113,45 @@ const LiveDataWidget = (props) => {
     return (
         <Grid item container className={classes.LiveDataWidget} direction={"column"}>
             <Grid item container direction={"row"}>
-                <Grid container item xs direction={"column"}>
+                <Grid container item xs={6} sm={2} md direction={"column"}>
                     <Grid item>
-                    <Typography variant={"h5"} style={{ paddingLeft: "12px" }}>Live Data:</Typography>
+                        <Typography variant={"h5"} style={{ paddingLeft: "12px" }}>Live Data:</Typography>
                     </Grid>
                     <Grid item>
-                    <Typography variant={"h6"} style={{ paddingLeft: "12px" }}>{rooms[pick].name}</Typography>
+                        <Typography variant={"h6"} style={{ paddingLeft: "12px" }}>{rooms[pick].name}</Typography>
                     </Grid>
                 </Grid>
-                <Grid item xs>
+            </Grid>
+            <Grid item container direction={"row"}>
+                <Grid item xs={6} sm={3} md>
                     <List>
                         <ListItem> Temperature</ListItem>
                         <ListItem> <Typography variant={"h4"} style={{ color: LiveData.TempColor }}> {LiveData.Temp}</Typography></ListItem>
                     </List>
                 </Grid>
-                <Grid item xs>
+                <Grid item xs={6} sm={3} md>
                     <List>
                         <ListItem> Humidity</ListItem>
                         <ListItem> <Typography variant={"h4"} style={{ color: LiveData.humidityColor }}>{LiveData.humidity}</Typography></ListItem>
                     </List>
                 </Grid>
-                <Grid item xs>
+                <Grid item xs={6} sm={3} md>
                     <List>
                         <ListItem> CO2 level</ListItem>
                         <ListItem> <Typography variant={"h4"} style={{ color: LiveData.CO2Color }}>{LiveData.CO2Level}</Typography></ListItem>
                     </List>
                 </Grid>
-                <Grid item xs>
+                <Grid item xs={6} sm={3} md>
                     <List>
                         <ListItem> Pressure level</ListItem>
                         <ListItem> <Typography variant={"h4"} style={{ color: LiveData.PressureColor }}>{LiveData.PressureLevel}</Typography></ListItem>
                     </List>
                 </Grid>
+            </Grid>
+            <Grid item container direction={"row"}>
                 <Grid item xs>
+                </Grid>
+                <Grid item xs={6} sm={2} md>
                     <Button variant="outlined" color="primary" onClick={handleShowRoom}>
                         Show Room
                     </Button>

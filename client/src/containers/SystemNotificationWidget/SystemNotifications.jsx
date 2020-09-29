@@ -19,10 +19,64 @@ const useStyles = makeStyles((theme) => ({
     notificationsWidget: {
         background: theme.palette.secondary.main,
         color: theme.palette.text.main,
-        minWidth: "256px",
-        maxWidth: "832px",
+
         minHeight: "360px",
         marginTop: "8px",
+        marginBottom:"8px",
+        '@media (max-width: 1500px)':{
+            minWidth: "512px",
+            maxWidth: "832px",
+            
+        },
+        '@media (max-width: 1200px)':{
+            minWidth: "448px",
+            maxWidth: "640px",
+            
+        },
+        '@media (max-width: 992px)':{
+            minWidth: "320px",
+            maxWidth: "512px",
+            
+        },
+        '@media (max-width: 705px)':{
+            minWidth: "256px",
+            maxWidth: "320px",
+            
+        },
+        '@media (max-width: 640px)':{
+            minWidth: "320px",
+            maxWidth: "512px",
+            
+        },
+        '@media (max-width: 460px)':{
+            minWidth:"300px",
+            maxWidth: "300px",
+            
+        },
+        '@media (max-width: 400px)':{
+            minWidth:"256px",
+            maxWidth: "256px",
+            
+        },
+        '@media (max-width: 330px)':{
+            minWidth:"212px",
+            maxWidth: "212px",
+            
+        }
+    },
+    headerText:{
+        '@media (max-width: 460px)':{
+            fontSize: 14,
+            
+        },
+        '@media (max-width: 400px)':{
+            fontSize: 14,
+            
+        },
+        '@media (max-width: 330px)':{
+            fontSize: 12,
+            
+        }
     },
     notificationsList: {
         minWidth: "256px",
@@ -33,9 +87,22 @@ const useStyles = makeStyles((theme) => ({
         color: "white",
         height:"48px",
         width:"48px",
+        marginRight:"48px"
     },
     listItemIcon:{
-        color: theme.palette.text.main
+        color: theme.palette.text.main,
+        '@media (max-width: 460px)':{
+            
+            
+        },
+        '@media (max-width: 400px)':{
+            marginRight:"-24px"
+            
+        },
+        '@media (max-width: 320px)':{
+            fontSize:"medium"
+            
+        }
     },
     warning: {
         // background:theme.palette.roomStatus.warning,
@@ -113,6 +180,57 @@ const useStyles = makeStyles((theme) => ({
         paddingRight: "8px",
         // color: theme.palette.secondary.main
     },
+    globalListItemQueries:{
+        '@media (max-width: 705px)':{
+            maxWidth:"236px"
+            
+        },
+        '@media (max-width: 640px)':{
+            minWidth: "310px",
+            maxWidth: "448px",
+            
+        },
+        '@media (max-width: 460px)':{
+            minWidth: "224px",
+            maxWidth:"256px"
+            
+        },
+        '@media (max-width: 400px)':{
+            minWidth: "200px",
+            maxWidth:"224px"
+            
+        },
+        '@media (max-width: 330px)':{
+            minWidth: "128px",
+            maxWidth:"192px"
+            
+        }
+    },
+    globalListItemText:{
+        "& .MuiTypography-displayBlock":{
+            '@media (max-width: 705px)':{
+                fontSize: 12,
+                
+            },
+            '@media (max-width: 640px)':{
+                fontSize: 14,
+                
+            },
+            '@media (max-width: 460px)':{
+                fontSize: 12,
+                
+            },
+            '@media (max-width: 400px)':{
+                fontSize: 10,
+                
+            },
+            '@media (max-width: 330px)':{
+                fontSize: 8,
+                
+            }
+        }
+        
+    }
 
 }));
 
@@ -134,8 +252,11 @@ const NotificationsListItems = (props, style) => {
                 case "warning":
                     if (props.pick === 0 || props.pick === 2) {
                         return (
-                            <ListItem button alignItems="flex-start" style={style} className={classes.warningItem} key={index}>
-                                <ListItemIcon ><ErrorRoundedIcon className={classes.listItemIcon} /></ListItemIcon><ListItemText >{item.room + ": "}</ListItemText><ListItemText className={classes.warningText}> {item.msg + " "}</ListItemText><ListItemText >{itemTime.format('HH:mm, MM:DD:YYYY')}</ListItemText>
+                            <ListItem button alignItems="flex-start" style={style} className={`${classes.warningItem} ${classes.globalListItemQueries}`} key={index}>
+                                <ListItemIcon className={classes.listItemIcon} ><ErrorRoundedIcon className={classes.listItemIcon} /></ListItemIcon>
+                                <ListItemText className={`${classes.globalListItemText}`} >{item.room + ": "}</ListItemText>
+                                <ListItemText className={`${classes.globalListItemText} ${classes.warningText}`}> {item.msg + " "}</ListItemText>
+                                <ListItemText className={`${classes.globalListItemText}`}>{itemTime.format('HH:mm, MM:DD:YYYY')+ " "}</ListItemText>
                             </ListItem>
                         )
                     }
@@ -143,8 +264,11 @@ const NotificationsListItems = (props, style) => {
                 case "FAULT":
                     if (props.pick === 1 || props.pick === 2) {
                         return (
-                            <ListItem button alignItems="flex-start" style={style} className={classes.faultItem} key={index}>
-                                <ListItemIcon ><BrokenImageIcon className={classes.listItemIcon} /></ListItemIcon><ListItemText >{item.room + ": "}</ListItemText><ListItemText className={classes.faultText}>{item.msg + " "}</ListItemText><ListItemText >{itemTime.format('HH:mm, MM:DD:YYYY')}</ListItemText>
+                            <ListItem button alignItems="flex-start" style={style} className={`${classes.faultItem} ${classes.globalListItemQueries}`} key={index}>
+                                <ListItemIcon className={classes.listItemIcon} ><BrokenImageIcon className={classes.listItemIcon} /></ListItemIcon>
+                                <ListItemText className={`${classes.globalListItemText}`}>{item.room + ": "}</ListItemText>
+                                <ListItemText className={`${classes.globalListItemText} ${classes.faultText}`}>{item.msg + " "}</ListItemText>
+                                <ListItemText className={`${classes.globalListItemText}`}>{itemTime.format('HH:mm, MM:DD:YYYY') + " "}</ListItemText>
                             </ListItem>
                         )
                     }
@@ -152,8 +276,11 @@ const NotificationsListItems = (props, style) => {
                 default:
                     if (props.pick !== 0 && props.pick !== 1) {
                         return (
-                            <ListItem button alignItems="space-evenly" style={style} className={classes.infoItem} key={index}>
-                                <ListItemIcon ><InfoIcon className={classes.listItemIcon} /></ListItemIcon><ListItemText >{item.room + ": "}</ListItemText><ListItemText className={classes.infoText}>{item.room + ": " + item.msg + " "}</ListItemText><ListItemText >{itemTime.format('HH:mm, MM:DD:YYYY')}</ListItemText>
+                            <ListItem button alignItems="space-evenly" style={style} className={`${classes.infoItem} ${classes.globalListItemQueries}`} key={index}>
+                                <ListItemIcon className={classes.listItemIcon} ><InfoIcon className={classes.listItemIcon} /></ListItemIcon>
+                                <ListItemText className={`${classes.globalListItemText}`}>{item.room + ": "}</ListItemText>
+                                <ListItemText className={`${classes.globalListItemText} ${classes.infoText}`} >{item.room + ": " + item.msg + " "}</ListItemText>
+                                <ListItemText className={`${classes.globalListItemText}`}>{itemTime.format('HH:mm, MM:DD:YYYY')+ " "}</ListItemText>
                             </ListItem>
                         )
                     }
@@ -189,12 +316,12 @@ export const SystemNotifications = () => {
         setAnchorEl(null);
     };
     const ITEM_HEIGHT = 48;
-
+//xs={12} sm={6} md
     return (
-        <Grid container item className={classes.notificationsWidget} xs justify={"center"} spacing={1} direction={"column"}>
+        <Grid container item className={classes.notificationsWidget} xs justify={"center"} spacing={1} direction={"column"}> 
             <Grid container item xs direction={"row"}>
                 <Grid container item xs={8}>
-                    <Typography variant={"h5"} style={{ paddingLeft: "12px" }}>System Notifications ({state.notifications.length})</Typography>
+                    <Typography variant={"h5"} className={classes.headerText} style={{ paddingLeft: "12px" }}>System Notifications ({state.notifications.length})</Typography>
                 </Grid>
                 <Grid container item xs>
 

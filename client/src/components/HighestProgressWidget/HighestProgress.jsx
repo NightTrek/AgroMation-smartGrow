@@ -23,14 +23,54 @@ const useStyles = makeStyles((theme) => ({
     ProgressWidget: {
         background: theme.palette.secondary.main,
         color: theme.palette.text.main,
-        minWidth: "256px",
+        minWidth: "192px",
         maxWidth: "416px",
         minHeight: "364px",
         marginTop: "8px",
+        display:"flex",
+        flexGrow:1,
         // marginLeft:"32px",
+        '@media (max-width: 1200px)':{
+            minWidth: "192px",
+            maxWidth: "360px",
+            
+        },
+        '@media (max-width: 1000px)':{
+            minWidth: "192px",
+            maxWidth: "256px",
+            
+        },
+        '@media (max-width: 900px)':{
+            minWidth: "128",
+            maxWidth: "192px",
+            
+        },
+        '@media (max-width: 640px)':{
+            minWidth: "256px",
+            maxWidth: "512px",
+            
+        },
+        '@media (max-width: 460px)':{
+            minWidth: "192px",
+            maxWidth: "300px",
+            
+        },
+        '@media (max-width: 400px)':{
+            minWidth: "128px",
+            maxWidth: "256px",
+            
+        },
+        '@media (max-width: 330px)':{
+            minWidth: "92px",
+            maxWidth: "212px",
+            
+        }
     },
     iconButton: {
         color: "white",
+        width:"48px",
+        height:"48px",
+        // marginRight:"12px"
     },
     pie: {
         width: "192px",
@@ -106,7 +146,7 @@ const HighestProgress = (props) => {
     return (
         <Grid item container className={classes.ProgressWidget} direction={"column"}>
             {/* widget Top bar menu */}
-            <Grid container item xs direction={"row"} className={classes.TopBar}>
+            <Grid container item xs direction={"row"} className={classes.TopBar} wrap={"nowrap"}>
                 <Grid container item xs={8}>
                     <Typography variant={"h5"} style={{ paddingLeft: "12px" }}>Highest Progress</Typography>
                 </Grid>

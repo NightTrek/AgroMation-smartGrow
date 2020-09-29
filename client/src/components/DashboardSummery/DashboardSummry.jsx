@@ -24,7 +24,33 @@ import {resetPendingZones, resetZones} from "../../actions/LightZoneActions";
 const useStyles = makeStyles((theme) => ({
     dashboardSummery: {
         background: theme.palette.secondary.main,
-        color: theme.palette.text.main
+        color: theme.palette.text.main,
+        '@media (max-width: 460px)':{
+            maxWidth: "300px",
+            
+        },
+        '@media (max-width: 400px)':{
+            maxWidth: "256px",
+            
+        },
+        '@media (max-width: 320px)':{
+            maxWidth: "212px",
+            
+        }
+    },
+    Title:{
+        '@media (max-width: 460px)':{
+            fontSize: 18,
+            
+        },
+        '@media (max-width: 400px)':{
+            fontSize: 14,
+            
+        },
+        '@media (max-width: 320px)':{
+            fontSize: 12,
+            
+        }
     },
     formControl: {
         color: theme.palette.text.main,
@@ -36,7 +62,15 @@ const useStyles = makeStyles((theme) => ({
     },
     pieChart: {
         width: "160px",
-        height: "160px"
+        height: "160px",
+        '@media (max-width: 460px)':{
+            width: "128px",
+            height: "128px",
+        },
+        '@media (max-width: 320px)':{
+            width: "92px",
+            height: "92px",
+        }
     },
     legendList: {
         paddingTop: "2px",
@@ -49,8 +83,16 @@ const useStyles = makeStyles((theme) => ({
     },
     legendItem: {
         paddingTop: "2px",
-        paddingBottom: "2px"
+        paddingBottom: "2px",
 
+    },
+    legendText:{
+        '@media (max-width: 460px)':{
+            fontSize:12
+        },
+        '@media (max-width: 320px)':{
+            fontSize:10
+        }
     },
     Divider: {
         background: "white",
@@ -59,6 +101,14 @@ const useStyles = makeStyles((theme) => ({
     color: {
         background: theme.palette.roomStatus.veg
     },
+    roomSelect:{
+        '@media (max-width: 460px)':{
+            fontSize:12
+        },
+        '@media (max-width: 320px)':{
+            fontSize:10
+        }
+    }
 
 }));
 
@@ -70,10 +120,11 @@ const DashboardPieChart = (props) => {
         labels.push(item.y);
         return item.y
     })
+    
 
     return (
         // <Grid item xs={3}>
-        <Grid container item direction="column" justify="center" alignItems="center" spacing={0} xs>
+        <Grid container item direction="column" justify="center" alignItems="center" spacing={0} xs={12} sm={6} md lg>
             <Grid item xs>
                 <Typography variant="subtitle2" className={classes.chartLabel}>{props.chartName}</Typography>
             </Grid>
@@ -97,7 +148,7 @@ const DashboardPieChart = (props) => {
                         // console.log(props.colorScale);
 
                         return (<ListItem key={index} className={classes.legendItem}>
-                            <div className={classes.legendColor} style={{ background: props.colorScale[index] }}></div> <Typography variant={"body2"}>{item.catName}</Typography>
+                            <div className={classes.legendColor} style={{ background: props.colorScale[index] }}></div> <Typography variant={"body2"} className={classes.legendText} >{item.catName}</Typography>
                         </ListItem>);
                     }
                     )}
@@ -130,7 +181,7 @@ function DashboardSummary(props) {
 
     }), shallowEqual)
 
-    // console.log(rooms)
+    // When the global state changes decide if we send example data or load db data
     useEffect(() => {
         // console.log(pending !== true && user !== undefined && rooms[0].ownerID === undefined)
         // console.log(user)
@@ -138,6 +189,7 @@ function DashboardSummary(props) {
         if (pending !== true && user !== undefined && rooms[0].ownerID === undefined) {
             if(user.example){
                 props.setExampleRooms()
+                props.pendingRooms()
             }else if(user.UID !== undefined  && rooms[0].ownerID === undefined){
                 props.getRooms(user)
                 props.pendingRooms()
@@ -208,7 +260,7 @@ function DashboardSummary(props) {
         <Grid container direction="column" justify={"center"} spacing={2} className={classes.dashboardSummery}>
             <Grid container item direction="row" xs>
                 <Grid item xs={2} style={{ paddingLeft: "24px" }}>
-                    <Typography variant={"h6"}>Summary</Typography>
+                    <Typography variant={"h6"} className={classes.Title}>Summary</Typography>
                 </Grid>
                 <Grid item xs ></Grid>
                 <Grid item >
@@ -219,12 +271,13 @@ function DashboardSummary(props) {
                             onChange={handleChange}
                             inputProps={{
                                 name: 'pick',
-                                id: 'Room-Name',
+                                id: 'Room-Name'
                             }}
                             defaultValue={0}
+                            className={classes.roomSelect}
                         >
                             {rooms.map((Item, Index) => (
-                                <MenuItem key={Index} value={Index}>{Item.name}</MenuItem>
+                                <MenuItem key={Index} value={Index} className={classes.roomSelect}>{Item.name}</MenuItem>
                             ))}
                         </Select>
                     </StandardRoundSelectForm>
@@ -233,12 +286,13 @@ function DashboardSummary(props) {
 
             {/* ========= charts start here =================================*/}
             <Grid container item direction="row" xs >
+                {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
                 <DashboardPieChart chartName={"Temp"} classes={classes} theme={theme} dataSet={generateTempData()} colorScale={defaultColorScale} />
-                <VerticalDividerStyled orientation={'vertical'} flexItem />
+                {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
                 <DashboardPieChart chartName={"Humidity"} classes={classes} theme={theme} dataSet={sampleHumidityData} colorScale={defaultColorScale} />
-                <VerticalDividerStyled orientation={'vertical'} flexItem />
+                {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
                 <DashboardPieChart chartName={"CO2"} classes={classes} theme={theme} dataSet={sampleCO2Data} colorScale={defaultColorScale} />
-                <VerticalDividerStyled orientation={'vertical'} flexItem />
+                {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
                 <DashboardPieChart chartName={"Progress"} classes={classes} theme={theme} dataSet={sampleProgressData} colorScale={progressColorScale} />
             </Grid>
         </Grid>

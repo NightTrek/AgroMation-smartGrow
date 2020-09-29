@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { firebaseSignOut } from "../../actions/auth";
+import {resetUserPending, resetUser} from "../../actions/User";
 import { connect } from "react-redux";
 
 class Signout extends Component {
@@ -17,4 +18,4 @@ function mapStateToProps(state) {
   return { state };
 }
 
-export default connect(mapStateToProps, { firebaseSignOut })(Signout);
+export default connect(mapStateToProps, { firebaseSignOut,  resetUserPending, resetUser})(Signout);

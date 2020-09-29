@@ -768,7 +768,7 @@ const LightingController = (props) => {
                                 <Box style={{ marginLeft: "48px", marginBottom: "24px" }}>
                                     <PowerIntensity />
                                 </Box>
-                                <div className="ag-theme-balham-dark" style={{ width: "50%", height: "256px", marginLeft: "24px", marginTop:"28px" }}>
+                                <div className="ag-theme-balham-dark" style={{ width: "50%", height: "256px", marginLeft: "48px", marginTop:"28px" }}>
                                     <AgGridReact
                                         rowData={state.selectedZones}
                                         defaultColDef={{

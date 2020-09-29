@@ -3,9 +3,14 @@ import { exampleAccount } from "../exampleDataTypes/clientExamlpeDataTypes";
 import { db } from "../consts/firebase";
 
 export const fetchUserPending = (user) => dispatch => {
-
     dispatch({type: FETCH_USER_PENDING, payload: true})
-   
+}
+export const resetUserPending = () => dispatch => {
+    dispatch({type: FETCH_USER_PENDING, payload: false})
+}
+
+export const resetUser = () => dispatch => {
+    dispatch({ type: FETCH_USER, payload: {} });
 }
 
 export const fetchUser = (UID) => async dispatch => {

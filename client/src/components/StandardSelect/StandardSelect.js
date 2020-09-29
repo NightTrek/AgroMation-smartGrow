@@ -13,6 +13,11 @@ export const StandardRoundSelectForm = withStyles((theme) => ({
         paddingRight: '20px',
         "& .muiSelect-select": {
 
+        },
+        '@media (max-width: 460px)':{
+            maxWidth:"192px",
+            paddingLeft: "12px",
+            paddingRight: '10px',
         }
     },
 

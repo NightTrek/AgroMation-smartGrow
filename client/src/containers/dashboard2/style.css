@@ -2,8 +2,14 @@
     margin-top:20px;
     /* background-color: red; */
     z-index: 10;
+    
+    
 }
-
+@media only screen and (max-width: 400px) {
+    .dashboardMain{
+        max-width: 256px;
+    }
+}
 
 .red{
     background-color: red;

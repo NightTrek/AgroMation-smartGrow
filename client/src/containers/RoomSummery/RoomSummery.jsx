@@ -162,7 +162,6 @@ function TempMeter(props) {
 
 
     const handleMouseEnter = () => {
-        console.log("mouse Enter CO2")
         setLabels([{
             text: `${rooms[pick].tempSetPoint - 20}${tempUnitString}`,
             fontSize: "12px",
@@ -427,7 +426,6 @@ function HumidityMeter(props) {
 
 
     const handleMouseEnter = () => {
-        console.log("mouse Enter CO2")
         setLabels([{
             text: `${rooms[pick].humiditySetPoint - 20}%`,
             fontSize: "12px",
@@ -688,7 +686,6 @@ function CO2LevelMeter(props) {
 
 
     const handleMouseEnter = () => {
-        console.log("mouse Enter CO2")
         setLabels([{
             text: `${rooms[pick].CO2SetPoint - 1000}`,
             fontSize: "12px",

@@ -23,6 +23,7 @@
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "firebase": "^7.21.1",
     "firebase-admin": "^9.2.0",
     "fs": "0.0.1-security",
     "if-env": "^1.0.4",

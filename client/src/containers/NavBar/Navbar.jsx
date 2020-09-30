@@ -187,10 +187,9 @@ const useStyles = makeStyles((theme) => ({
     
 
     useEffect(()=>{
-        console.log(auth);
+;
         if(auth === null){
-            console.log("innder auth");
-            console.log(auth);
+            console.log("auth == null")
         }else if(!pending && user.firstName === undefined &&  auth.uid !== undefined){
                 console.log("getting user");
                 props.fetchUserPending()

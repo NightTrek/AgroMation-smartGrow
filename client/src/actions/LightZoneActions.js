@@ -42,8 +42,13 @@ export const fetchZones = (room) => async dispatch => {
         console.log(`querying zones for room for id ${room.name}`)
         let newZoneArray = [];
         for(let i = 0; i<room.Zones.length; i++){
-            let zone = await getIndividualZone(room.Zones[i].zoneRef)
-            newZoneArray.push(zone);
+            try{
+                let zone = await getIndividualZone(room.Zones[i].zoneRef)
+                newZoneArray.push(zone);
+            }catch(err){
+                console.log(err);
+            }
+            
         }
         dispatch({ type: FETCH_ZONES, payload: newZoneArray });
         // if(newZoneArray.length === room.Zones.length){

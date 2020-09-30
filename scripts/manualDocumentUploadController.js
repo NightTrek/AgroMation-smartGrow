@@ -2,13 +2,14 @@ const F = require("../config/fireAdmin");
 ///hello
 const admin = require('firebase-admin');
 const { db } = require("../config/fireAdmin");
+const { RoomService } = require("@material-ui/icons");
 
 const app = admin.initializeApp({
     credential: admin.credential.cert(F.serviceAccount),
     databaseURL: "https://agromation-grow-room-control.firebaseio.com"
 });
 
-const exampleInputData = {
+const exampleUserData = {
     UID: undefined,
     firstName: "Daniel",
     lastName: " Coffee",
@@ -18,19 +19,19 @@ const exampleInputData = {
     phone: "6503888615",
     location: [
         {
-            name: "Green Gardens",
+            // name: "Green Gardens",
             address: "9898 Trent Bypass suite 541",
             locationID:F.db.collection('Locations').doc('Y1chmcEmlfL1ZAWLVDhK')
         },
         {
             name: "Desert Warhouse",
-            address: "312 Palm Springs Blvd",
-            locationID: F.db.collection('Locations').doc('Y1chmcEmlfL1ZAWLVDhK')
+            // address: "312 Palm Springs Blvd",
+            locationID: F.db.collection('Locations').doc('kpRAIrWLBneVEVsvblkl')
         },
         {
-            name: "Hilltop Garden",
-            address: "420 Trent Bypass suite 541",
-            locationID: F.db.collection('Locations').doc('Y1chmcEmlfL1ZAWLVDhK')
+            // name: "Hilltop Garden",
+            // address: "420 Trent Bypass suite 541",
+            locationID: F.db.collection('Locations').doc('7rKAd9yHpQa5gJ9tbINV')
         },
     ]
 };
@@ -156,23 +157,23 @@ const roomData = [
     }];
 
 const LightZoneArrayAlpha = [
+    // {
+    //     name: "Zone one",
+    //     active: false,
+    //     lightCount: 6,
+    //     fault: false,
+    //     intensity: 50,
+    //     red: 50,
+    //     yellow: 50,
+    //     blue: 50,
+    //     timeOn:"1700",
+    //     timeOff:"0100",
+    //     dateFirstStarted:1234567,
+    //     totalRuntime:12
+    // },
     {
         name: "Zone two",
-        active: false,
-        activeCount: 6,
-        fault: 0,
-        intensity: 50,
-        red: 50,
-        yellow: 50,
-        blue: 50,
-        timeOn:"1700",
-        timeOff:"0100",
-        dateFirstStarted:1234567,
-        totalRuntime:12
-    },
-    {
-        name: "Zone three",
-        active: true,
+        // active: false,
         lightCount: 6,
         fault: false,
         intensity: 50,
@@ -184,48 +185,62 @@ const LightZoneArrayAlpha = [
         dateFirstStarted:1234567,
         totalRuntime:12
     },
-    {
-        name: "Zone four",
-        active:true,
-        lightCount: 6,
-        fault: false,
-        intensity: 50,
-        red: 50,
-        yellow: 50,
-        blue: 50,
-        timeOn:"1700",
-        timeOff:"0100",
-        dateFirstStarted:1234567,
-        totalRuntime:12
-    },
-    {
-        name: "Zone five",
-        active: true,
-        lightCount: 6,
-        fault: false,
-        intensity: 50,
-        red: 50,
-        yellow: 50,
-        blue: 50,
-        timeOn:"1700",
-        timeOff:"0100",
-        dateFirstStarted:1234567,
-        totalRuntime:12
-    },
-    {
-        name: "Zone six",
-        active: true,
-        lightCount: 6,
-        fault: false,
-        intensity: 50,
-        red: 50,
-        yellow: 50,
-        blue: 50,
-        timeOn:"1700",
-        timeOff:"0100",
-        dateFirstStarted:1234567,
-        totalRuntime:12
-    }
+    // {
+    //     name: "Zone three",
+    //     active: true,
+    //     lightCount: 6,
+    //     fault: false,
+    //     intensity: 50,
+    //     red: 50,
+    //     yellow: 50,
+    //     blue: 50,
+    //     timeOn:"1700",
+    //     timeOff:"0100",
+    //     dateFirstStarted:1234567,
+    //     totalRuntime:12
+    // },
+    // {
+    //     name: "Zone four",
+    //     active:true,
+    //     lightCount: 6,
+    //     fault: false,
+    //     intensity: 50,
+    //     red: 50,
+    //     yellow: 50,
+    //     blue: 50,
+    //     timeOn:"1700",
+    //     timeOff:"0100",
+    //     dateFirstStarted:1234567,
+    //     totalRuntime:12
+    // },
+    // {
+    //     name: "Zone five",
+    //     active: true,
+    //     lightCount: 6,
+    //     fault: false,
+    //     intensity: 50,
+    //     red: 50,
+    //     yellow: 50,
+    //     blue: 50,
+    //     timeOn:"1700",
+    //     timeOff:"0100",
+    //     dateFirstStarted:1234567,
+    //     totalRuntime:12
+    // },
+    // {
+    //     name: "Zone six",
+    //     active: true,
+    //     lightCount: 6,
+    //     fault: false,
+    //     intensity: 50,
+    //     red: 50,
+    //     yellow: 50,
+    //     blue: 50,
+    //     timeOn:"1700",
+    //     timeOff:"0100",
+    //     dateFirstStarted:1234567,
+    //     totalRuntime:12
+    // }
     
 ]
 const lightZoneBeta = [
@@ -287,7 +302,9 @@ const lightZoneBeta = [
         totalRuntime:12
     },
 ]
-
+//seems to be working with no validation of the email
+//takes an email string
+//uses the firebase admin to get authdata from the database and using the email provider
 const getUIDFromEmail = (email) => {
     return new Promise((resolve, reject) => {
         app.auth().getUserByEmail(email)
@@ -305,6 +322,7 @@ const getUIDFromEmail = (email) => {
     })
 
 }
+//seems to be working
 //checks if UID is a User and if not its adds a new User and returns a promise.
 //the Promise is resolved with a new document reference. everything else is rejected
 const addUserToFireStore = async (input) => {
@@ -336,6 +354,7 @@ const addUserToFireStore = async (input) => {
     })
 };
 
+//seems to be working
 //checks for UID
 //Checks and validates the location array.
 // checks and validates locationRefs ensures they are refs and not strings
@@ -411,13 +430,16 @@ const UploadUserJsonData = async (input) => {
     //return false with the error code
 }
 
-
+//seems to be working
+//Checks UID for owner User Account document to reference 
+//Checks and validates every single input.
+// checks the Zonearray and makes new one to upload
 const UploadRoom = async (input, UID, ZoneArray) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async(resolve, reject) => {
         //check if UID is valid by finding the document for that UID in the db. reject if it does not exist
         try{
             const UserRecord = await db.collection('Users').where("UID", "==", UID).get()
-            if(!UserRecord.exists){
+            if(UserRecord.empty){
                 reject({msg:"User Record does not exist ", record:UserRecord})
             }
         }catch(err){
@@ -482,15 +504,32 @@ const UploadRoom = async (input, UID, ZoneArray) => {
             reject({msg:"dateStarted invalid or not a number", item:input.dateStarted})
         }
         //validate the Zone Array
+        let Zones = [];
         if(ZoneArray.length === 0){
             reject({msg:"zone array invalid because it has zero length", zoneArray})
         }
         for(let i = 0; i<ZoneArray.length;i++){
-
+            if(ZoneArray[i].docRef){
+                Zones.push({zoneRef:ZoneArray[i].docRef})
+            }
+            else{
+                reject({msg:"Zone Array building error", zoneArray:ZoneArray})
+            }
         }
 
         input.ownerID = UID;
-
+        input.Zones = Zones
+        // resolve({msg:"done", output:input})
+        try{
+            const RoomRef = await db.collection('Rooms').add(input)
+            if(RoomRef){
+                resolve({msg:"Uploaded room", id:RoomRef.id, roomRef:RoomRef})
+            }else{
+                reject({msg:"Error Room ref null or undefined", roomRef:RoomRef})
+            }
+        }catch(err){
+            reject({msg:"error uploading Zone", error:err})
+        }
 
     })
     
@@ -578,7 +617,7 @@ const UploadZones = async (inputArray, ownerRef) => {
         //here we actually upload the zone
         try{
             const docRef = await db.collection("LightZones").add(item);
-            if(docRef && docRef.id && i<=3){
+            if(docRef && docRef.id){
                 uploadResultArray.push({msg:`SUCCESS for document ID: ${docRef.id}`, docRef:docRef, path: docRef.path})
             }
             else{
@@ -600,11 +639,19 @@ const UploadZones = async (inputArray, ownerRef) => {
 
 
 
-    const UserRef = db.collection('Users').doc('ahUzvP1mz461cWkIo9pK')
 
-    UploadZones(exampleLightZoneArray,UserRef).then((output) => {
+    const UserRef = db.collection('Users').doc('ahUzvP1mz461cWkIo9pK')
+//Here wa are getting a UserDocument Ref and a json lightZone array and validating it and uploading it to the database
+    UploadZones(LightZoneArrayAlpha, UserRef).then((output) => {
         console.log("========================================success======================================")
         console.log(output)
+        // //after the data is uploaded we take the outputed array of zoneRefs, JSON input room data, and the UID and validate and upload them creating a new room record 
+        // UploadRoom(roomData[3],"9bVgzHIlpGNqyWhOULNNBf36Gpg1",output.resultArray).then((result)=>{
+        //     console.log("====================Room uploaded ===========================")
+        //     console.log(result);
+        // }).catch((err)=>{
+        //     console.log(err)
+        // })
         
     }).catch((err) => {
         console.log(err)

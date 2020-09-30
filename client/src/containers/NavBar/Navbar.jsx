@@ -187,14 +187,16 @@ const useStyles = makeStyles((theme) => ({
     
 
     useEffect(()=>{
-        if(auth !== null  ){
-            if(!pending && user.firstName === undefined &&  auth.uid !== undefined){
-                // console.log(user);
+        console.log(auth);
+        if(auth === null){
+            console.log("innder auth");
+            console.log(auth);
+        }else if(!pending && user.firstName === undefined &&  auth.uid !== undefined){
+                console.log("getting user");
                 props.fetchUserPending()
                 props.fetchUser(auth.uid)
                 
             }
-        }
     })
     
     //check if data has loaded and if not display loading text

@@ -1268,10 +1268,10 @@ const useStyles = makeStyles((theme) => ({
         maxWidth: "256px",
         maxHeight: "256px",
         position: "relative",
-        '@media (min-width: 425px)':{
-            width: "64px",
-            height: "64px",
-        }
+        // '@media (min-width: 425px)':{
+        //     width: "64px",
+        //     height: "64px",
+        // }
     },
     ReactMeter: {
         // -webkit-filter: grayscale(100%);

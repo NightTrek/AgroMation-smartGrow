@@ -1255,6 +1255,18 @@ const useStyles = makeStyles((theme) => ({
         color: theme.palette.text.main,
         minWidth: "256px",
         minHeight: "360px",
+        '@media (max-width: 460px)':{
+            maxWidth: "300px",
+            
+        },
+        '@media (max-width: 400px)':{
+            maxWidth: "256px",
+            
+        },
+        '@media (max-width: 330px)':{
+            maxWidth: "212px",
+            
+        }
     },
     iconButton: {
         color: "white",

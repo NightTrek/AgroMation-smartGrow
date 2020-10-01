@@ -11,26 +11,26 @@ const app = admin.initializeApp({
 
 const exampleUserData = {
     UID: undefined,
-    firstName: "Daniel",
+    firstName: "Max",
     lastName: " Coffee",
-    accountOwner: null,
-    accountType: "SUPER",
-    email: "daniels@dual4t.com",
+    accountOwner: "9bVgzHIlpGNqyWhOULNNBf36Gpg1",
+    accountType: "User",
+    email: "daniel@daniel.com",
     phone: "6503888615",
     location: [
         {
-            // name: "Green Gardens",
+            name: "Green Gardens",
             address: "9898 Trent Bypass suite 541",
             locationID:F.db.collection('Locations').doc('Y1chmcEmlfL1ZAWLVDhK')
         },
         {
             name: "Desert Warhouse",
-            // address: "312 Palm Springs Blvd",
+            address: "312 Palm Springs Blvd",
             locationID: F.db.collection('Locations').doc('kpRAIrWLBneVEVsvblkl')
         },
         {
-            // name: "Hilltop Garden",
-            // address: "420 Trent Bypass suite 541",
+            name: "Hilltop Garden",
+            address: "420 Trent Bypass suite 541",
             locationID: F.db.collection('Locations').doc('7rKAd9yHpQa5gJ9tbINV')
         },
     ]
@@ -640,19 +640,25 @@ const UploadZones = async (inputArray, ownerRef) => {
 
 
 
-    const UserRef = db.collection('Users').doc('ahUzvP1mz461cWkIo9pK')
-//Here wa are getting a UserDocument Ref and a json lightZone array and validating it and uploading it to the database
-    UploadZones(LightZoneArrayAlpha, UserRef).then((output) => {
-        console.log("========================================success======================================")
-        console.log(output)
-        // //after the data is uploaded we take the outputed array of zoneRefs, JSON input room data, and the UID and validate and upload them creating a new room record 
-        // UploadRoom(roomData[3],"9bVgzHIlpGNqyWhOULNNBf36Gpg1",output.resultArray).then((result)=>{
-        //     console.log("====================Room uploaded ===========================")
-        //     console.log(result);
-        // }).catch((err)=>{
-        //     console.log(err)
-        // })
+//     const UserRef = db.collection('Users').doc('ahUzvP1mz461cWkIo9pK')
+// //Here wa are getting a UserDocument Ref and a json lightZone array and validating it and uploading it to the database
+//     UploadZones(LightZoneArrayAlpha, UserRef).then((output) => {
+//         console.log("========================================success======================================")
+//         console.log(output)
+//         // //after the data is uploaded we take the outputed array of zoneRefs, JSON input room data, and the UID and validate and upload them creating a new room record 
+//         // UploadRoom(roomData[3],"9bVgzHIlpGNqyWhOULNNBf36Gpg1",output.resultArray).then((result)=>{
+//         //     console.log("====================Room uploaded ===========================")
+//         //     console.log(result);
+//         // }).catch((err)=>{
+//         //     console.log(err)
+//         // })
         
-    }).catch((err) => {
-        console.log(err)
-    })
+//     }).catch((err) => {
+//         console.log(err)
+//     })
+
+// UploadUserJsonData(exampleUserData).then((response) => {
+//     console.log(response);
+// }).catch((error) => {
+//     console.log(error)
+// })

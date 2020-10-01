@@ -244,7 +244,7 @@ const useStyles = makeStyles((theme) => ({
     }
 
     const menuIcons = [<DashboardIcon data-index={"dashboard"} color={"primary"} />, <BusinessIcon data-index={"rooms"} color={"primary"} />, <GroupIcon data-index={"users"} color={"primary"} />, <SettingsIcon data-index={"settings"} color={"primary"} />, <ExitToAppIcon data-index={'signout'} color={"primary"}/>]
-
+    
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -331,6 +331,7 @@ const useStyles = makeStyles((theme) => ({
                         </Typography>
                     </Grid> : <div></div>}
                 <Divider />
+
                 <List>
                     {['Dashboard', 'Rooms', 'Users', 'Settings','Signout'].map((text, index) => (
                         <NavLink to={"/" + text} key={text} onClick={(e) =>{

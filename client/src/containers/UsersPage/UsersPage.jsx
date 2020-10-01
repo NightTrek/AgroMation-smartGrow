@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useEffect} from 'react'
 // import PropTypes from 'prop-types'
+import { compose } from "redux";
+import { connect, useSelector, shallowEqual } from "react-redux";
 import {
     Container, Grid, makeStyles, useTheme, withStyles, Button, Modal, Box, Typography, List,
     ListItem, ListItemText, ListItemIcon, Backdrop, Fade, IconButton, Input, Select, MenuItem,
@@ -10,61 +12,12 @@ import CheckCircleRoundedIcon from '@material-ui/icons/CheckCircleRounded';
 
 import CancelIcon from '@material-ui/icons/Cancel';
 import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect";
+import {fetchManagedUsers, pendingManagedUsers, resetPendingManagedUsers } from "../../actions/ManageUsersActions"
+
+import {exampleManagedUsers} from "../../exampleDataTypes/clientExamlpeDataTypes";
 
 
 
-const exampleUsers = [
-    {
-        id: 1,
-        userName: "Daniel Steigman",
-        type: "Admin",
-        email: "daniel@daniel.com",
-        phone:"(661)-228-3212",
-        Level: 1,
-        zones: ["room Alpha", "room Beta", "Veg Room 1", "veg Room 2", "clone room alpha", "clone room beta", "mother room", "Flower Room A"],
-        active: true
-    },
-    {
-        id: 2,
-        userName: "Bob lemon",
-        type: "Admin",
-        email: "Bob@Bob.com",
-        phone:"(661)-228-3212",
-        Level: 1,
-        zones: ["room Alpha", "room Beta", "Veg Room 1", "veg Room 2"],
-        active: false
-    },
-    {
-        id: 3,
-        userName: "Max torus",
-        type: "Admin",
-        email: "max@max.com",
-        phone:"(661)-228-3212",
-        Level: 2,
-        zones: ["room Alpha", "room Beta", "Veg Room 1", "veg Room 2"],
-        active: true
-    },
-    {
-        id: 4,
-        userName: "George Smith",
-        type: "Admin",
-        email: "george@george.com",
-        phone:"(661)-228-3212",
-        Level: 1,
-        zones: ["room Alpha", "room Beta", "Veg Room 1", "veg Room 2"],
-        active: true
-    },
-    {
-        id: 5,
-        userName: "Sharon jane",
-        type: "Admin",
-        email: "Sharon@Sharon.com",
-        phone:"(661)-228-3212",
-        Level: 1,
-        zones: ["room Alpha", "room Beta", "Veg Room 1", "veg Room 2"],
-        active: true
-    },
-]
 
 const EditUserButton = withStyles((theme) => ({
 
@@ -188,8 +141,11 @@ const useStyles = makeStyles((theme) => ({
 const UserWidget = (props) => {
     const classes = useStyles();
     const theme = useTheme();
-    const zones = props.zones;
+    let zones = props.zones;
 
+    if(zones === undefined){
+        zones = ["loading rooms", "room Beta", "Veg Room 1", "veg Room 2"]
+    }
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -201,11 +157,30 @@ const UserWidget = (props) => {
         setOpen(false);
     };
 
+    const setAccountTypePick = () => {
+        console.log(props.type)
+        console.log(props.userName)
+        console.log((props.type === "User"))
+        if(props.type === "Admin"){
+            return 0;
+        }
+        if(props.type === "User"){
+            console.log("User ret")
+            return 1;
+        }
+        if(props.type === "Viewer"){
+            return 2;
+        }
+        
+    }
+    let pick = setAccountTypePick()
+    console.log(pick)
     //Account Type
     const [state, setState] = React.useState({ //setState
         accountType: ["Admin", "User", "viewer"],
-        pick: 0
+        pick: pick
     });
+    console.log(state.pick)
     const handleChange = (event) => {
         const name = event.target.name;
         // console.log(name);
@@ -282,7 +257,7 @@ const UserWidget = (props) => {
                                                     name: 'pick',
                                                     id: 'AccountType',
                                                 }}
-                                                defaultValue={0}
+                                                defaultValue={2}
                                             >
                                                 {state.accountType.map((Item, Index) => (
                                                     <MenuItem key={Index} value={Index}>{Item}</MenuItem>
@@ -334,14 +309,89 @@ const UserWidget = (props) => {
     );
 }
 
-export default function UsersPage(props) {
+ const UsersPage = (props) => {
     const classes = useStyles();
 
-    const [state, ] = React.useState({ //setState
-        Users: props.Users || exampleUsers,
-        pick: 1,
-    });
+    let {user,pick, auth, pending, managedUsers} = useSelector( state => ({
+        user:state.users.user,
+        pending:state.managedUsers.pending,
+        pick:state.users.activeLocation,
+        auth:state.auth.authenticated,
+        managedUsers: state.managedUsers.user
 
+    }),shallowEqual)
+
+    // console.log(user);
+    const testManagedUsers = (item) => {
+        console.log(item)
+        if(item === undefined){
+            return true;
+        }
+        if(!item.length>0){
+            return true;
+        }
+        if(item[0].example){
+            return true;
+        }
+        return false;
+    }
+
+    useEffect(()=>{
+        //passes is managed Users is indefined or has a length of zero
+        //passes if auth is not null and auth.uid is not defined
+        //passes if users.uid is not und)
+
+        if(auth === null){
+            
+        }else if(!pending && testManagedUsers(managedUsers)  &&  auth.uid !== undefined && user.UID !== undefined){
+                console.log("getting managed user");
+                props.pendingManagedUsers()
+                props.fetchManagedUsers(auth.uid)
+                
+            }
+    })
+    
+    //check if data has loaded and if not display loading text
+    if(user.firstName === undefined || user.location.length === undefined){
+        console.log("setting loading data")
+        user = {
+            name:"loading",
+            location:[
+                {
+                    name:"loading",
+                    address: "Loading Address"
+                },
+                {
+                    name:"loading locations",
+                    address: "loading address"
+                },
+                
+            ]
+        };
+    }
+    // console.log(managedUsers);
+    // console.log(testManagedUsers(managedUsers))
+    if(testManagedUsers(managedUsers)){
+        managedUsers = [
+            {
+                userName: "loading Users",
+                type: "loading",
+                email: "loading",
+                phone:"loading",
+                Level: 1,
+                zones: ["room Alpha", "room Beta", "Veg Room 1", "veg Room 2"],
+                active: true,
+                example:true,
+            },
+        ]
+    }
+    // else{
+    //     console.log(managedUsers[0].accountType === "User")
+    //     console.log(managedUsers[1].accountType=== "User")
+    //     console.log(managedUsers[2].accountType=== "User")
+    // }
+
+    
     return (
         <Container className={"containerMain"}>
             <Grid container item direction={"column"} spacing={5} className={classes.usersPageWidget} alignItems={"center"}>
@@ -353,9 +403,9 @@ export default function UsersPage(props) {
                     </Grid>
                 </Grid>
                 <Grid item container direction={"row"} spacing={5} style={{ marginLeft: "48px" }} justify={"flex-start"}>
-                    {state.Users.map((item, index) => {
+                    {managedUsers.map((item, index) => {
                         return (
-                            <UserWidget key={index} UserIndex={index} userName={item.userName} email={item.email} type={item.type} phone={item.phone} zones={state.Users[index].zones} />
+                            <UserWidget key={index} UserIndex={index} userName={item.firstName + " " + item.lastName} email={item.email} type={item.accountType} phone={item.phone} zones={managedUsers[index].zones} />
                         );
                     })}
                 </Grid>
@@ -363,3 +413,11 @@ export default function UsersPage(props) {
         </Container>
     )
 }
+const mapStateToProps = ( state ) => {
+    return { user: state.user };
+}
+
+const formedComponent = compose(
+    connect(mapStateToProps, { fetchManagedUsers: fetchManagedUsers, pendingManagedUsers:pendingManagedUsers, resetPendingManagedUsers:resetPendingManagedUsers }))(UsersPage);
+
+export default formedComponent;

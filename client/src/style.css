@@ -236,3 +236,11 @@ a:hover {
 #filled-search-label{
   color:white;
 }
+
+/* ==========================text field labels ====================== */
+
+
+.MuiFormLabel-root{
+  color:white !important;
+  padding-left:24px !important;
+}

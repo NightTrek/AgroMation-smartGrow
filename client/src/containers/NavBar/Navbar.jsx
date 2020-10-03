@@ -226,6 +226,7 @@ const useStyles = makeStyles((theme) => ({
     const handleChange = (event) => {
         props.setLocation(event.target.value);
         props.resetPendingRooms()
+        props.getRooms(user, pick)
     };
 
     //checks if auth has a value and opens if it does
@@ -364,7 +365,7 @@ const mapStateToProps = ( state ) => {
 }
 
 const formedComponent = compose(
-    connect(mapStateToProps, { fetchUser: fetchUser, setLocation: setLocation, fetchUserPending:fetchUserPending, resetPendingRooms:resetPendingRooms, }),
+    connect(mapStateToProps, { fetchUser: fetchUser, setLocation: setLocation, fetchUserPending:fetchUserPending, resetPendingRooms:resetPendingRooms, getRooms:getRooms }),
     reduxForm({ form: 'Add todo' })
 )(MiniDrawer);
 

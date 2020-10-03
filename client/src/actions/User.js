@@ -3,23 +3,23 @@ import { exampleAccount } from "../exampleDataTypes/clientExamlpeDataTypes";
 import { db } from "../consts/firebase";
 
 export const fetchUserPending = (user) => dispatch => {
-    dispatch({type: FETCH_USER_PENDING, payload: true})
+    dispatch({ type: FETCH_USER_PENDING, payload: true })
 }
 export const resetUserPending = () => dispatch => {
-    dispatch({type: FETCH_USER_PENDING, payload: false})
+    dispatch({ type: FETCH_USER_PENDING, payload: false })
 }
 
 export const resetUser = () => dispatch => {
     dispatch({ type: FETCH_USER, payload: {} });
 }
 
-export const fetchUser = (UID) => async dispatch => {
+export const fetchUser = (UID, EMAIL) => async dispatch => {
     console.log(`Fetching User ${UID}`)
     if (UID !== undefined) {
         db.collection("Users").where("UID", "==", UID)
             .get()
             .then((querySnapshot) => {
-                if(!querySnapshot.empty){
+                if (!querySnapshot.empty) {
                     querySnapshot.forEach((doc) => {
                         if (doc.exists) {
                             // console.log("user dispatched")
@@ -27,22 +27,46 @@ export const fetchUser = (UID) => async dispatch => {
                         } else {
                             console.log("Example user dispatched")
                             dispatch({ type: FETCH_USER, payload: exampleAccount });
-    
+
                         }
                     });
                 }
-                else{
-                    console.log("Example user dispatched")
-                    dispatch({ type: FETCH_USER, payload: exampleAccount });
+                else {
+                    console.log("Trying User email to tie the account")
+                    db.collection("Users").where("email", "==", EMAIL)
+                        .get()
+                        .then((querySnapshot) => {
+                            if (!querySnapshot.empty) {
+                                querySnapshot.forEach((doc) => {
+                                    if (doc.exists) {
+                                        // console.log("user dispatched")
+                                        dispatch({ type: FETCH_USER, payload: doc.data() })
+                                    } else {
+                                        console.log("Example user dispatched")
+                                        dispatch({ type: FETCH_USER, payload: exampleAccount });
+
+                                    }
+                                });
+                            }
+                            else {
+
+                                console.log("Example user dispatched")
+                                dispatch({ type: FETCH_USER, payload: exampleAccount });
+                            }
+
+                        }).catch((error) => {
+                            console.log(error)
+                            dispatch({ type: FETCH_USER, payload: exampleAccount });
+                        });
                 }
-                
+
             }).catch((error) => {
                 console.log(error)
                 dispatch({ type: FETCH_USER, payload: exampleAccount });
             });
     }
-    else{
-        console.log("UID undefined")
+    else if (EMAIL !== undefined) {
+
         // dispatch({type: FETCH_USER, payload: exampleAccount});
     }
 

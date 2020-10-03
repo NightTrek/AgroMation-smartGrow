@@ -18,7 +18,7 @@ import { StandardRoundSelectForm } from "../../components/StandardSelect/Standar
 import { fetchManagedUsers, pendingManagedUsers, resetPendingManagedUsers } from "../../actions/ManageUsersActions"
 
 import { exampleManagedUsers } from "../../exampleDataTypes/clientExamlpeDataTypes";
-import { db } from "../../consts/firebase";
+import { db, auth } from "../../consts/firebase";
 
 
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
@@ -203,8 +203,19 @@ const UserWidget = (props) => {
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
     }
+
+
+
+    const [state, setState] = React.useState({
+        firstName: props.mUser.firstName,
+        lastName: props.mUser.lastName,
+        email: props.mUser.email,
+        phone: props.mUser.phone,
+        firstTimeLoad: false
+    });
+
     //Select any locations the account already has access too
-    if (gridApi && zones[0] !== "loading rooms") {
+    if (!state.firstTimeLoad && gridApi && zones[0] !== "loading rooms") {
         gridApi.forEachNode((node, index) => {
             zones.forEach((item, index) => {
                 if (node.data.name === item.name && node.data.address === item.address) {
@@ -213,16 +224,12 @@ const UserWidget = (props) => {
             })
 
 
+        });
+        setState({
+            ...state,
+            firstTimeLoad: true
         })
     }
-
-
-    const [state, setState] = React.useState({
-        firstName: props.mUser.firstName,
-        lastName: props.mUser.lastName,
-        email: props.mUser.email,
-        phone: props.mUser.phone
-    });
 
     const setAccountTypePick = () => {
         // console.log(type)
@@ -265,7 +272,9 @@ const UserWidget = (props) => {
     }
 
     const updateManagedUser = () => {
+        //get the selected locations
         let selectedRows = gridApi.getSelectedRows()
+        //make sure there are locations. dont let no locations be set
         if (selectedRows === undefined || selectedRows.length < 1) {
             props.handleInvalidAlertOpen("Please Select some locations for the User to access");
             return 0;
@@ -282,30 +291,103 @@ const UserWidget = (props) => {
         };
         let count = 0;
         for (let key in output) {
-            //check for changes
-            console.log(output[key])
-            console.log(props.mUser[key])
-            if (output[key] == props.mUser[key]) {   
+            //check for changes 
+            if (output[key] == props.mUser[key]) {
                 count++
-                console.log(count)
+            }
+            //if the value is an Array check if the two arrays have the same name for each variables 
+            if (Array.isArray(output[key])) {
+                let arrayCount = 0;
+                let i;
+                for (i = 0; i < props.mUser[key].length; i++) {
+                    //for each item of the array where both name values are equal count
+                    if (output[key][i] && output[key][i].name === props.mUser[key][i].name) {
+                        arrayCount++
+                    }
+                }
+                //if the arrayCount and the index are equal then the two arrays are the same
+                if (arrayCount === i) {
+                    count++
+
+                }
             }
             if (!output[key] || output[key].length === 0) {
                 props.handleInvalidAlertOpen(`${key} seems to be missing`)
                 return 0
             }
         }
-        console.log(count);
-        console.log(Object.keys(output).length)
         if (count === Object.keys(output).length) {
             props.handleInvalidAlertOpen("Did you forget to make changes? no updates detected")
             return 0;
         }
-        //first check and verify there are changes
-        //then check if the changes are valid
+
+        //check that the values are valid
+        if (output.firstName.length === 0 || output.firstName.length < 3) {
+            props.handleInvalidAlertOpen("Please include a first name")
+            return 0;
+        }
+        if (output.lastName.length === 0 || output.lastName.length < 3) {
+            props.handleInvalidAlertOpen("Please include a last name")
+            return 0;
+        }
+        if (!validateEmail(output.email)) {
+            props.handleInvalidAlertOpen("please Provide a valid email for reference")
+            return 0;
+        }
+        if (output.phone.length < 5) {
+            props.handleInvalidAlertOpen("Phone number is invalid")
+            return 0;
+        }
+        if (!props.ownerID || props.ownerID === "loading") {
+            props.handleInvalidAlertOpen("Unable to add new user Loading data still")
+            return 0
+        }
+
+        let UserRef = props.mUserDocRef;//db.collection("Users").where("email", '==', props.mUser.email)
         //then start a transaction to update the User
+        db.runTransaction((transaction) => {
+            return transaction.get(UserRef).then((UserDoc) => {
+                if (!UserDoc.exists) {
+                    throw "Document does not exist"
+                }
+                let data = UserDoc.data();
+                console.log(data);
+                console.log(output)
+                for(let key in data){
+                   let item = Object.keys(output).find((element)=>{
+                       if(key===element || key==="UID"){
+                           return true
+                       }
+                   });
+                   if(!item){
+                       throw "Keys missing in Output"
+                   }
+                }
+                transaction.update(UserRef, output);
+                return output;
+                //do the update and return output
+            }).then((output) => {
+                props.handleInvalidAlertOpen("Successfully updated User profile", "success");
+                handleClose();
+            }).catch((err) => {
+                props.handleInvalidAlertOpen("error");
+                console.log(err);
+            })
+        })
         //read the user
         //update the user assuming it makes sense
     };
+
+    const sendPasswordResetEmail = () => {
+        auth.sendPasswordResetEmail(props.mUser.email).then(function() {
+            // Email sent.
+            props.handleInvalidAlertOpen("Successfully sent password reset email", "success");
+          }).catch(function(error) {
+            // An error happened.
+            console.log(error)
+            props.handleInvalidAlertOpen("Error something went wrong");
+          });
+    }
 
 
     const Row = ({ index, style }) => (
@@ -398,8 +480,8 @@ const UserWidget = (props) => {
                                                 </StandardRoundSelectForm>
                                             </Grid>
                                             <Grid item xs>
-                                                <EditUserButton color={"primary"}>
-                                                    Generate new Password
+                                                <EditUserButton color={"primary"} onClick={sendPasswordResetEmail}>
+                                                    Send Password Reset email
                                                 </EditUserButton>
                                             </Grid>
                                         </Grid>
@@ -717,7 +799,7 @@ const UsersPage = (props) => {
 
     }
 
-    
+
 
 
     return (
@@ -734,7 +816,9 @@ const UsersPage = (props) => {
                     {managedUsers.map((item, index) => {
                         if (item.firstName !== "loading") {
                             return (
-                                <UserWidget key={index} UserIndex={index} ownerID={user.UID} handleInvalidAlertOpen={handleInvalidAlertOpen} mUser={item} firstName={item.firstName} lastName={item.lastName} email={item.email} type={item.accountType} phone={item.phone} location={locations} zones={managedUsers[index].location} />
+                                <UserWidget key={index} UserIndex={index} mUserDocRef={item.ref} ownerID={user.UID} handleInvalidAlertOpen={handleInvalidAlertOpen} mUser={item} 
+                                userName={item.firstName+" "+item.lastName} firstName={item.firstName} lastName={item.lastName} email={item.email} type={item.accountType} phone={item.phone}
+                                 location={locations} zones={managedUsers[index].location} />
                             );
                         } else {
                             return (

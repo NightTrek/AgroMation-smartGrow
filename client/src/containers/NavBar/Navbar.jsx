@@ -35,6 +35,7 @@ import "./style.css";
 import { Grid, withStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import { fetchUser, setLocation, fetchUserPending } from "../../actions/User";
+import {resetPendingRooms, getRooms} from "../../actions/roomActions";
 
 
 //
@@ -190,10 +191,10 @@ const useStyles = makeStyles((theme) => ({
 ;
         if(auth === null){
             console.log("auth == null")
-        }else if(!pending && user.firstName === undefined &&  auth.uid !== undefined){
+        }else if(!pending && user.firstName === undefined &&  auth.uid !== undefined && auth.email){
                 console.log("getting user");
                 props.fetchUserPending()
-                props.fetchUser(auth.uid)
+                props.fetchUser(auth.uid, auth.email)
                 
             }
     })
@@ -224,6 +225,7 @@ const useStyles = makeStyles((theme) => ({
     //dispatches location change to redux state. changes the index of state.users.activelocation for the state.users.user.location array
     const handleChange = (event) => {
         props.setLocation(event.target.value);
+        props.resetPendingRooms()
     };
 
     //checks if auth has a value and opens if it does
@@ -362,7 +364,7 @@ const mapStateToProps = ( state ) => {
 }
 
 const formedComponent = compose(
-    connect(mapStateToProps, { fetchUser: fetchUser, setLocation: setLocation, fetchUserPending:fetchUserPending }),
+    connect(mapStateToProps, { fetchUser: fetchUser, setLocation: setLocation, fetchUserPending:fetchUserPending, resetPendingRooms:resetPendingRooms, }),
     reduxForm({ form: 'Add todo' })
 )(MiniDrawer);
 

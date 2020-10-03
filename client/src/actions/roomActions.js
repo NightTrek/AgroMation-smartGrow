@@ -7,7 +7,11 @@ export const pendingRooms = () => dispatch => {
     dispatch({type: PENDING_ROOMS, payload:true});
 }
 
-export const getRooms = (User) => async dispatch => {
+export const resetPendingRooms = () => dispatch => {
+    dispatch({type: PENDING_ROOMS, payload:false});
+}
+
+export const getRooms = (User, location) => async dispatch => {
     //try and get the rooms using the location ID provided
     if (User !== undefined && User.UID !== undefined) {
         if (User.accountOwner == null && User.UID !== undefined) {
@@ -41,6 +45,28 @@ export const getRooms = (User) => async dispatch => {
                 });
         }
         else {
+            console.log("Using location array to get rooms");
+            
+            let querySnapshot = await User.location[location].locationID.get()//.then( async() => {
+                if(querySnapshot.exists){
+                    console.log(querySnapshot.data())
+                    let RoomPerLocationArray = [];
+                    for(let i = 0; i < querySnapshot.data().rooms.length; i++){
+                        let docSnapshot = await querySnapshot.data().rooms[i].get()
+                            if(docSnapshot.exists){
+                                RoomPerLocationArray.push({doc:docSnapshot.id, ...docSnapshot.data()})
+                            }
+                            else{
+                                throw "room Reference not found"
+                            }
+                        
+                    }
+                    console.log(RoomPerLocationArray);
+                    dispatch({type: GET_ROOMS, payload: RoomPerLocationArray})
+                }
+            // }).catch((error) => {
+            //     console.log(error);
+            // })
             //Use the users location array to get the Rooms 
             //first it will read each location document in the location array
             //then it will query each room associated in the room array associated with the location document

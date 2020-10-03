@@ -173,11 +173,13 @@ function DashboardSummary(props) {
     const progressColorScale = [theme.palette.roomStatus.clone, theme.palette.roomStatus.veg, theme.palette.roomStatus.flower];
 
 
-    let { rooms, pick, user, pending } = useSelector(state => ({
+    let { rooms, pick, user, pending, locationIndex } = useSelector(state => ({
         rooms: state.growRooms.rooms,
         pick: state.growRooms.roomIndex,
         user: state.users.user,
-        pending: state.growRooms.pending
+        locationIndex:state.users.activeLocation,
+        pending: state.growRooms.pending,
+
 
     }), shallowEqual)
 
@@ -191,7 +193,7 @@ function DashboardSummary(props) {
                 props.setExampleRooms()
                 props.pendingRooms()
             }else if(user.UID !== undefined  && rooms[0].ownerID === undefined){
-                props.getRooms(user)
+                props.getRooms(user, locationIndex)
                 props.pendingRooms()
             }
         }

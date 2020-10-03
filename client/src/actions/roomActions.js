@@ -46,7 +46,8 @@ export const getRooms = (User, location) => async dispatch => {
         }
         else {
             console.log("Using location array to get rooms");
-            
+                console.log(User.location)
+                console.log(location)
             let querySnapshot = await User.location[location].locationID.get()//.then( async() => {
                 if(querySnapshot.exists){
                     console.log(querySnapshot.data())

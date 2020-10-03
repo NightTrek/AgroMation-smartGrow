@@ -1342,11 +1342,12 @@ function RoomSummery(props) {
         tempUnitString = cLogo;
     }
 
-    let { rooms, pick, user, pending } = useSelector(state => ({
+    let { rooms, pick, user, pending, locationIndex } = useSelector(state => ({
         rooms: state.growRooms.rooms,
         pick: state.growRooms.roomIndex,
         user: state.users.user,
-        pending: state.growRooms.pending
+        pending: state.growRooms.pending,
+        locationIndex:state.users.activeLocation,
 
     }), shallowEqual)
 
@@ -1358,7 +1359,7 @@ function RoomSummery(props) {
                 props.setExampleRooms()
                 props.pendingRooms()
             }else if(user.UID !== undefined  && rooms[0].ownerID === undefined){
-                props.getRooms(user)
+                props.getRooms(user, locationIndex)
                 props.pendingRooms()
             }
         }

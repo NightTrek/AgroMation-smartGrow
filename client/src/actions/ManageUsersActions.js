@@ -15,8 +15,10 @@ export const resetPendingManagedUsers = () => dispatch => {
 }
 
 
-export const fetchManagedUsers = (UID) => dispatch => {
-    db.collection('Users').where("accountOwner", "==", UID).get().then((querySnapshot) => {
+export const fetchManagedUsers = (UID) => async  dispatch => {
+    try{
+
+        let querySnapshot = await db.collection('Users').where("accountOwner", "==", UID).get()
         if(!querySnapshot.empty){
             let managedUsers = [];
             querySnapshot.forEach((doc, index) => {
@@ -32,10 +34,11 @@ export const fetchManagedUsers = (UID) => dispatch => {
         else{
             console.log("Example managed users dispatched")
             dispatch({ type: FETCH_MANAGED_USERS, payload: exampleManagedUsers });
-        }
+        }  
 
-    }).catch((err) => {
+    }catch(err){
         console.log(err);
         dispatch({ type: FETCH_MANAGED_USERS, payload: exampleManagedUsers });
-    })
+    }
+
 }

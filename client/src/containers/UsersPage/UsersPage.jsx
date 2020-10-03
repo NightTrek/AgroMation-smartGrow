@@ -4,7 +4,7 @@ import { compose } from "redux";
 import { connect, useSelector, shallowEqual } from "react-redux";
 import {
     Container, Grid, makeStyles, useTheme, withStyles, Button, Modal, Box, Typography, List,
-    ListItem, ListItemText, ListItemIcon, Backdrop, Fade, IconButton, Input, Select, MenuItem, TextField
+    ListItem, ListItemText, ListItemIcon, Backdrop, Fade, IconButton, Input, Select, MenuItem, TextField, CircularProgress
 } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
@@ -18,10 +18,12 @@ import { StandardRoundSelectForm } from "../../components/StandardSelect/Standar
 import { fetchManagedUsers, pendingManagedUsers, resetPendingManagedUsers } from "../../actions/ManageUsersActions"
 
 import { exampleManagedUsers } from "../../exampleDataTypes/clientExamlpeDataTypes";
-import { Stats } from 'fs';
+import { db } from "../../consts/firebase";
 
 
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
+import { error } from 'winston';
+import ManagedUsers from '../../reducers/ManagedUsers';
 // import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
 
 const EditUserButton = withStyles((theme) => ({
@@ -154,7 +156,10 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-
+const validateEmail = (email) => {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
 
 
 
@@ -165,7 +170,7 @@ const UserWidget = (props) => {
     const theme = useTheme();
     let zones = props.zones;
     let type = props.type;
-    let accountType = ["Admin", "User", "viewer"];
+    let accountType = ["Admin", "User", "Viewer"];
 
     if (zones === undefined) {
         zones = ["loading rooms", "room Beta", "Veg Room 1", "veg Room 2"]
@@ -174,6 +179,9 @@ const UserWidget = (props) => {
         // console.log("type is undefined")
         type = "Viewer";
     }
+
+
+
 
     const [open, setOpen] = React.useState(false);
 
@@ -185,6 +193,36 @@ const UserWidget = (props) => {
     const handleClose = () => {
         setOpen(false);
     };
+
+    ///Grid stuff
+    const [gridApi, setGridApi] = React.useState(null);
+    const [gridColumnApi, setGridColumnApi] = React.useState(null);
+
+
+    function onGridReady(params) {
+        setGridApi(params.api);
+        setGridColumnApi(params.columnApi);
+    }
+    //Select any locations the account already has access too
+    if (gridApi && zones[0] !== "loading rooms") {
+        gridApi.forEachNode((node, index) => {
+            zones.forEach((item, index) => {
+                if (node.data.name === item.name && node.data.address === item.address) {
+                    node.setSelected(true);
+                }
+            })
+
+
+        })
+    }
+
+
+    const [state, setState] = React.useState({
+        firstName: props.mUser.firstName,
+        lastName: props.mUser.lastName,
+        email: props.mUser.email,
+        phone: props.mUser.phone
+    });
 
     const setAccountTypePick = () => {
         // console.log(type)
@@ -219,9 +257,59 @@ const UserWidget = (props) => {
         // props.setRoom(event.target.value);
     };
 
+    const handleInputChange = (event) => {
+        setState({
+            ...state,
+            [event.target.name]: event.target.value
+        })
+    }
+
+    const updateManagedUser = () => {
+        let selectedRows = gridApi.getSelectedRows()
+        if (selectedRows === undefined || selectedRows.length < 1) {
+            props.handleInvalidAlertOpen("Please Select some locations for the User to access");
+            return 0;
+        }
+
+        let output = {
+            firstName: state.firstName,
+            lastName: state.lastName,
+            phone: state.phone,
+            email: state.email,
+            location: selectedRows,
+            accountOwner: props.ownerID,
+            accountType: accountType[pick]
+        };
+        let count = 0;
+        for (let key in output) {
+            //check for changes
+            console.log(output[key])
+            console.log(props.mUser[key])
+            if (output[key] == props.mUser[key]) {   
+                count++
+                console.log(count)
+            }
+            if (!output[key] || output[key].length === 0) {
+                props.handleInvalidAlertOpen(`${key} seems to be missing`)
+                return 0
+            }
+        }
+        console.log(count);
+        console.log(Object.keys(output).length)
+        if (count === Object.keys(output).length) {
+            props.handleInvalidAlertOpen("Did you forget to make changes? no updates detected")
+            return 0;
+        }
+        //first check and verify there are changes
+        //then check if the changes are valid
+        //then start a transaction to update the User
+        //read the user
+        //update the user assuming it makes sense
+    };
+
 
     const Row = ({ index, style }) => (
-        <div style={style}><ListItemIcon><CheckCircleRoundedIcon style={{ color: theme.palette.primary.main, fontSize: "18px" }} /></ListItemIcon>{zones[index]}</div>
+        <div style={style}><ListItemIcon><CheckCircleRoundedIcon style={{ color: theme.palette.primary.main, fontSize: "18px" }} /></ListItemIcon>{zones[index].name}</div>
     );
     return (
         <Grid item container direction={"row"} className={classes.userInfoContainer} xs>
@@ -237,7 +325,7 @@ const UserWidget = (props) => {
                 <List className={classes.zoneList}>
                     <ListItem>
                         <ListItemIcon></ListItemIcon>
-                        <ListItemText primary={"Zones"}></ListItemText>
+                        <ListItemText primary={"Locations"}></ListItemText>
                     </ListItem>
                     <ListItem >
                         <FixedSizeList height={128} width={192} itemSize={32} itemCount={zones.length}>
@@ -250,8 +338,8 @@ const UserWidget = (props) => {
                 </List>
             </Grid>
             <Modal
-                aria-labelledby="transition-modal-title"
-                aria-describedby="transition-modal-description"
+                aria-labelledby="update-user-modal"
+                aria-describedby="update-user-modal-description"
                 className={classes.modal}
                 open={open}
                 onClose={handleClose}
@@ -266,39 +354,23 @@ const UserWidget = (props) => {
                         <form noValidate >
                             <Grid item container direction={"column"} className={classes.setPointWidget}>
                                 <Grid item container direction={"row"}>
-                                    <Grid item xs> <Grid item ><h3 id="transition-modal-title">Edit User</h3></Grid></Grid>
+                                    <Grid item xs> <Grid item ><h3 id="update-user-modal">Edit User</h3></Grid></Grid>
                                     <Grid item> <IconButton onClick={handleClose} ><CancelIcon style={{ color: theme.palette.text.main }} /></IconButton></Grid>
                                 </Grid>
                                 <Grid item container direction={"row"} spacing={5}>
                                     <Grid item xs={12} sm={6}>
-
-                                        <EditUserInput defaultValue={props.userName} inputProps={{ 'aria-label': 'description' }} />
-
-
+                                        <EditUserInput label={"First Name"} name={"firstName"} value={state.firstName} inputProps={{ 'aria-label': 'input first name' }} onChange={handleInputChange} />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <StandardRoundSelectForm className={classes.formControl} hiddenLabel>
-                                            <Select
-                                                value={pick}
-                                                onChange={handleChange}
-                                                inputProps={{
-                                                    name: 'pick',
-                                                    id: 'AccountType',
-                                                }}
-                                                defaultValue={2}
-                                            >
-                                                {accountType.map((Item, Index) => (
-                                                    <MenuItem key={Index} value={Index}>{Item}</MenuItem>
-                                                ))}
-                                            </Select>
-                                        </StandardRoundSelectForm>
+                                        <EditUserInput label={"Last Name"} name={"lastName"} value={state.lastName} inputProps={{ 'aria-label': 'input last name' }} onChange={handleInputChange} />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <EditUserInput defaultValue={props.email} inputProps={{ 'aria-label': 'description' }} />
+                                        <EditUserInput label={"User Email"} name={"email"} value={state.email} inputProps={{ 'aria-label': 'input email' }} onChange={handleInputChange} />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <EditUserInput defaultValue={props.phone} inputProps={{ 'aria-label': 'description' }} />
+                                        <EditUserInput label={"User Phone"} name={"phone"} value={state.phone} inputProps={{ 'aria-label': 'input phone' }} onChange={handleInputChange} />
                                     </Grid>
+
 
                                 </Grid>
                                 <Grid item container direction={"column"} className={classes.sliderRow}>
@@ -307,14 +379,52 @@ const UserWidget = (props) => {
                                         <Grid item xs> </Grid>
                                     </Grid>
                                     <Grid item container direction={'row'}>
-
-                                        <Grid item xs>
-                                            <EditUserInput label={"Generated password"} defaultValue={"*********************"} inputProps={{ 'aria-label': 'description' }} />
+                                        <Grid item container direction={"column"} xs>
+                                            <Grid item xs>
+                                                <StandardRoundSelectForm className={classes.formControl} hiddenLabel>
+                                                    <Select
+                                                        value={pick}
+                                                        onChange={handleChange}
+                                                        inputProps={{
+                                                            name: 'pick',
+                                                            id: 'AccountType',
+                                                        }}
+                                                        defaultValue={2}
+                                                    >
+                                                        {accountType.map((Item, Index) => (
+                                                            <MenuItem key={Index} value={Index}>{Item}</MenuItem>
+                                                        ))}
+                                                    </Select>
+                                                </StandardRoundSelectForm>
+                                            </Grid>
+                                            <Grid item xs>
+                                                <EditUserButton color={"primary"}>
+                                                    Generate new Password
+                                                </EditUserButton>
+                                            </Grid>
                                         </Grid>
-                                        <Grid item xs>
-                                            <EditUserButton color={"primary"}>
-                                                Generate new Password
-                                        </EditUserButton>
+
+                                        <Grid item container xs>
+                                            <div style={{ minHeight: '300px', minWidth: '200px', width: "98%" }} className="ag-theme-alpine-dark" >
+                                                <AgGridReact
+                                                    rowData={props.location}
+                                                    rowSelection="multiple"
+                                                    rowMultiSelectWithClick={true}
+                                                    animateRows={true}
+                                                    defaultColDef={{
+                                                        flex: 1,
+                                                        minWidth: 128,
+                                                        sortable: true,
+                                                        filter: true,
+                                                    }}
+                                                    // 
+                                                    onGridReady={onGridReady}>
+
+                                                    <AgGridColumn field="name" sortable={true} filter={true} checkboxSelection={true}></AgGridColumn>
+                                                    <AgGridColumn field="address" sortable={true}></AgGridColumn>
+
+                                                </AgGridReact>
+                                            </div>
                                         </Grid>
                                     </Grid>
 
@@ -322,7 +432,7 @@ const UserWidget = (props) => {
                                 <Grid item container direction={"row"}>
                                     <Grid item xs></Grid>
                                     <Grid item xs>
-                                        <Button variant={"outlined"} color={"primary"}>
+                                        <Button variant={"outlined"} color={"primary"} onClick={updateManagedUser}>
                                             SAVE USER DETAILS
                                         </Button>
                                     </Grid>
@@ -371,7 +481,6 @@ const UsersPage = (props) => {
         //passes if auth is not null and auth.uid is not defined
         //passes if users.uid is not und)
         // 
-        console.log(pending)
         if (auth === null) {
 
         } else if (!pending && testManagedUsers(managedUsers) && auth.uid !== undefined && user.UID !== undefined) {
@@ -405,22 +514,19 @@ const UsersPage = (props) => {
     if (testManagedUsers(managedUsers)) {
         managedUsers = [
             {
-                userName: "loading Users",
+                firstName: "loading",
+                lastName: "loading",
                 type: "loading",
                 email: "loading",
                 phone: "loading",
                 Level: 1,
-                zones: ["room Alpha", "room Beta", "Veg Room 1", "veg Room 2"],
+                zones: ["location Alpha", "location Beta", "location 1", "location 2"],
                 active: true,
                 example: true,
             },
         ]
     }
-    // else{
-    //     console.log(managedUsers[0].accountType === "User")
-    //     console.log(managedUsers[1].accountType=== "User")
-    //     console.log(managedUsers[2].accountType=== "User")
-    // }
+
 
     const [state, setState] = React.useState({
         firstName: "",
@@ -428,6 +534,7 @@ const UsersPage = (props) => {
         email: "",
         phone: "",
         errorMsg: "",
+        alertType: "error",
         invalidAlert: false,
     })
     //Add User modal
@@ -438,52 +545,64 @@ const UsersPage = (props) => {
         setOpen(true);
     };
 
-    const handleInvalidAlertOpen = (msg) => {
+    const handleInvalidAlertOpen = (msg, type) => {
+        if (type === "success") {
+            console.log("successAlert")
+            setState({
+                ...state,
+                errorMsg: msg,
+                invalidAlert: true,
+                alertType: "success"
+            });
+        } else {
+            console.log("error alert")
+            setState({
+                ...state,
+                errorMsg: msg,
+                invalidAlert: true,
+                alertType: "error"
+            });
+        }
 
-        setState({
-            ...state,
-            errorMsg:msg,
-            invalidAlert: true
-        });
     };
 
+
+
     const handleClose = () => {
-        if(state.firstName.length>0 ||state.lastName.length>0 || state.email.length>0 || state.phone.length>0){
-                setState({
-                    ...state,
-                    errorMsg:"Changes have not been saved hit x to exit",
-                    invalidAlert:true
-                })
-            
-        }else{
+        if (state.firstName.length > 0 || state.lastName.length > 0 || state.email.length > 0 || state.phone.length > 0) {
+            setState({
+                ...state,
+                errorMsg: "Changes have not been saved hit x to exit",
+                invalidAlert: true
+            })
+
+        } else {
             setOpen(false);
         }
-        
+
     };
 
     const xExit = () => {
-        if(state.firstName.length>0 ||state.lastName.length>0 || state.email.length>0 || state.phone.length>0){
-            setState({
-                ...state,
-                errorMsg:"Changes have not been saved hit x to exit",
-                invalidAlert:true
-            })
-        
+        if (state.firstName.length > 0 || state.lastName.length > 0 || state.email.length > 0 || state.phone.length > 0) {
+            // setState({
+            //     ...state,
+            //     errorMsg: ,
+            //     invalidAlert: true
+            // })
+            handleInvalidAlertOpen("Warning changes have been saved")
+
         }
         setOpen(false);
     }
 
     const [Userpick, setPick] = React.useState(2)
     // console.log(pick)
-  
+
 
 
     const handleChange = (event) => {
-        // const name = event.target.name;
-        // console.log(name);
-
         setPick(event.target.value);
-        // props.setRoom(event.target.value);
+
     };
 
     const handleInputChange = (event) => {
@@ -513,12 +632,11 @@ const UsersPage = (props) => {
             invalidAlert: false
         });
     };
-    const validateEmail = (email) => {
-        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(String(email).toLowerCase());
-    }
 
-    const submitNewUser = () => {
+
+
+
+    const submitNewUser = async () => {
         if (state.firstName.length === 0 || state.firstName.length < 3) {
             setState({
                 ...state,
@@ -560,7 +678,6 @@ const UsersPage = (props) => {
             return 0
         }
         let selectedRows = gridApi.getSelectedRows()
-        // console.log(selectedRows)
         if (selectedRows === undefined || selectedRows.length < 1) {
             handleInvalidAlertOpen("Please Select some locations for the User to access");
             return 0;
@@ -574,9 +691,35 @@ const UsersPage = (props) => {
             accountOwner: user.UID,
             accountType: accountType[Userpick]
         };
-        console.log(output)
+
+        db.collection("Users").where("email", "==", state.email).get().then((UsersSnapshot) => {
+            if (UsersSnapshot.empty) {
+                db.collection('Users').add(output).then((response) => {
+                    console.log(response)
+                    if (response.id !== undefined) {
+                        handleInvalidAlertOpen("Success added User they can not login and access your data", 'success')
+                        setOpen(false);
+                    } else {
+                        handleInvalidAlertOpen("failed to add User Server error please wait and try again.")
+                    }
+                }).catch((error) => {
+                    console.log(error)
+                    handleInvalidAlertOpen(`ERROR failed to upload new User please wait and try again`)
+                })
+            } else {
+                handleInvalidAlertOpen(`ERROR email already in use`)
+            }
+        }).catch((error) => {
+            handleInvalidAlertOpen(`ERROR failed to upload new User please wait and try again`)
+        })
+
+
 
     }
+
+    
+
+
     return (
         <Container className={"containerMain"}>
             <Grid container item direction={"column"} spacing={5} className={classes.usersPageWidget} alignItems={"center"}>
@@ -589,9 +732,17 @@ const UsersPage = (props) => {
                 </Grid>
                 <Grid item container direction={"row"} spacing={5} style={{ marginLeft: "48px" }} justify={"flex-start"}>
                     {managedUsers.map((item, index) => {
-                        return (
-                            <UserWidget key={index} UserIndex={index} userName={item.firstName + " " + item.lastName} email={item.email} type={item.accountType} phone={item.phone} zones={managedUsers[index].zones} />
-                        );
+                        if (item.firstName !== "loading") {
+                            return (
+                                <UserWidget key={index} UserIndex={index} ownerID={user.UID} handleInvalidAlertOpen={handleInvalidAlertOpen} mUser={item} firstName={item.firstName} lastName={item.lastName} email={item.email} type={item.accountType} phone={item.phone} location={locations} zones={managedUsers[index].location} />
+                            );
+                        } else {
+                            return (
+                                <CircularProgress key={index} color="primary" />
+                            );
+
+                        }
+
                     })}
                 </Grid>
             </Grid>
@@ -673,7 +824,7 @@ const UsersPage = (props) => {
                                         </Grid>
                                         <Grid item container xs direction={'column'}>
                                             <Typography variant={'h5'}>Choose Locations</Typography>
-                                            <div style={{ minHeight: '300px', minWidth: '200px',width:"98%"  }} className="ag-theme-alpine-dark" >
+                                            <div style={{ minHeight: '300px', minWidth: '200px', width: "98%" }} className="ag-theme-alpine-dark" >
                                                 <AgGridReact
                                                     rowData={locations}
                                                     rowSelection="multiple"
@@ -708,15 +859,16 @@ const UsersPage = (props) => {
                                 </Grid>
                             </Grid>
                         </form>
-                        <Snackbar open={state.invalidAlert} autoHideDuration={6000} onClose={handleInvalidAlertClose}>
-                            <Alert onClose={handleInvalidAlertClose} severity="error">
-                                {state.errorMsg}
-                            </Alert>
-                        </Snackbar>
-                        
+
+
                     </Box>
                 </Fade>
             </Modal>
+            <Snackbar open={state.invalidAlert} autoHideDuration={6000} onClose={handleInvalidAlertClose}>
+                <Alert onClose={handleInvalidAlertClose} severity={state.alertType}>
+                    {state.errorMsg}
+                </Alert>
+            </Snackbar>
         </Container>
     )
 }

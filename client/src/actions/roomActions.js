@@ -41,7 +41,9 @@ export const getRooms = (User) => async dispatch => {
                 });
         }
         else {
-            //try and Use the Owner ID as the UID
+            //Use the users location array to get the Rooms 
+            //first it will read each location document in the location array
+            //then it will query each room associated in the room array associated with the location document
         }
     }
 

@@ -1255,6 +1255,7 @@ const useStyles = makeStyles((theme) => ({
         color: theme.palette.text.main,
         minWidth: "256px",
         minHeight: "360px",
+        height:"auto",
         '@media (max-width: 460px)':{
             maxWidth: "300px",
             

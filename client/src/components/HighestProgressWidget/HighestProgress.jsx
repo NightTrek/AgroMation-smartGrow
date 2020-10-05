@@ -66,11 +66,25 @@ const useStyles = makeStyles((theme) => ({
             
         }
     },
+    title:{
+        // '@media (max-width: 460px)':{
+        //     fontSize: 14,
+            
+        // },
+        // '@media (max-width: 400px)':{
+        //     fontSize: 14,
+            
+        // },
+        // '@media (max-width: 330px)':{
+        //     fontSize: 12,
+            
+        // }
+    },
     iconButton: {
         color: "white",
         width:"48px",
         height:"48px",
-        // marginRight:"12px"
+        marginRight:"12px"
     },
     pie: {
         width: "192px",
@@ -147,12 +161,12 @@ const HighestProgress = (props) => {
         <Grid item container className={classes.ProgressWidget} direction={"column"}>
             {/* widget Top bar menu */}
             <Grid container item xs direction={"row"} className={classes.TopBar} wrap={"nowrap"}>
-                <Grid container item xs={8}>
-                    <Typography variant={"h5"} style={{ paddingLeft: "12px" }}>Highest Progress</Typography>
+                <Grid container item xs={10}>
+                    <Typography variant={"h5"} className={classes.title} style={{ paddingLeft: "12px" }}>Highest Progress</Typography>
                 </Grid>
-                <Grid container item xs>
+                {/* <Grid container item xs={0} sm>
 
-                </Grid>
+                </Grid> */}
                 <Grid container item xs={1}>
                     <IconButton aria-label="Widget Settings" color="primary" className={classes.iconButton}><MoreVertIcon /></IconButton>
                 </Grid>

@@ -26,15 +26,16 @@ const useStyles = makeStyles((theme) => ({
         background: theme.palette.secondary.main,
         color: theme.palette.text.main,
         '@media (max-width: 460px)':{
-            maxWidth: "300px",
+            maxWidth: "300px !important",
+            minHeight:"1024px"
             
         },
         '@media (max-width: 400px)':{
-            maxWidth: "256px",
+            maxWidth: "256px !important",
             
         },
         '@media (max-width: 330px)':{
-            maxWidth: "212px",
+            maxWidth: "212px !important",
             
         }
     },
@@ -64,12 +65,19 @@ const useStyles = makeStyles((theme) => ({
         width: "160px",
         height: "160px",
         '@media (max-width: 460px)':{
-            width: "128px",
-            height: "128px",
+            width: "128px !important",
+            height: "128px !important",
         },
         '@media (max-width: 320px)':{
-            width: "92px",
-            height: "92px",
+            width: "92px !important",
+            height: "92px !important",
+            
+        }
+    },
+    "#bottomPieChart":{
+        '@media (max-width: 330px)':{
+            marginBottom:"256px",
+            
         }
     },
     legendList: {
@@ -120,11 +128,14 @@ const DashboardPieChart = (props) => {
         labels.push(item.y);
         return item.y
     })
-    
+    let ExtraClass = props.ExtraClass;
+if(!ExtraClass){
+    ExtraClass = " "
+}
 
     return (
         // <Grid item xs={3}>
-        <Grid container item direction="column" justify="center" alignItems="center" spacing={0} xs={12} sm={6} md lg>
+        <Grid container item direction="column" justify="center" alignItems="center" id={ExtraClass} style={{paddingBottom:"12px"}} spacing={0} xs={12} sm={6} md lg>
             <Grid item xs>
                 <Typography variant="subtitle2" className={classes.chartLabel}>{props.chartName}</Typography>
             </Grid>
@@ -259,8 +270,8 @@ function DashboardSummary(props) {
     };
 
     return (
-        <Grid container direction="column" justify={"center"} spacing={2} className={classes.dashboardSummery}>
-            <Grid container item direction="row" xs>
+        <Grid container direction="column" justify={"center"} spacing={2} className={`${classes.dashboardSummery} `} >
+            <Grid container item direction="row" xs style={{maxHeight:"128px"}}>
                 <Grid item xs={2} style={{ paddingLeft: "24px" }}>
                     <Typography variant={"h6"} className={classes.Title}>Summary</Typography>
                 </Grid>
@@ -295,7 +306,10 @@ function DashboardSummary(props) {
                 {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
                 <DashboardPieChart chartName={"CO2"} classes={classes} theme={theme} dataSet={sampleCO2Data} colorScale={defaultColorScale} />
                 {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
-                <DashboardPieChart chartName={"Progress"} classes={classes} theme={theme} dataSet={sampleProgressData} colorScale={progressColorScale} />
+                <DashboardPieChart chartName={"Progress"} classes={classes} theme={theme} dataSet={sampleProgressData} colorScale={progressColorScale} ExtraClass={"#bottomPieChart"}/>
+            </Grid>
+            <Grid container item direction={"row"} xs>
+
             </Grid>
         </Grid>
     )

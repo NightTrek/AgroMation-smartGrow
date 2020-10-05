@@ -8,8 +8,8 @@ import React from 'react';
 import { Container, Grid } from "@material-ui/core";
 import DashboardSummery from "../../components/DashboardSummery/DashboardSummry";
 import { SystemNotifications } from '../SystemNotificationWidget/SystemNotifications';
-import  HighestProgress from '../../components/HighestProgressWidget/HighestProgress';
-import  LiveDataWidget  from '../../components/LiveDataDashBoardWidget/LiveDataWidget';
+import HighestProgress from '../../components/HighestProgressWidget/HighestProgress';
+import LiveDataWidget from '../../components/LiveDataDashBoardWidget/LiveDataWidget';
 
 
 //import styling
@@ -27,7 +27,7 @@ const Dashboard2 = (props) => {
     });
 
 
-    
+
 
     const setRoom = (index) => {
         const cstate = state;
@@ -38,20 +38,22 @@ const Dashboard2 = (props) => {
 
     return (
         <Container className={"containerMain"}>
-            <Grid container direction={'column'} spacing={6}>
+            <Grid container direction={'row'} spacing={4}>
                 <Grid
                     container item direction="row"
-                    spacing={3} xs>
+                    xs={12}>
                     <DashboardSummery setRoom={setRoom} />
                 </Grid>
-                <Grid container item direction="row"
-                    spacing={3} xs >
+                <Grid item container direction="row" xs={12} sm={8}>
                     <SystemNotifications />
-                    <Grid item></Grid>
+                </Grid>
+                <Grid container item direction="row"
+                    xs={12} sm={4} >
+
                     <HighestProgress roomName={state.rooms[state.roomIndex]} />
                 </Grid>
                 <Grid container item direction="row"
-                    spacing={3} xs >
+                    xs={12} >
                     <LiveDataWidget roomName={state.rooms[state.roomIndex]} />
                 </Grid>
                 {/* <Grid item direction="row" justify="center" alignItems="stretch" xs={12} spacing={3}> */}

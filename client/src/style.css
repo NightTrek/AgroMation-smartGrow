@@ -244,3 +244,13 @@ a:hover {
   color:white !important;
   padding-left:24px !important;
 }
+
+
+.warningNotification{
+  background-color: #DC4346 !important;
+  color:black;
+}
+.faultNotification{
+  background-color:#121315 !important;
+  color:black;
+}

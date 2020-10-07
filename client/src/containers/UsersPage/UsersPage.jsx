@@ -149,8 +149,8 @@ const useStyles = makeStyles((theme) => ({
     },
     addUserButton: {
         position: "fixed",
-        top: '812px',
-        right: "128px",
+        top: '85%',
+        right: "10%",
     }
 
 

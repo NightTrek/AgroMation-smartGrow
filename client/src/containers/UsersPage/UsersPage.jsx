@@ -351,8 +351,8 @@ const UserWidget = (props) => {
                     throw "Document does not exist"
                 }
                 let data = UserDoc.data();
-                console.log(data);
-                console.log(output)
+                // console.log(data);
+                // console.log(output)
                 for(let key in data){
                    let item = Object.keys(output).find((element)=>{
                        if(key===element || key==="UID"){

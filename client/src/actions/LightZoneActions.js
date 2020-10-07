@@ -59,6 +59,11 @@ export const fetchZones = (room) => async dispatch => {
 
 };
 
+export const updateZones = (updatedZones) => dispatch => {
+    console.log("dispatching updated room data")
+    dispatch({ type: FETCH_ZONES, payload: updatedZones })
+}
+
 
 export const setExampleZones = () => dispatch => {
     let result = exampleLightZoneArray;

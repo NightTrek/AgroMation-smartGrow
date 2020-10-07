@@ -14,8 +14,7 @@ import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import CancelIcon from '@material-ui/icons/Cancel';
 //my imports 
-import { exampleLightZoneArray } from "../../exampleDataTypes/clientExamlpeDataTypes";
-import { fetchZones, pendingZones, setExampleZones, resetPendingZones } from "../../actions/LightZoneActions";
+import { fetchZones, pendingZones, setExampleZones, resetPendingZones, updateZones } from "../../actions/LightZoneActions";
 
 //firebase
 import { db } from "../../consts/firebase";
@@ -467,7 +466,6 @@ const activeIndicator = (props) => {
 const LightingController = (props) => {
     const classes = useStyles();
     const theme = useTheme();
-    const lightZoneArray = props.lightZoneArray || exampleLightZoneArray;
 
     let { rooms, pick, user, lightZones, pending } = useSelector(state => ({
         rooms: state.growRooms.rooms,
@@ -562,7 +560,6 @@ const LightingController = (props) => {
 
 
     const [state, setState] = useState({
-        lightZoneArray: lightZoneArray,
         currentZone: 0,
         selectedZones: [],
         spectrumModal: false,
@@ -585,23 +582,49 @@ const LightingController = (props) => {
             invalidAlert: false
         });
     };
-    const handleAlertOpen = (msg, type) => {
+    const handleAlertOpen = (msg, type, closeModals) => {
         if (type === "success") {
             console.log("successAlert")
-            setState({
-                ...state,
-                errorMsg: msg,
-                invalidAlert: true,
-                alertType: "success"
-            });
+            if (closeModals) {
+                setState({
+                    ...state,
+                    spectrumModal: false,
+                    powerModal: false,
+                    scheduleModal: false,
+                    errorMsg: msg,
+                    invalidAlert: true,
+                    alertType: "success"
+                });
+            } else {
+                setState({
+                    ...state,
+                    errorMsg: msg,
+                    invalidAlert: true,
+                    alertType: "success"
+                });
+            }
+
         } else {
             console.log("error alert")
-            setState({
-                ...state,
-                errorMsg: msg,
-                invalidAlert: true,
-                alertType: "error"
-            });
+            if(closeModals){
+                setState({
+                    ...state,
+                    spectrumModal: false,
+                    powerModal: false,
+                    scheduleModal: false,
+                    errorMsg: msg,
+                    invalidAlert: true,
+                    alertType: "error"
+                });
+            }else{
+                setState({
+                    ...state,
+                    errorMsg: msg,
+                    invalidAlert: true,
+                    alertType: "error"
+                });
+            }
+            
         }
 
     };
@@ -640,12 +663,14 @@ const LightingController = (props) => {
             setState({
                 ...state,
                 spectrumModal: true,
+                spectrum: [selectedRows[0].red, selectedRows[0].yellow, selectedRows[0].blue],
                 selectedZones: selectedRows
             })
         }
         else {
             // TODO nothing selected warning
             console.log("provide warning that nothing is selected");
+            handleAlertOpen("Error please Select some zones to edit");
         }
 
     };
@@ -684,22 +709,40 @@ const LightingController = (props) => {
                             };
                         }
                         let output = {
+                            ...data,
                             red: state.spectrum[0],
                             yellow: state.spectrum[1],
                             blue: state.spectrum[2]
                         }
                         transaction.update(ZoneRef, output);
                         return {
-                            ...data,
+                            ...output,
                             doc: roomDocSnapshot.id
                         };
 
                     });
                 });
                 updatedZones.push(data)
-                
             }
-            handleAlertOpen("Zones updated", "success")
+
+            let newReduxLightZones = [];
+            for (let i = 0; i < lightZones.length; i++) {
+                let newArrayitem = {};
+                for (let index = 0; index < updatedZones.length; index++) {
+                    if (lightZones[i].name === updatedZones[index].name) {
+                        newArrayitem = updatedZones[index]
+                    }
+                }
+                if (newArrayitem === {} || newArrayitem.name == undefined) {
+                    newArrayitem = lightZones[i]
+                }
+                newReduxLightZones.push(newArrayitem);
+            }
+            console.log(newReduxLightZones)
+
+            props.updateZones(newReduxLightZones)
+            handleAlertOpen("Zones updated", "success", true)
+
         } catch (err) {
             console.log(err)
             handleAlertOpen("Error updating Zones")
@@ -722,11 +765,84 @@ const LightingController = (props) => {
             })
         }
         else {
-            // TODO nothing selected warning
-            console.log("provide warning that nothing is selected");
+            handleAlertOpen("Error please Select some zones to edit");
         }
 
     };
+
+    const setPower = async () => {
+
+        if (typeof state.power !== "number") {
+            throw "invalid type spectrum"
+            return 0;
+        }
+        if (state.power < 0) {
+            throw "invalid value spectrum must be positive"
+        }
+        if (state.power > 100) {
+            throw "invalid value spectrum must be below 100"
+        }
+        try {
+            let updatedZones = []
+            for (let i = 0; i < state.selectedZones.length; i++) {
+                if (!state.selectedZones[i].doc) {
+                    throw `Error selected zone is missing doc ${state.selectedZones[i]}`
+                }
+                let ZoneRef = db.collection("LightZones").doc(state.selectedZones[i].doc);
+
+                let data = await db.runTransaction((transaction) => {
+                    return transaction.get(ZoneRef).then((roomDocSnapshot) => {
+                        if (!roomDocSnapshot.exists) {
+                            throw "Document does not exist"
+                        }
+                        let data = roomDocSnapshot.data();
+                        //maybe check and see if the document needs to be updated
+                        if (data.intensity === state.power) {
+                            return {
+                                ...data,
+                                doc: roomDocSnapshot.id
+                            };
+                        }
+                        let output = {
+                            ...data,
+                            intensity: state.power
+                        }
+                        transaction.update(ZoneRef, output);
+                        return {
+                            ...output,
+                            doc: roomDocSnapshot.id
+                        };
+
+                    });
+                });
+                updatedZones.push(data)
+            }
+
+            let newReduxLightZones = [];
+            for (let i = 0; i < lightZones.length; i++) {
+                let newArrayitem = {};
+                for (let index = 0; index < updatedZones.length; index++) {
+                    if (lightZones[i].name === updatedZones[index].name) {
+                        newArrayitem = updatedZones[index]
+                    }
+                }
+                if (newArrayitem === {} || newArrayitem.name == undefined) {
+                    newArrayitem = lightZones[i]
+                }
+                newReduxLightZones.push(newArrayitem);
+            }
+            console.log(newReduxLightZones)
+
+            props.updateZones(newReduxLightZones)
+
+            handleAlertOpen("Zones updated", "success", true)
+
+        } catch (err) {
+            console.log(err)
+            handleAlertOpen("Error updating Zones")
+        }
+
+    }
 
     const openScheduleControl = (event) => {
 
@@ -886,7 +1002,12 @@ const LightingController = (props) => {
                             </Grid> */}
                             <Grid item container direction={"row"}>
                                 <Box style={{ marginLeft: "48px", marginBottom: "24px" }}>
-                                    <PowerIntensity />
+                                    <PowerIntensity value={state.power} setFunc={(number) => {
+                                        setState({
+                                            ...state,
+                                            power: number
+                                        })
+                                    }} />
                                 </Box>
                                 <div className="ag-theme-balham-dark" style={{ width: "50%", height: "256px", marginLeft: "48px", marginTop: "28px" }}>
                                     <AgGridReact
@@ -901,7 +1022,7 @@ const LightingController = (props) => {
                                 </div>
                             </Grid>
                             <Grid item container direction={"row"}>
-                                <Button variant={"outlined"} color={"primary"}>
+                                <Button variant={"outlined"} color={"primary"} onClick={setPower}>
                                     Set
                                     </Button>
                             </Grid>
@@ -984,7 +1105,7 @@ function mapStateToProps({ state }) {
 }
 
 const formedComponent = compose(
-    connect(mapStateToProps, { fetchZones: fetchZones, pendingZones: pendingZones, resetPendingZones: resetPendingZones, setExampleZones: setExampleZones })
+    connect(mapStateToProps, { fetchZones: fetchZones, pendingZones: pendingZones, resetPendingZones: resetPendingZones, setExampleZones: setExampleZones, updateZones: updateZones })
 )(LightingController);
 
 export default formedComponent;

@@ -5,7 +5,8 @@ import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
 import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
-import { Grid, TextField, makeStyles, useTheme, withStyles, Slider, Typography, Button, Divider, IconButton, Backdrop, Modal, Fade, Box } from '@material-ui/core'
+import { Grid, TextField, makeStyles, useTheme, withStyles, Slider, Typography, Button, Divider, IconButton, Backdrop, Modal, Fade, Box, Snackbar } from '@material-ui/core'
+import Alert from '@material-ui/lab/Alert';
 //icons
 // import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
 import WavesIcon from '@material-ui/icons/Waves';
@@ -14,8 +15,10 @@ import ScheduleIcon from '@material-ui/icons/Schedule';
 import CancelIcon from '@material-ui/icons/Cancel';
 //my imports 
 import { exampleLightZoneArray } from "../../exampleDataTypes/clientExamlpeDataTypes";
-import { fetchZones, pendingZones, setExampleZones, resetPendingZones} from "../../actions/LightZoneActions";
+import { fetchZones, pendingZones, setExampleZones, resetPendingZones } from "../../actions/LightZoneActions";
 
+//firebase
+import { db } from "../../consts/firebase";
 
 function valuetext(value) {
     return `${value}%`;
@@ -72,7 +75,7 @@ const PowerIntensitySlider = withStyles({
             // marginTop: -320,
             marginLeft: -12,
             border: '2px solid #2D2F33',
-            color:"black"
+            color: "black"
         }
     }
 })(Slider);
@@ -126,7 +129,7 @@ const RedIntensitySlider = withStyles({
             marginTop: -320,
             marginLeft: -12,
             border: '2px solid #2D2F33',
-            color:"black"
+            color: "black"
         }
     }
 })(Slider);
@@ -179,7 +182,7 @@ const YellowIntensitySlider = withStyles({
             marginTop: -320,
             marginLeft: -12,
             border: '2px solid #2D2F33',
-            color:"black"
+            color: "black"
         }
     }
 })(Slider);
@@ -223,7 +226,7 @@ const BlueIntensitySlider = withStyles({
             marginTop: -320,
             marginLeft: -12,
             border: '2px solid #2D2F33',
-            color:"black"
+            color: "black"
         }
 
     }
@@ -235,7 +238,7 @@ const ZoneSearchInput = withStyles((theme) => ({
 
     root: {
         background: theme.palette.secondary.dark,
-        color:theme.palette.text.main
+        color: theme.palette.text.main
     },
 
 }))(TextField);
@@ -322,8 +325,8 @@ const useStyles = makeStyles((theme) => ({
 
 const PowerIntensity = (props) => {
     const classes = useStyles();
-    const defaultValue = props.intensity || 50;
-    const [value, setValue] = React.useState(defaultValue);
+    const defaultValue = props.value
+    // const [value, setValue] = React.useState(defaultValue);
 
     const topCaption = props.topCaption || "power";
     const type = props.type || 0;
@@ -331,13 +334,14 @@ const PowerIntensity = (props) => {
     // const color = props.color || "white";
 
     const handleSliderChange = (event, newValue) => {
-        setValue(newValue);
+        // setValue(newValue);
+        props.setFunc(newValue);
     };
 
     const ThumbComponent = (props) => {
         return (
             <span {...props}>
-                {value}
+                {defaultValue}
             </span>
         );
     }
@@ -345,7 +349,7 @@ const PowerIntensity = (props) => {
     const typeOptions = [
         <PowerIntensitySlider
             orientation="vertical"
-            defaultValue={defaultValue}
+            value={defaultValue}
             aria-labelledby="vertical-slider"
             getAriaValueText={valuetext}
             marks={false}
@@ -354,7 +358,7 @@ const PowerIntensity = (props) => {
         />,
         <RedIntensitySlider
             orientation="vertical"
-            defaultValue={defaultValue}
+            value={defaultValue}
             aria-labelledby="vertical-slider"
             getAriaValueText={valuetext}
             marks={false}
@@ -363,7 +367,7 @@ const PowerIntensity = (props) => {
         />,
         <YellowIntensitySlider
             orientation="vertical"
-            defaultValue={defaultValue}
+            value={defaultValue}
             aria-labelledby="vertical-slider"
             getAriaValueText={valuetext}
             marks={false}
@@ -372,7 +376,7 @@ const PowerIntensity = (props) => {
         />,
         <BlueIntensitySlider
             orientation="vertical"
-            defaultValue={defaultValue}
+            value={defaultValue}
             aria-labelledby="vertical-slider"
             getAriaValueText={valuetext}
             marks={false}
@@ -406,13 +410,32 @@ const PowerIntensity = (props) => {
 
 const RGBInensities = (props) => {
     // const { red, yellow, blue } = props;
+    const setR = (number) => {
+        props.setState({
+            ...props.state,
+            spectrum: [number, props.state.spectrum[1], props.state.spectrum[2]],
+        })
+    }
+    const setY = (number) => {
+        props.setState({
+            ...props.state,
+            spectrum: [props.state.spectrum[0], number, props.state.spectrum[2]],
+        })
+    }
+
+    const setB = (number) => {
+        props.setState({
+            ...props.state,
+            spectrum: [props.state.spectrum[0], props.state.spectrum[1], number],
+        })
+    }
     return (
         <Grid item container direction={"row"} xs={5} wrap={'nowrap'} style={{ marginLeft: "48px", marginBottom: "24px" }}>
-            <PowerIntensity type={1} topCaption={"Color Spectrum"} bottomHeading={"Red"} color={"red"} />
+            <PowerIntensity type={1} value={props.state.spectrum[0]} setFunc={setR} topCaption={"Color Spectrum"} bottomHeading={"Red"} color={"red"} />
             <Divider orientation={"vertical"} flexItem></Divider>
-            <PowerIntensity type={2} topCaption={" "} bottomHeading={"Yellow"} color={"yellow"} />
+            <PowerIntensity type={2} value={props.state.spectrum[1]} setFunc={setY} topCaption={" "} bottomHeading={"Yellow"} color={"yellow"} />
             <Divider orientation={"vertical"} flexItem></Divider>
-            <PowerIntensity type={3} topCaption={" "} bottomHeading={"Blue"} color={"blue"} />
+            <PowerIntensity type={3} value={props.state.spectrum[2]} setFunc={setB} topCaption={" "} bottomHeading={"Blue"} color={"blue"} />
         </Grid>
     );
 };
@@ -459,16 +482,18 @@ const LightingController = (props) => {
         // console.log(pending !== true && user !== undefined && rooms[0].ownerID === undefined)
         // console.log(user)
         if (pending !== true && user !== undefined && rooms[pick] !== undefined) {
-            if(user.example){
+            if (user.example) {
                 props.setExampleZones()
-            }else if(user.UID !== undefined  && rooms[pick].Zones !== undefined){
+            } else if (user.UID !== undefined && rooms[pick].Zones !== undefined) {
                 console.log("fetching zones from db")
                 props.fetchZones(rooms[pick])
                 props.pendingZones()
             }
         }
+
+
     })
-    
+
 
     if (rooms === undefined || rooms.length === 0) {
         rooms = [
@@ -489,13 +514,13 @@ const LightingController = (props) => {
     }
     // console.log(lightZones.length)
     //check if zones are undefined and put loading data
-    
-    if(lightZones.length === 0){
-        if(rooms.Zones === undefined){
+
+    if (lightZones.length === 0) {
+        if (rooms.Zones === undefined) {
             lightZones = [
                 {
                     id: 1,
-                    example:true,
+                    example: true,
                     name: "No Zones set up in this room",
                     active: false,
                     activeCount: 0,
@@ -504,18 +529,18 @@ const LightingController = (props) => {
                     red: 50,
                     yellow: 50,
                     blue: 50,
-                    timeOn:"NaN",
-                    timeOff:"NaN",
-                    dateFirstStarted:0,
-                    totalRuntime:0
+                    timeOn: "NaN",
+                    timeOff: "NaN",
+                    dateFirstStarted: 0,
+                    totalRuntime: 0
                 },
             ]
         }
-        else{
+        else {
             lightZones = [
                 {
                     id: 1,
-                    example:true,
+                    example: true,
                     name: "Loading Zones",
                     active: false,
                     activeCount: 6,
@@ -524,17 +549,17 @@ const LightingController = (props) => {
                     red: 50,
                     yellow: 50,
                     blue: 50,
-                    timeOn:"1111",
-                    timeOff:"1111",
-                    dateFirstStarted:0,
-                    totalRuntime:0
+                    timeOn: "1111",
+                    timeOff: "1111",
+                    dateFirstStarted: 0,
+                    totalRuntime: 0
                 },
             ]
         }
-        
+
     }
-    
-    
+
+
 
     const [state, setState] = useState({
         lightZoneArray: lightZoneArray,
@@ -543,8 +568,43 @@ const LightingController = (props) => {
         spectrumModal: false,
         powerModal: false,
         scheduleModal: false,
+        spectrum: [50, 50, 50],
+        power: 50,
+        timeOn: "",
+        timeOff: "",
+        errorMsg: "",
+        invalidAlert: false,
+        alertType: "error"
 
     });
+
+    //snackbar alert system
+    const handleInvalidAlertClose = () => {
+        setState({
+            ...state,
+            invalidAlert: false
+        });
+    };
+    const handleAlertOpen = (msg, type) => {
+        if (type === "success") {
+            console.log("successAlert")
+            setState({
+                ...state,
+                errorMsg: msg,
+                invalidAlert: true,
+                alertType: "success"
+            });
+        } else {
+            console.log("error alert")
+            setState({
+                ...state,
+                errorMsg: msg,
+                invalidAlert: true,
+                alertType: "error"
+            });
+        }
+
+    };
 
     ///Grid stuff
     const [gridApi, setGridApi] = useState(null);
@@ -556,7 +616,7 @@ const LightingController = (props) => {
         setGridColumnApi(params.columnApi);
     }
 
-    
+
 
     const handleChange = (event) => {
         gridApi.setFilterModel({
@@ -589,6 +649,66 @@ const LightingController = (props) => {
         }
 
     };
+
+    const setSpectrum = async () => {
+        console.log(state.spectrum);
+        console.log(state.selectedZones);
+        for (let i = 0; i < state.spectrum.length; i++) {
+            if (typeof state.spectrum[i] !== "number") {
+                throw "invalid type spectrum"
+                return 0;
+            }
+            if (state.spectrum[i] < 0) {
+                throw "invalid value spectrum must be positive"
+            }
+            if (state.spectrum[i] > 100) {
+                throw "invalid value spectrum must be below 100"
+            }
+        }
+
+        try {
+            let updatedZones = []
+            for (let i = 0; i < state.selectedZones.length; i++) {
+                let ZoneRef = db.collection("LightZones").doc(state.selectedZones[i].doc);
+                let data = await db.runTransaction((transaction) => {
+                    return transaction.get(ZoneRef).then((roomDocSnapshot) => {
+                        if (!roomDocSnapshot.exists) {
+                            throw "Document does not exist"
+                        }
+                        let data = roomDocSnapshot.data();
+                        //maybe check and see if the document needs to be updated
+                        if (data.red === state.spectrum[0] && data.yellow === state.spectrum[1] && data.blue === state.spectrum[2]) {
+                            return {
+                                ...data,
+                                doc: roomDocSnapshot.id
+                            };
+                        }
+                        let output = {
+                            red: state.spectrum[0],
+                            yellow: state.spectrum[1],
+                            blue: state.spectrum[2]
+                        }
+                        transaction.update(ZoneRef, output);
+                        return {
+                            ...data,
+                            doc: roomDocSnapshot.id
+                        };
+
+                    });
+                });
+                updatedZones.push(data)
+                
+            }
+            handleAlertOpen("Zones updated", "success")
+        } catch (err) {
+            console.log(err)
+            handleAlertOpen("Error updating Zones")
+        }
+
+
+
+    }
+
 
     const openPowerControl = (event) => {
 
@@ -637,16 +757,16 @@ const LightingController = (props) => {
 
     const numberOfActiveZones = () => {
         let count = 0;
-        if(lightZones.length >0){
-            lightZones.forEach((item) =>{
-                if(item.active){
+        if (lightZones.length > 0) {
+            lightZones.forEach((item) => {
+                if (item.active) {
                     count++
                 }
             })
             return count;
         }
-        else{return 0}
-        
+        else { return 0 }
+
     }
 
     return (
@@ -729,10 +849,10 @@ const LightingController = (props) => {
                                 </div>
                             </Grid>
                             <Grid item container direction={"row"}>
-                                <RGBInensities />
+                                <RGBInensities state={state} setState={setState} />
                             </Grid>
                             <Grid item container direction={"row"}>
-                                <Button variant={"outlined"} color={"primary"}>
+                                <Button variant={"outlined"} color={"primary"} onClick={setSpectrum}>
                                     Set
                                     </Button>
                             </Grid>
@@ -768,7 +888,7 @@ const LightingController = (props) => {
                                 <Box style={{ marginLeft: "48px", marginBottom: "24px" }}>
                                     <PowerIntensity />
                                 </Box>
-                                <div className="ag-theme-balham-dark" style={{ width: "50%", height: "256px", marginLeft: "48px", marginTop:"28px" }}>
+                                <div className="ag-theme-balham-dark" style={{ width: "50%", height: "256px", marginLeft: "48px", marginTop: "28px" }}>
                                     <AgGridReact
                                         rowData={state.selectedZones}
                                         defaultColDef={{
@@ -804,7 +924,7 @@ const LightingController = (props) => {
             >
                 <Fade in={state.scheduleModal}>
                     <Box className={classes.paper}>
-                    <Grid item container direction={"column"} className={classes.setPointWidget}>
+                        <Grid item container direction={"column"} className={classes.setPointWidget}>
                             <Grid item container direction={"row"}>
                                 <Grid item> <Typography variant={"h5"}>Light Schedule Control</Typography></Grid>
                                 <Grid item xs> </Grid>
@@ -826,7 +946,7 @@ const LightingController = (props) => {
                                 </div>
                             </Grid>
                             <Grid item container direction={"row"}>
-                            <Grid item container direction={"column"} className={classes.sliderRow}>
+                                <Grid item container direction={"column"} className={classes.sliderRow}>
                                     <Grid item container direction={"row"} style={{ padding: "6px", marginBottom: "24px" }}>
                                         <Grid item> <h4>Schedule Lighting times</h4></Grid>
                                         <Grid item xs> </Grid>
@@ -835,7 +955,7 @@ const LightingController = (props) => {
                                         <Grid item></Grid>
                                         <Grid item xs> </Grid>
                                     </Grid>
-                                    
+
                                 </Grid>
                             </Grid>
                             <Grid item container direction={"row"}>
@@ -847,6 +967,13 @@ const LightingController = (props) => {
                     </Box>
                 </Fade>
             </Modal>
+            {/* Snackbar Alert System */}
+            <Snackbar open={state.invalidAlert} autoHideDuration={6000} onClose={handleInvalidAlertClose}>
+                <Alert onClose={handleInvalidAlertClose} severity={state.alertType}>
+                    {state.errorMsg}
+                </Alert>
+            </Snackbar>
+
         </Grid >
     )
 }
@@ -857,7 +984,7 @@ function mapStateToProps({ state }) {
 }
 
 const formedComponent = compose(
-    connect(mapStateToProps, {fetchZones:fetchZones, pendingZones:pendingZones, resetPendingZones:resetPendingZones, setExampleZones:setExampleZones})
+    connect(mapStateToProps, { fetchZones: fetchZones, pendingZones: pendingZones, resetPendingZones: resetPendingZones, setExampleZones: setExampleZones })
 )(LightingController);
 
 export default formedComponent;

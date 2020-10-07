@@ -21,7 +21,7 @@ const getIndividualZone = async (zoneRef) => {
         return new Promise((resolve,reject) => {
             if (doc.exists) {
                 console.log("adding data")
-                resolve(doc.data())
+                resolve({doc:doc.id, ...doc.data()})
             } else {
                 console.log("zone undefined")
                 reject("document undefined")

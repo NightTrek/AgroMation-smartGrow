@@ -169,15 +169,13 @@ function FieldMeter(props) {
             minMax: [props.min, props.max] 
         });
     }, [props])
-    console.log(props.rooms[props.pick].name)
-    console.log(meterState)
-    console.log([meterState.minMax[0] + TypeData.superMin,
-        meterState.minMax[0], meterState.setPoint + TypeData.min, meterState.setPoint + TypeData.max,
-        meterState.minMax[1], meterState.minMax[1] + TypeData.superMax])
+    // console.log(props.rooms[props.pick].name)
+    // console.log(meterState)
+    // console.log([meterState.minMax[0] + TypeData.superMin,
+    //     meterState.minMax[0], meterState.setPoint + TypeData.min, meterState.setPoint + TypeData.max,
+    //     meterState.minMax[1], meterState.minMax[1] + TypeData.superMax])
     //slider handlers
     const handleSetPointSliderChange = (event, newValue) => {
-        console.log(newValue)
-
         setMeterState({ ...meterState, setPoint: parseInt(newValue) });
     };
 
@@ -189,7 +187,6 @@ function FieldMeter(props) {
     };
     //input handlers
     const handleSetPointInputChange = (event) => {
-        console.log(event.target.value)
         setMeterState({ ...meterState, setPoint: event.target.value === '' ? props.setPoint : Number(event.target.value) });
     };
 
@@ -292,7 +289,10 @@ function FieldMeter(props) {
                 }
                 //do the update and return output
                 
-                let output = {...data};
+                let output = {
+                    ...data,
+                    doc:props.rooms[props.pick].doc
+                };
                 for(let key in TypeData.output){
                     if(key.slice(-3) === "int"){
                         output[key] = parseInt(meterState.setPoint)
@@ -309,7 +309,11 @@ function FieldMeter(props) {
                 return output;
 
             }).then((data) => {
-                console.log(data)
+                // console.log(data)
+                let newReduxRoomArray = props.rooms
+                newReduxRoomArray[props.pick] = data
+                // console.log(newReduxRoomArray);
+                props.setRoom(newReduxRoomArray);
                 props.handleAlertOpen("Successfully updated room data", "success");
                 setOpen(false);
             }).catch((err) => {

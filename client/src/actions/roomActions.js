@@ -71,6 +71,11 @@ export const getRooms = (User, location) => async dispatch => {
 
 };
 
+export const updateRooms = (result) => dispatch => {
+    console.log("dispatching room update data")
+    dispatch({ type: GET_ROOMS, payload: result })
+}
+
 export const setExampleRooms = () => dispatch => {
     let result = ExampleRoomData;
     console.log("dispatching Example room data")

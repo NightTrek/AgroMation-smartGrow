@@ -17,9 +17,7 @@ export const getRooms = (User, location) => async dispatch => {
         if (User.accountOwner == null && User.UID !== undefined) {
             //when the Owner ID is null us the UID for the user account
             console.log(`querying rooms for id ${User.UID}`)
-            db.collection("Rooms").where("ownerID", "==", User.UID)
-                .get()
-                .then((querySnapshot) => {
+            let querySnapshot = await db.collection("Rooms").where("ownerID", "==", User.UID).get()
                     if (!querySnapshot.empty) {
                         let roomArray = [];
                         querySnapshot.forEach((doc) => {
@@ -39,10 +37,7 @@ export const getRooms = (User, location) => async dispatch => {
                         // dispatch({ type: FETCH_USER, payload: exampleAccount });
                     }
 
-                }).catch((error) => {
-                    console.log(error)
-                    // dispatch({ type: FETCH_USER, payload: exampleAccount });
-                });
+                
         }
         else {
             console.log("Using location array to get rooms");

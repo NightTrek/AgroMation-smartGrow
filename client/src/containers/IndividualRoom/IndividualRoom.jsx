@@ -79,7 +79,7 @@ const IndividualRoom = () => {
 
     const [state, setState] = React.useState({ //setState
         Tabs: ["Analytics", "Lights", "Alarms", "Logs"],
-        pick: 1,
+        pick: 0,
     });
 
 

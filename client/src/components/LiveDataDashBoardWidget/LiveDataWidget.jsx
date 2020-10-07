@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
         minWidth: "128px",
         maxWidth: "1248px",
         minHeight: "128px",
+        padding:"12px",
         // marginLeft:"32px",
     },
     iconButton: {
@@ -113,14 +114,14 @@ const LiveDataWidget = (props) => {
     return (
         <Grid item container className={classes.LiveDataWidget} direction={"column"}>
             <Grid item container direction={"row"}>
-                <Grid container item xs={6} sm={2} md direction={"column"}>
-                    <Grid item>
+                    <Grid item xs={6} md={4} lg={2}>
                         <Typography variant={"h5"} style={{ paddingLeft: "12px" }}>Live Data:</Typography>
                     </Grid>
-                    <Grid item>
+                    <Grid item xs={6} md={4} lg={2}>
                         <Typography variant={"h6"} style={{ paddingLeft: "12px" }}>{rooms[pick].name}</Typography>
                     </Grid>
-                </Grid>
+                    <Grid item xs>
+                    </Grid>
             </Grid>
             <Grid item container direction={"row"}>
                 <Grid item xs={6} sm={3} md>
@@ -151,7 +152,7 @@ const LiveDataWidget = (props) => {
             <Grid item container direction={"row"}>
                 <Grid item xs>
                 </Grid>
-                <Grid item xs={6} sm={2} md>
+                <Grid item xs sm={2} style={{paddingBottom:"24px"}}>
                     <Button variant="outlined" color="primary" onClick={handleShowRoom}>
                         Show Room
                     </Button>

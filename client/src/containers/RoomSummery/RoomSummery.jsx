@@ -243,6 +243,7 @@ const useStyles = makeStyles((theme) => ({
         maxWidth: "256px",
         maxHeight: "256px",
         position: "relative",
+        
         // '@media (min-width: 425px)':{
         //     width: "64px",
         //     height: "64px",
@@ -267,6 +268,8 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
     },
     paper: {
+        display:"flex",
+        flexGrow:1,
         position: "absolute",
         minWidth: "512px",
         color: theme.palette.text.main,
@@ -275,6 +278,19 @@ const useStyles = makeStyles((theme) => ({
         border: `2px solid ${theme.palette.secondary.dark}`,
         boxShadow: theme.shadows[5],
         padding: "12px",
+        '@media (max-width: 550px)': {
+            minWidth:"64px",
+            maxWidth: "320px",
+
+        },
+        '@media (max-width: 400px)': {
+            maxWidth: "256px",
+
+        },
+        '@media (max-width: 330px)': {
+            maxWidth: "256px",
+
+        }
     },
     setPointWidget: {
         paddingTop: "0px",

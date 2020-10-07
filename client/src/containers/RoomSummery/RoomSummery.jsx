@@ -4,7 +4,11 @@ import PropTypes from 'prop-types';
 import { connect, useSelector, shallowEqual } from 'react-redux';
 import { compose } from "redux";
 import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles'; //useTheme
-import { Grid, Typography, Select, MenuItem, ListItemText, List, ListItem, ListItemIcon, Button, Modal, Backdrop, Fade, Box, Slider, Input, IconButton } from '@material-ui/core'
+import {
+    Grid, Typography, Select, MenuItem, ListItemText, List, ListItem, ListItemIcon, Button, Modal, Backdrop, Fade,
+    Box, Slider, Input, IconButton, Snackbar, CircularProgress
+} from '@material-ui/core'
+import Alert from '@material-ui/lab/Alert';
 import ReactSpeedometer from "react-d3-speedometer"
 import ErrorIcon from '@material-ui/icons/Error';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
@@ -15,12 +19,16 @@ import { StandardRoundSelectForm } from "../../components/StandardSelect/Standar
 import CancelIcon from '@material-ui/icons/Cancel';
 // import VerticalDividerStyled from "../../components/VerticalDivider/VerticalDivider";
 
+//custom components
+import FieldMeter from "../../components/RoomMeter/RoomMeter"
 
 
 //Redux actions
 import { getRooms, setRoom, setExampleRooms, pendingRooms } from "../../actions/roomActions";
-import {resetPendingZones, resetZones} from "../../actions/LightZoneActions";
+import { resetPendingZones, resetZones } from "../../actions/LightZoneActions";
 
+//firebase stuff
+import { db } from "../../consts/firebase";
 
 function DiagnosticColorBar(props) {
     const theme = useTheme();
@@ -95,11 +103,12 @@ function TempMeter(props) {
 
     //setPointStuff
     const [meterState, setMeterState] = React.useState({
-        setPoint: rooms[pick].tempSetPoint,
-        max: rooms[pick].tempMax,
-        min: rooms[pick].tempMin,
-        minMax: [rooms[pick].tempMin, rooms[pick].tempMax]
+        setPoint: props.rooms[props.pick].tempSetPoint,
+        max: props.rooms[props.pick].tempMax,
+        min: props.rooms[props.pick].tempMin,
+        minMax: [props.rooms[props.pick].tempMin, props.rooms[props.pick].tempMax]
     });
+
 
     //slider handlers
     const handleSetPointSliderChange = (event, newValue) => {
@@ -116,7 +125,7 @@ function TempMeter(props) {
     const handleSetPointInputChange = (event) => {
         setMeterState({ ...meterState, setPoint: event.target.value === '' ? '' : Number(event.target.value) });
     };
-    
+
     const handleMinInputChange = (event) => {
         let cMeterState = meterState.minMax;
         if (event.target.value < meterState.setPoint) {
@@ -148,11 +157,11 @@ function TempMeter(props) {
     };
 
     const handleClose = () => {
-        if (rooms[pick].tempSetPoint === meterState.setPoint) {
+        if (props.rooms[props.pick].tempSetPoint === meterState.setPoint) {
             setOpen(false);
         }
         else {
-            alert("ALERT changes have not been sent too the device");
+            props.handleAlertOpen("Changes have not been saved please hit set to save changes to controller")
             setOpen(false);
         }
     };
@@ -163,12 +172,12 @@ function TempMeter(props) {
 
     const handleMouseEnter = () => {
         setLabels([{
-            text: `${rooms[pick].tempSetPoint - 20}${tempUnitString}`,
+            text: `${props.rooms[props.pick].tempSetPoint - 20}${tempUnitString}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         }, {
-            text: `${rooms[pick].tempSetPoint - 5}${tempUnitString}`,
+            text: `${props.rooms[props.pick].tempSetPoint - 5}${tempUnitString}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
@@ -180,13 +189,13 @@ function TempMeter(props) {
             color: "white"
         },
         {
-            text: `${rooms[pick].tempSetPoint + 5}${tempUnitString}`,
+            text: `${props.rooms[props.pick].tempSetPoint + 5}${tempUnitString}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
         },
         {
-            text: `${rooms[pick].tempSetPoint + 20}${tempUnitString}`,
+            text: `${props.rooms[props.pick].tempSetPoint + 20}${tempUnitString}`,
             fontSize: "12px",
             position: "OUTSIDE",
             color: "white"
@@ -197,9 +206,51 @@ function TempMeter(props) {
     }
 
     const handleSendChanges = () => {
-        if(meterState.setPoint !== rooms[pick].tempSetPoint){
-
+        //verify there are changes
+        if (meterState.setPoint == props.rooms[props.pick].tempSetPoint && meterState.minMax[0] == props.rooms[props.pick].tempMin && meterState.minMax[1] == props.rooms[props.pick].tempMax) {
+            props.handleAlertOpen("Did  you forget to make the changes")
+            return 0;
         }
+        //verify the setpoint is above min
+        if (meterState.setPoint < meterState.minMax[0]) {
+            props.handleAlertOpen("Your setpoint must be above your minimum value")
+            return 0;
+        } //verify your setpoint is below max
+        if (meterState.setPoint > meterState.minMax[1]) {
+            props.handleAlertOpen("Your setpoint must be below your maximum value")
+            return 0;
+        }
+        const roomRef = db.collection('Rooms').doc(props.rooms[props.pick].doc)
+        db.runTransaction((transaction) => {
+            return transaction.get(roomRef).then((roomDocSnapshot) => {
+                if (!roomDocSnapshot.exists) {
+                    throw "Document does not exist"
+                }
+                let data = roomDocSnapshot.data();
+                //maybe check and see if the document needs to be updated
+                if (data.setPoint === meterState.setPoint && data.tempMin === meterState.minMax[0] && data.tempMax === meterState.minMax[1]) {
+                    return data;
+                }
+                //do the update and return output
+                let output = {
+                    ...data,
+                    tempSetPoint: parseInt(meterState.setPoint),
+                    tempMin: parseInt(meterState.minMax[0]),
+                    tempMax: parseInt(meterState.minMax[1])
+                }
+                transaction.update(roomRef, output);
+                return output;
+
+            }).then((data) => {
+                props.handleAlertOpen("Successfully updated room data", "success");
+                setOpen(false);
+            }).catch((err) => {
+                props.handleAlertOpen("error during transaction");
+                console.log(err);
+            })
+        })
+
+
     }
 
     return (
@@ -217,19 +268,19 @@ function TempMeter(props) {
                         needleColor={theme.palette.text.main}
                         value={roomState.liveData.temp}
                         currentValueText={`${roomState.liveData.temp} °F`}
-                        minValue={rooms[pick].tempSetPoint - 50}
-                        maxValue={rooms[pick].tempSetPoint + 50}
+                        minValue={meterState.minMax[0] - 30}
+                        maxValue={meterState.minMax[1] + 30}
                         segments={5}
-                        customSegmentStops={[rooms[pick].tempSetPoint - 50,
-                        rooms[pick].tempSetPoint - 20, rooms[pick].tempSetPoint - 5, rooms[pick].tempSetPoint + 5,
-                        rooms[pick].tempSetPoint + 20, rooms[pick].tempSetPoint + 50]}
-                        segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main , theme.palette.roomStatus.nominal, theme.palette.primary.main,
-                            theme.palette.roomStatus.warning]}
+                        customSegmentStops={[meterState.minMax[0] - 30,
+                        meterState.minMax[0], meterState.setPoint - 2, meterState.setPoint + 2,
+                        meterState.minMax[1], meterState.minMax[1] + 30]}
+                        segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.nominal, theme.palette.primary.main,
+                        theme.palette.roomStatus.warning]}
                         customSegmentLabels={Labels}
                     />
                 </div>
-                <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.temp} min={rooms[pick].tempSetPoint - 5} superMin={rooms[pick].tempSetPoint - 20}
-                    max={rooms[pick].tempSetPoint + 5} superMax={rooms[pick].tempSetPoint + 20} setPoint={`${rooms[pick].tempSetPoint}${tempUnitString}`} />
+                <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.temp} min={meterState.setPoint - 5} superMin={parseInt(meterState.minMax[0])}
+                    max={meterState.setPoint + 5} superMax={parseInt(meterState.minMax[1])} setPoint={`${meterState.setPoint}${tempUnitString}`} />
                 <Modal
                     aria-labelledby="Temperature setpoint modal"
                     aria-describedby="Set the temperature of controller"
@@ -289,7 +340,7 @@ function TempMeter(props) {
                                             <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "24px" }}> {tempUnitString}</Typography>
                                         </Grid>
                                     </Grid>
-                                    <Grid item container direction={'row'} style={{marginTop:"24px"}}>
+                                    <Grid item container direction={'row'} style={{ marginTop: "24px" }}>
                                         <Grid item>
                                             <Typography variant={"body1"}>Minimum</Typography>
                                             <Input
@@ -311,18 +362,18 @@ function TempMeter(props) {
                                             <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "48px" }}> {tempUnitString}</Typography>
                                         </Grid>
                                         <Grid item xs>
-                                            
+
                                             <Slider
                                                 value={meterState.minMax}
                                                 onChange={handleMinMaxSliderChange}
                                                 aria-labelledby="min-slider"
                                                 min={0}
                                                 max={120}
-                                                style={{ width: "95%", marginTop:"24px" }}
+                                                style={{ width: "95%", marginTop: "24px" }}
                                             />
                                         </Grid>
                                         <Grid item>
-                                        <Typography variant={"body1"}>Maximum</Typography>
+                                            <Typography variant={"body1"}>Maximum</Typography>
                                             <Input
                                                 className={classes.input}
                                                 value={meterState.minMax[1]}
@@ -345,7 +396,7 @@ function TempMeter(props) {
                                     </Grid>
                                 </Grid>
                                 <Grid item container direction={"row"}>
-                                    <Button variant={"outlined"} color={"primary"}>
+                                    <Button variant={"outlined"} color={"primary"} onClick={handleSendChanges}>
                                         Set
                                     </Button>
                                 </Grid>
@@ -376,7 +427,7 @@ function HumidityMeter(props) {
     };
     //setPointStuff
     const [meterState, setMeterState] = React.useState({
-        setPoint: rooms[pick].humiditySetPoint,
+        setPoint: props.rooms[props.pick].humiditySetPoint,
         max: rooms[pick].humidityMax,
         min: rooms[pick].humidityMin,
         minMax: [rooms[pick].humidityMin, rooms[pick].humidityMax]
@@ -396,7 +447,7 @@ function HumidityMeter(props) {
     const handleSetPointInputChange = (event) => {
         setMeterState({ ...meterState, setPoint: event.target.value === '' ? '' : Number(event.target.value) });
     };
-    
+
     const handleMinInputChange = (event) => {
         let cMeterState = meterState.minMax;
         if (event.target.value < meterState.setPoint) {
@@ -482,8 +533,8 @@ function HumidityMeter(props) {
                         rooms[pick].humiditySetPoint - 10,
                         rooms[pick].humiditySetPoint + 10, rooms[pick].humiditySetPoint + 30,
                         rooms[pick].humiditySetPoint + 50]}
-                        segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main , theme.palette.roomStatus.nominal, theme.palette.primary.main,
-                            theme.palette.roomStatus.warning]}
+                        segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.nominal, theme.palette.primary.main,
+                        theme.palette.roomStatus.warning]}
                         customSegmentLabels={Labels} />
                 </div>
                 <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.humidty} min={rooms[pick].humiditySetPoint - 10} superMin={rooms[pick].humiditySetPoint - 30}
@@ -547,7 +598,7 @@ function HumidityMeter(props) {
                                             <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "24px" }}> %</Typography>
                                         </Grid>
                                     </Grid>
-                                    <Grid item container direction={'row'} style={{marginTop:"24px"}}>
+                                    <Grid item container direction={'row'} style={{ marginTop: "24px" }}>
                                         <Grid item>
                                             <Typography variant={"body1"}>Minimum</Typography>
                                             <Input
@@ -569,18 +620,18 @@ function HumidityMeter(props) {
                                             <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "48px" }}> %</Typography>
                                         </Grid>
                                         <Grid item xs>
-                                            
+
                                             <Slider
                                                 value={meterState.minMax}
                                                 onChange={handleMinMaxSliderChange}
                                                 aria-labelledby="min-slider"
                                                 min={0}
                                                 max={120}
-                                                style={{ width: "95%", marginTop:"24px" }}
+                                                style={{ width: "95%", marginTop: "24px" }}
                                             />
                                         </Grid>
                                         <Grid item>
-                                        <Typography variant={"body1"}>Maximum</Typography>
+                                            <Typography variant={"body1"}>Maximum</Typography>
                                             <Input
                                                 className={classes.input}
                                                 value={meterState.minMax[1]}
@@ -656,7 +707,7 @@ function CO2LevelMeter(props) {
     const handleSetPointInputChange = (event) => {
         setMeterState({ ...meterState, setPoint: event.target.value === '' ? '' : Number(event.target.value) });
     };
-    
+
     const handleMinInputChange = (event) => {
         let cMeterState = meterState.minMax;
         if (event.target.value < meterState.setPoint) {
@@ -737,8 +788,8 @@ function CO2LevelMeter(props) {
                         maxValue={rooms[pick].CO2SetPoint + 2000}
                         segments={5}
                         customSegmentStops={[rooms[pick].CO2SetPoint - 2000, rooms[pick].CO2SetPoint - 1000, rooms[pick].CO2SetPoint - 200, rooms[pick].CO2SetPoint + 200, rooms[pick].CO2SetPoint + 1000, rooms[pick].CO2SetPoint + 2000]}
-                        segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main , theme.palette.roomStatus.nominal, theme.palette.primary.main,
-                            theme.palette.roomStatus.warning]}
+                        segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.nominal, theme.palette.primary.main,
+                        theme.palette.roomStatus.warning]}
                         customSegmentLabels={Labels} />
                 </div>
                 <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.CO2level} min={rooms[pick].CO2SetPoint - 200} superMin={rooms[pick].CO2SetPoint - 1000}
@@ -802,7 +853,7 @@ function CO2LevelMeter(props) {
                                             <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "24px" }}> ppm</Typography>
                                         </Grid>
                                     </Grid>
-                                    <Grid item container direction={'row'} style={{marginTop:"24px"}}>
+                                    <Grid item container direction={'row'} style={{ marginTop: "24px" }}>
                                         <Grid item>
                                             <Typography variant={"body1"}>Minimum</Typography>
                                             <Input
@@ -824,18 +875,18 @@ function CO2LevelMeter(props) {
                                             <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "48px" }}> ppm</Typography>
                                         </Grid>
                                         <Grid item xs>
-                                            
+
                                             <Slider
                                                 value={meterState.minMax}
                                                 onChange={handleMinMaxSliderChange}
                                                 aria-labelledby="min-slider"
                                                 min={0}
                                                 max={6000}
-                                                style={{ width: "95%", marginTop:"24px" }}
+                                                style={{ width: "95%", marginTop: "24px" }}
                                             />
                                         </Grid>
                                         <Grid item>
-                                        <Typography variant={"body1"}>Maximum</Typography>
+                                            <Typography variant={"body1"}>Maximum</Typography>
                                             <Input
                                                 className={classes.input}
                                                 value={meterState.minMax[1]}
@@ -909,7 +960,7 @@ function PressureMeter(props) {
     const handleSetPointInputChange = (event) => {
         setMeterState({ ...meterState, setPoint: event.target.value === '' ? '' : Number(event.target.value) });
     };
-    
+
     const handleMinInputChange = (event) => {
         let cMeterState = meterState.minMax;
         if (event.target.value < meterState.setPoint) {
@@ -977,7 +1028,7 @@ function PressureMeter(props) {
         <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'}>
             <Typography variant={"h6"} align={'center'}>Pressure level</Typography>
             <Grid item xs className={classes.meterContainer}>
-                <div  onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                     <ReactSpeedometer
                         forceRender
                         width={256}
@@ -990,8 +1041,8 @@ function PressureMeter(props) {
                         segments={5}
                         currentValueText={`${roomState.liveData.pressure} mbar`}
                         customSegmentStops={[rooms[pick].pressureSetPont - 300, rooms[pick].pressureSetPont - 100, rooms[pick].pressureSetPont - 20, rooms[pick].pressureSetPont + 20, rooms[pick].pressureSetPont + 100, rooms[pick].pressureSetPont + 300]}
-                        segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main , theme.palette.roomStatus.nominal, theme.palette.primary.main,
-                            theme.palette.roomStatus.warning]}
+                        segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.nominal, theme.palette.primary.main,
+                        theme.palette.roomStatus.warning]}
                         customSegmentLabels={Labels} />
                 </div>
                 <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData.pressure} min={rooms[pick].pressureSetPont - 20} superMin={rooms[pick].pressureSetPont - 100}
@@ -1055,7 +1106,7 @@ function PressureMeter(props) {
                                             <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "24px" }}> ppm</Typography>
                                         </Grid>
                                     </Grid>
-                                    <Grid item container direction={'row'} style={{marginTop:"24px"}}>
+                                    <Grid item container direction={'row'} style={{ marginTop: "24px" }}>
                                         <Grid item>
                                             <Typography variant={"body1"}>Minimum</Typography>
                                             <Input
@@ -1077,18 +1128,18 @@ function PressureMeter(props) {
                                             <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "48px" }}> ppm</Typography>
                                         </Grid>
                                         <Grid item xs>
-                                            
+
                                             <Slider
                                                 value={meterState.minMax}
                                                 onChange={handleMinMaxSliderChange}
                                                 aria-labelledby="min-slider"
                                                 min={0}
                                                 max={2000}
-                                                style={{ width: "95%", marginTop:"24px" }}
+                                                style={{ width: "95%", marginTop: "24px" }}
                                             />
                                         </Grid>
                                         <Grid item>
-                                        <Typography variant={"body1"}>Maximum</Typography>
+                                            <Typography variant={"body1"}>Maximum</Typography>
                                             <Input
                                                 className={classes.input}
                                                 value={meterState.minMax[1]}
@@ -1255,18 +1306,18 @@ const useStyles = makeStyles((theme) => ({
         color: theme.palette.text.main,
         minWidth: "256px",
         minHeight: "360px",
-        height:"auto",
-        '@media (max-width: 460px)':{
+        height: "auto",
+        '@media (max-width: 460px)': {
             maxWidth: "300px",
-            
+
         },
-        '@media (max-width: 400px)':{
+        '@media (max-width: 400px)': {
             maxWidth: "256px",
-            
+
         },
-        '@media (max-width: 330px)':{
+        '@media (max-width: 330px)': {
             maxWidth: "212px",
-            
+
         }
     },
     iconButton: {
@@ -1305,7 +1356,7 @@ const useStyles = makeStyles((theme) => ({
         position: "absolute",
         minWidth: "512px",
         color: theme.palette.text.main,
-        background:"url('https://cdn.discordapp.com/attachments/370759274621698048/755271571181928459/unknown.png')",
+        background: "url('https://cdn.discordapp.com/attachments/370759274621698048/755271571181928459/unknown.png')",
         backgroundColor: theme.palette.secondary.main,
         border: `2px solid ${theme.palette.secondary.dark}`,
         boxShadow: theme.shadows[5],
@@ -1348,7 +1399,7 @@ function RoomSummery(props) {
         pick: state.growRooms.roomIndex,
         user: state.users.user,
         pending: state.growRooms.pending,
-        locationIndex:state.users.activeLocation,
+        locationIndex: state.users.activeLocation,
 
     }), shallowEqual)
 
@@ -1356,77 +1407,108 @@ function RoomSummery(props) {
     useEffect(() => {
         // console.log(pending !== true && user.UID !== undefined && rooms[0].ownerID === undefined)
         if (pending !== true && user !== undefined && rooms[0].ownerID === undefined) {
-            if(user.example){
+            if (user.example) {
                 props.setExampleRooms()
                 props.pendingRooms()
-            }else if(user.UID !== undefined  && rooms[0].ownerID === undefined){
+            } else if (user.UID !== undefined && rooms[0].ownerID === undefined) {
                 props.getRooms(user, locationIndex)
                 props.pendingRooms()
             }
         }
     })
-
-//check if data has loaded and if not display loading text
-if (rooms === undefined || rooms.length === 0) {
-    rooms = [
-        {
-            name: "Loading rooms",
-            tempSetPoint: 72,
-            humiditySetPoint: 44,
-            CO2SetPoint: 3000,
-            pressureSetPont: 1114,
-            stage: "loading",
-            dateStarted: 1597017600,
-            CloneTime: 864000,
-            VegTime: 3024000,
-            FlowerTime: 2419200,
-        },
-    ]
-    pick = 0;
-}
+    let loading = false;
+    //check if data has loaded and if not display loading text
+    if (rooms === undefined || rooms.length === 0) {
+        rooms = [
+            {
+                name: "Loading rooms",
+                tempSetPoint: 72,
+                humiditySetPoint: 44,
+                CO2SetPoint: 3000,
+                pressureSetPont: 1114,
+                stage: "loading",
+                dateStarted: 1597017600,
+                CloneTime: 864000,
+                VegTime: 3024000,
+                FlowerTime: 2419200,
+            },
+        ]
+        pick = 0;
+        loading=true;
+    }
 
     const [state, setState] = React.useState({ //setState
         liveData: {
             temp: 74,
-            humidty: 45,
-            CO2level: 2988,
+            humidity: 45,
+            CO2: 2988,
             pressure: 1114
         },
-        MeterArrayIndexStart: 0
+        MeterArrayIndexStart: true,
+        errorMsg: "",
+        invalidAlert: false,
+        alertType: "error"
+
     });
 
-    let MeterArray = [
-        <TempMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes} tempUnitString={tempUnitString} key={0} />,
-        <HumidityMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes} key={10} />,
-        <CO2LevelMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes} key={20} />,
-        <StageMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes} key={40} />,
-        <PressureMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes} key={30} />];
+    const handleInvalidAlertClose = () => {
+        setState({
+            ...state,
+            invalidAlert: false
+        });
+    };
 
-        
+    const handleAlertOpen = (msg, type) => {
+        if (type === "success") {
+            console.log("successAlert")
+            setState({
+                ...state,
+                errorMsg: msg,
+                invalidAlert: true,
+                alertType: "success"
+            });
+        } else {
+            console.log("error alert")
+            setState({
+                ...state,
+                errorMsg: msg,
+                invalidAlert: true,
+                alertType: "error"
+            });
+        }
+
+    };
+
 
     const handleChange = (event) => {
         // console.log(name);
+        loading=true
         props.setRoom(event.target.value)
-        props.resetPendingZones();
-        props.resetZones();
+            props.resetPendingZones();
+            props.resetZones();
+        setTimeout(()=>{
+            loading=false;
+            
+        },1000)
+        
+        // tempMeterRef.current.updateState()
     };
 
     const handleRightShift = () => {
-        if (state.MeterArrayIndexStart === 1) {
+        if (state.MeterArrayIndexStart) {
             setState({
                 ...state,
-                MeterArrayIndexStart: 0
+                MeterArrayIndexStart: false
             });
         } else {
             setState({
                 ...state,
-                MeterArrayIndexStart: 1
+                MeterArrayIndexStart: true
             });
         }
     }
 
-
-
+    
     return (
         <Grid item container direction={"column"} className={classes.roomSummeryWidget} spacing={3}>
             <Grid container item direction="row" xs>
@@ -1457,37 +1539,53 @@ if (rooms === undefined || rooms.length === 0) {
                     <LeftRightButton color={"primary"} onClick={handleRightShift}><KeyboardArrowLeftIcon style={{ fontSize: 48 }} /></LeftRightButton>
                 </Grid>
                 {/* <Grid item container direction={"column"} xs lg> */}
-                <Grid item container direction={'row'} xs lg={10}>
-                    {/* <VerticleDividerStyled orientation={'vertical'} flexItem /> */}
-                    {MeterArray.map((Component, index) => {
-                        if (state.MeterArrayIndexStart === 1) {
-                            if (index > 0) {
-                                return (
-                                    Component
-                                );
-                            }
-                            return (<div key={index}></div>);
-                        } else {
-                            if (index < MeterArray.length - 1) {
-                                return (
-                                    Component
-                                );
-                            }
-                            return (<div key={index}></div>);
-                        }
-                    })}
-                    {/* <VerticleDividerStyled orientation={'vertical'} flexItem /> */}
-                </Grid>
+                {loading ? (<CircularProgress color={"primary"} />) :
+                    (
+                        <Grid item container direction={'row'} xs lg={10}>
+                            <FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
+                                type={"temp"}
+                                title={"Temp"}
+                                longTitle={"Temprature"}
+                                setpoint={rooms[pick].tempSetPoint}
+                                min={rooms[pick].tempMin}
+                                max={rooms[pick].tempMax}
+                                UnitString={tempUnitString} handleAlertOpen={handleAlertOpen} />
+
+                            <FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
+                                type={"humidity"} title={"Humidity"} longTitle={"Humidity"}
+                                setpoint={rooms[pick].humiditySetPoint} min={rooms[pick].humidityMin} max={rooms[pick].humidityMax}
+                                UnitString={" %"} handleAlertOpen={handleAlertOpen} />
+
+                            <FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
+                                type={"CO2"} title={"CO2 level"} longTitle={"CO2 level"}
+                                setpoint={rooms[pick].CO2SetPoint} min={rooms[pick].CO2Min} max={rooms[pick].CO2Max}
+                                UnitString={" ppm"} handleAlertOpen={handleAlertOpen} />
+
+                            {state.MeterArrayIndexStart ?
+                                (<StageMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes} handleAlertOpen={handleAlertOpen} />) :
+
+                                (<FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
+                                    type={"pressure"} title={"pressure level"} longTitle={"Variable Pressure Deficit"}
+                                    setpoint={rooms[pick].pressureSetPont} min={rooms[pick].pressureMin} max={rooms[pick].pressureMax}
+                                    UnitString={" mbar"} handleAlertOpen={handleAlertOpen} />
+                                )}
+                        </Grid>
+                    )}
                 {/* </Grid> */}
                 <Grid item container direction={'column'} justify={"center"} xs={1} lg={1}>
                     <LeftRightButton color={"primary"} onClick={handleRightShift}><KeyboardArrowRightIcon style={{ fontSize: 48 }} /></LeftRightButton>
                 </Grid>
             </Grid>
+            <Snackbar open={state.invalidAlert} autoHideDuration={6000} onClose={handleInvalidAlertClose}>
+                <Alert onClose={handleInvalidAlertClose} severity={state.alertType}>
+                    {state.errorMsg}
+                </Alert>
+            </Snackbar>
         </Grid>
     )
 }
 
-const roomSummeryActions = { getRooms: getRooms, setRoom: setRoom, setExampleRooms:setExampleRooms, pendingRooms:pendingRooms, resetPendingZones:resetPendingZones, resetZones:resetZones }
+const roomSummeryActions = { getRooms: getRooms, setRoom: setRoom, setExampleRooms: setExampleRooms, pendingRooms: pendingRooms, resetPendingZones: resetPendingZones, resetZones: resetZones }
 
 function mapStateToProps({ state }) {
     return { state };

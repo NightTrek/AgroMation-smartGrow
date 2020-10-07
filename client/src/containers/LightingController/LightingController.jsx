@@ -584,7 +584,7 @@ const LightingController = (props) => {
     };
     const handleAlertOpen = (msg, type, closeModals) => {
         if (type === "success") {
-            console.log("successAlert")
+            // console.log("successAlert")
             if (closeModals) {
                 setState({
                     ...state,
@@ -605,7 +605,7 @@ const LightingController = (props) => {
             }
 
         } else {
-            console.log("error alert")
+            // console.log("error alert")
             if(closeModals){
                 setState({
                     ...state,
@@ -650,7 +650,7 @@ const LightingController = (props) => {
             }
         });
         var filterState = gridApi.getFilterModel();
-        console.log('filterState: ', filterState);
+        // console.log('filterState: ', filterState);
         // props.setRoom(event.target.value);
         gridApi.onFilterChanged();
     };
@@ -676,8 +676,8 @@ const LightingController = (props) => {
     };
 
     const setSpectrum = async () => {
-        console.log(state.spectrum);
-        console.log(state.selectedZones);
+        // console.log(state.spectrum);
+        // console.log(state.selectedZones);
         for (let i = 0; i < state.spectrum.length; i++) {
             if (typeof state.spectrum[i] !== "number") {
                 throw "invalid type spectrum"
@@ -738,7 +738,7 @@ const LightingController = (props) => {
                 }
                 newReduxLightZones.push(newArrayitem);
             }
-            console.log(newReduxLightZones)
+            // console.log(newReduxLightZones)
 
             props.updateZones(newReduxLightZones)
             handleAlertOpen("Zones updated", "success", true)
@@ -756,7 +756,7 @@ const LightingController = (props) => {
     const openPowerControl = (event) => {
 
         let selectedRows = gridApi.getSelectedRows()
-        console.log(selectedRows)
+        // console.log(selectedRows)
         if (selectedRows !== undefined && selectedRows.length > 0) {
             setState({
                 ...state,
@@ -831,7 +831,7 @@ const LightingController = (props) => {
                 }
                 newReduxLightZones.push(newArrayitem);
             }
-            console.log(newReduxLightZones)
+            // console.log(newReduxLightZones)
 
             props.updateZones(newReduxLightZones)
 
@@ -847,7 +847,7 @@ const LightingController = (props) => {
     const openScheduleControl = (event) => {
 
         let selectedRows = gridApi.getSelectedRows()
-        console.log(selectedRows)
+        // console.log(selectedRows)
         if (selectedRows !== undefined && selectedRows.length > 0) {
             setState({
                 ...state,
@@ -857,7 +857,8 @@ const LightingController = (props) => {
         }
         else {
             // TODO nothing selected warning
-            console.log("provide warning that nothing is selected");
+            handleAlertOpen("Error please Select some zones to edit");
+            // console.log("provide warning that nothing is selected");
         }
 
     };

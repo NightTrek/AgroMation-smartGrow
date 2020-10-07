@@ -32,7 +32,7 @@ import { db } from "../../consts/firebase";
 
 function DiagnosticColorBar(props) {
     const theme = useTheme();
-    let color = theme.palette.primary.main;
+    let color = theme.palette.roomStatus.nominal;
     let top = props.top || "60%";
     let left = props.left || "10%";
     let msg = "nominal";
@@ -40,20 +40,17 @@ function DiagnosticColorBar(props) {
     // console.log(` supermin ${props.superMax} < value: ${props.datapoint} < max ${props.max}`);
     // console.log(` supermin ${props.superMin} > value: ${props.datapoint} < min ${props.min}`);
     if ((props.superMax > props.datapoint && props.datapoint > props.max) || (props.superMin < props.datapoint && props.datapoint < props.min)) {
-        color = theme.palette.roomStatus.warning;
+        color = theme.palette.primary.main;
         msg = "Warning";
         iconMsg = <HelpIcon style={{ color: color }} />;
     }
     // console.log(props.datapoint > props.superMax);
     // console.log(props.datapoint < props.superMin)
     if (props.datapoint > props.superMax || props.datapoint < props.superMin) {
-        color = theme.palette.roomStatus.fault;
+        color = theme.palette.roomStatus.warning;
         msg = "FAULT";
         iconMsg = <ErrorIcon style={{ color: color }} />;
     }
-
-
-
 
     return (
         <List style={{

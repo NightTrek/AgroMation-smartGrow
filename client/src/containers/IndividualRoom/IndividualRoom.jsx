@@ -95,6 +95,7 @@ const IndividualRoom = () => {
             <Grid container item direction={"column"} spacing={3}>
                 <Grid item container direction={'row'}>
                     <RoomSummery />
+                    
                 </Grid>
                 <Grid item container direction={"column"} className={classes.roomTabWidget}>
                     <Grid item container direction={"row"} className={classes.backgroundTab}>

@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { connect, useSelector, shallowEqual } from "react-redux";
 import { compose } from "redux";
+import moment from "moment";
 import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
 import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
 import { Grid, TextField, makeStyles, useTheme, withStyles, Slider, Typography, Button, Divider, IconButton, Backdrop, Modal, Fade, Box, Snackbar } from '@material-ui/core'
 import Alert from '@material-ui/lab/Alert';
+
+
 //icons
 // import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
 import WavesIcon from '@material-ui/icons/Waves';
@@ -18,6 +21,7 @@ import { fetchZones, pendingZones, setExampleZones, resetPendingZones, updateZon
 
 //firebase
 import { db } from "../../consts/firebase";
+
 
 function valuetext(value) {
     return `${value}%`;
@@ -317,6 +321,11 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: "12px",
         // border:`solid 2px ${theme.palette.secondary.dark}`
     },
+    textField: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        width: 200,
+      },
 
 }));
 
@@ -459,6 +468,48 @@ const activeIndicator = (props) => {
     }
 };
 
+const createTimeStr = (string) => {
+    // console.log(`============= ${string} ===================`)
+    let stringArray = string.split(":")
+    if(stringArray.length > 1){
+        return `${stringArray[0]}:${stringArray[1]}`;
+    }else{
+        let hour = string.slice(0,2);
+        let minute = string.slice(2,4);
+        return `${hour}:${minute}`;
+    }
+    
+
+}
+
+const calcTotalUptime = (timeA, timeB) => {
+    let timeArrayA = timeA.split(":");
+    let timeArrayB = timeB.split(":");
+    let now, then;
+    if(timeArrayA.length>1 && timeArrayB.length>1){
+        now = moment().hour(timeArrayA[0]).minute(timeArrayA[1]);
+        console.log(now)
+        then = moment().hour(timeArrayB[0]).minute(timeArrayB[1]);
+        if(timeArrayB[0]<timeArrayA[0]){
+            then.add(1,"day")
+        }
+    }else{
+        let HoursA = parseInt(timeA.slice(0,2))
+        let HoursB = parseInt(timeB.slice(0,2))
+        let MinuteA = parseInt(timeA.slice(2,4))
+        let MinuteB = parseInt(timeB.slice(2,4))
+        now = moment().hour(HoursA).minute(MinuteA);
+        console.log(now)
+        then = moment().hour(HoursB).minute(MinuteB);
+        if(HoursB<HoursA){
+            then.add(1,"day")
+        }
+    } 
+    console.log(then)
+    let ms = moment(now,"DD/MM/YYYY HH:mm:ss").diff(moment(then,"DD/MM/YYYY HH:mm:ss"));
+    let d = moment.duration(ms);
+    return d.humanize();
+}
 
 
 
@@ -475,6 +526,7 @@ const LightingController = (props) => {
         pending: state.LightZones.pendingZones
 
     }), shallowEqual)
+
 
     useEffect(() => {
         // console.log(pending !== true && user !== undefined && rooms[0].ownerID === undefined)
@@ -569,11 +621,14 @@ const LightingController = (props) => {
         power: 50,
         timeOn: "",
         timeOff: "",
+        totalUptimePerDay:"",
         errorMsg: "",
         invalidAlert: false,
         alertType: "error"
 
     });
+
+    //dateHandlers
 
     //snackbar alert system
     const handleInvalidAlertClose = () => {
@@ -606,7 +661,7 @@ const LightingController = (props) => {
 
         } else {
             // console.log("error alert")
-            if(closeModals){
+            if (closeModals) {
                 setState({
                     ...state,
                     spectrumModal: false,
@@ -616,7 +671,7 @@ const LightingController = (props) => {
                     invalidAlert: true,
                     alertType: "error"
                 });
-            }else{
+            } else {
                 setState({
                     ...state,
                     errorMsg: msg,
@@ -624,7 +679,7 @@ const LightingController = (props) => {
                     alertType: "error"
                 });
             }
-            
+
         }
 
     };
@@ -848,11 +903,14 @@ const LightingController = (props) => {
 
         let selectedRows = gridApi.getSelectedRows()
         // console.log(selectedRows)
-        if (selectedRows !== undefined && selectedRows.length > 0) {
+        if (selectedRows !== undefined && selectedRows.length > 0) {      
             setState({
                 ...state,
                 scheduleModal: true,
-                selectedZones: selectedRows
+                selectedZones: selectedRows,
+                timeOn: createTimeStr(selectedRows[0].timeOn),
+                timeOff:createTimeStr(selectedRows[0].timeOff),
+                totalUptimePerDay:calcTotalUptime(selectedRows[0].timeOn, selectedRows[0].timeOff)
             })
         }
         else {
@@ -863,6 +921,87 @@ const LightingController = (props) => {
 
     };
 
+    const handleStartTimeChange = (event) => {
+        console.log(event.target.value)
+        setState({
+            ...state,
+            timeOn: event.target.value,
+            totalUptimePerDay:calcTotalUptime(event.target.value, state.timeOff)
+        })
+    }
+
+    const handleEndTimeChange = (event) => {
+        console.log(event.target.value)
+        setState({
+            ...state,
+            timeOff: event.target.value,
+            totalUptimePerDay:calcTotalUptime(state.timeOn, event.target.value)
+        })
+    }
+
+    const setSchedule = async ()  => {
+        console.log(state)
+        try {
+            let updatedZones = []
+            for (let i = 0; i < state.selectedZones.length; i++) {
+                if (!state.selectedZones[i].doc) {
+                    throw `Error selected zone is missing doc ${state.selectedZones[i]}`
+                }
+                let ZoneRef = db.collection("LightZones").doc(state.selectedZones[i].doc);
+
+                let data = await db.runTransaction((transaction) => {
+                    return transaction.get(ZoneRef).then((roomDocSnapshot) => {
+                        if (!roomDocSnapshot.exists) {
+                            throw "Document does not exist"
+                        }
+                        let data = roomDocSnapshot.data();
+                        //maybe check and see if the document needs to be updated
+                        if (data.timeOn === state.timeOn && data.timeOff === state.timeOff) {
+                            return {
+                                ...data,
+                                doc: roomDocSnapshot.id
+                            };
+                        }
+                        let output = {
+                            ...data,
+                            timeOn: state.timeOn,
+                            timeOff: state.timeOff
+                        }
+                        transaction.update(ZoneRef, output);
+                        return {
+                            ...output,
+                            doc: roomDocSnapshot.id
+                        };
+
+                    });
+                });
+                updatedZones.push(data)
+            }
+
+            let newReduxLightZones = [];
+            for (let i = 0; i < lightZones.length; i++) {
+                let newArrayitem = {};
+                for (let index = 0; index < updatedZones.length; index++) {
+                    if (lightZones[i].name === updatedZones[index].name) {
+                        newArrayitem = updatedZones[index]
+                    }
+                }
+                if (newArrayitem === {} || newArrayitem.name == undefined) {
+                    newArrayitem = lightZones[i]
+                }
+                newReduxLightZones.push(newArrayitem);
+            }
+            // console.log(newReduxLightZones)
+
+            props.updateZones(newReduxLightZones)
+
+            handleAlertOpen("Zones updated", "success", true)
+
+        } catch (err) {
+            console.log(err)
+            handleAlertOpen("Error updating Zones")
+        }
+    }
     const handleClose = () => {
         setState({
             ...state,
@@ -1073,15 +1212,48 @@ const LightingController = (props) => {
                                         <Grid item> <h4>Schedule Lighting times</h4></Grid>
                                         <Grid item xs> </Grid>
                                     </Grid>
+                                    <Grid item container direction={"row"}>
+                                        <Typography variant={'body1'}>
+                                            Lights on for {state.totalUptimePerDay} 
+                                        </Typography>
+                                    </Grid>
                                     <Grid item container direction={"row"} style={{ padding: "6px", marginBottom: "24px" }}>
-                                        <Grid item></Grid>
-                                        <Grid item xs> </Grid>
+                                        <TextField
+                                            id="time"
+                                            label="start time"
+                                            type="time"
+                                            value={state.timeOn}
+                                            onChange={handleStartTimeChange}
+                                            className={classes.textField}
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                            inputProps={{
+                                                step: 300, // 5 min
+                                            }}
+                                        />
+
+                                        <TextField
+                                            id="time"
+                                            label="Alarm clock"
+                                            type="time"
+                                            value={state.timeOff}
+                                            onChange={handleEndTimeChange}
+                                            className={classes.textField}
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                            inputProps={{
+                                                step: 300, // 5 min
+                                            }}
+                                        />
+
                                     </Grid>
 
                                 </Grid>
                             </Grid>
                             <Grid item container direction={"row"}>
-                                <Button variant={"outlined"} color={"primary"}>
+                                <Button variant={"outlined"} color={"primary"} onClick={setSchedule}>
                                     Set
                                     </Button>
                             </Grid>

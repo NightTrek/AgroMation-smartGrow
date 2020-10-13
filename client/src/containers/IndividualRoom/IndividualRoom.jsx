@@ -54,6 +54,19 @@ function TabPanel(props) {
 
 
 const useStyles = makeStyles((theme) => ({
+    RoomSummeryContainer:{
+        '@media (max-width: 550px)': {
+            marginLeft:"-24px",
+        },
+        '@media (max-width: 450px)': {
+            
+
+
+        },
+        '@media (max-width: 370px)': {
+
+        }
+    },
     roomTabWidget: {
         background: theme.palette.secondary.main,
         color: theme.palette.text.main,
@@ -129,8 +142,8 @@ const IndividualRoom = () => {
     return (
         <Container className={"containerMain"}>
             <Grid container item direction={"column"} spacing={3}>
-                <Grid item container direction={'row'} >
-                    {/* <RoomSummery /> */}
+                <Grid item container direction={'row'} className={classes.RoomSummeryContainer}>
+                    <RoomSummery />
 
                 </Grid>
                 <Grid item container direction={"column"} className={classes.roomTabWidget}>

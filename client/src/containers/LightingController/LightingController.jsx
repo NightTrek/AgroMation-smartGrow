@@ -241,7 +241,8 @@ const ZoneSearchInput = withStyles((theme) => ({
 
     root: {
         background: theme.palette.secondary.dark,
-        color: theme.palette.text.main
+        color: theme.palette.text.main,
+        minWidth:"92px"
     },
 
 }))(TextField);
@@ -298,6 +299,24 @@ const useStyles = makeStyles((theme) => ({
         width: "56px",
         height: "56px",
         position: "relative",
+    },
+    agGridContainer:{
+        marginLeft: "24px", 
+        marginTop: "24px",
+        '@media (max-width: 930px)': {
+            marginLeft: "12px", 
+
+        },
+        '@media (max-width: 550px)': {
+            
+
+        },
+        '@media (max-width: 450px)': {
+            marginLeft: "0px",
+        },
+        '@media (max-width: 370px)': {
+            
+        }
     },
     modal: {
         display: 'flex',
@@ -1024,20 +1043,23 @@ const LightingController = (props) => {
         <Grid item container direction={"column"} >
             {/* This is the topBar */}
             <Grid item container direction={"row"} spacing={5} style={{ paddingTop: "12px" }}>
-                <Grid item xs style={{ marginLeft: "24px" }}>
+                <Grid item xs={12} sm={12} md={3} style={{ marginLeft: "24px" }}>
                     <Typography variant={"h5"}>{`(${numberOfActiveZones()}) Light Zones Active`}</Typography>
                 </Grid>
-                <Grid item xs></Grid>
-                <Grid item><IconButton onClick={openSpectrumControl}><WavesIcon color={"primary"} /></IconButton></Grid>
-                <Grid item><IconButton onClick={openPowerControl}><WbIncandescentIcon color={"primary"} /></IconButton></Grid>
-                <Grid item><IconButton onClick={openScheduleControl}><ScheduleIcon color={"primary"} /></IconButton></Grid>
-                <Grid item >
+                <Grid item xs={false} sm md></Grid>
+                <Grid item xs={2} sm={2} md={1}>
+                    <IconButton onClick={openSpectrumControl}><WavesIcon color={"primary"} /></IconButton></Grid>
+                <Grid item xs={2} sm={2} md={1}>
+                    <IconButton onClick={openPowerControl}><WbIncandescentIcon color={"primary"} /></IconButton></Grid>
+                <Grid item xs={2} sm={2} md={1}>
+                    <IconButton onClick={openScheduleControl}><ScheduleIcon color={"primary"} /></IconButton></Grid>
+                <Grid item xs={12} sm={5} md={2}>
                     <ZoneSearchInput id="filled-search" label="Search field" type="search" variant="filled" onChange={handleChange} />
                 </Grid>
             </Grid>
-            {/*this is the main bar  */}
-            <Grid item container direction={'row'} style={{ marginLeft: "24px", marginTop: "24px" }}>
-                <div className="ag-theme-alpine-dark" style={{ minHeight: '300px', minWidth: '200px', width: "98%" }}>
+            {/*this is the main AG grid bar with light zone information  */}
+            <Grid item container direction={'row'} className={classes.agGridContainer}>
+                <div className="ag-theme-alpine-dark" style={{ minHeight: '300px', minWidth: '192px', width: "98%" }}>
                     <AgGridReact
                         rowData={lightZones}
                         rowSelection="multiple"

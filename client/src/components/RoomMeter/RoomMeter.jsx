@@ -52,7 +52,7 @@ function DiagnosticColorBar(props) {
             left: left,
         }}>
             <ListItem key={1}>
-                <ListItemText variant={"button"}>SetPoint:</ListItemText>
+                <ListItemText variant={"button"} style={{paddingRight:"12px"}}>SetPoint:</ListItemText>
                 <Button variant="outlined" color={"primary"} onClick={props.handleOpen} style={{ marginLeft: "12px" }}>
 
                     {props.setPoint}
@@ -326,14 +326,13 @@ function FieldMeter(props) {
     }
 
     return (
-        <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'}>
-
+        <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'} style={{paddingBottom:"24px",minWidth:"192px", maxWidth:"320px"}}>
             <Typography variant={"h6"} align={'center'}>{props.title}</Typography>
             <Grid item xs className={classes.meterContainer}>
                 <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                     <ReactSpeedometer
                         forceRender={true}
-                        width={256}
+                        width={props.width}
                         needleTransitionDuration={2000}
                         needleTransition="easeElastic"
                         needleHeightRatio={0.7}
@@ -351,7 +350,7 @@ function FieldMeter(props) {
                         customSegmentLabels={Labels}
                     />
                 </div>
-                <DiagnosticColorBar handleOpen={handleOpen} datapoint={roomState.liveData[props.type]} min={meterState.setPoint + TypeData.min} superMin={parseInt(meterState.minMax[0])}
+                <DiagnosticColorBar left={"5%"} handleOpen={handleOpen} datapoint={roomState.liveData[props.type]} min={meterState.setPoint + TypeData.min} superMin={parseInt(meterState.minMax[0])}
                     max={meterState.setPoint + TypeData.max} superMax={parseInt(meterState.minMax[1])} setPoint={`${meterState.setPoint}${UnitString}`} />
                 <Modal
                     aria-labelledby="Temperature setpoint modal"
@@ -491,8 +490,11 @@ FieldMeter.propTypes = {
     theme: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
     UnitString: PropTypes.string.isRequired,
-    handleAlertOpen: PropTypes.func.isRequired
+    handleAlertOpen: PropTypes.func.isRequired,
+    width:PropTypes.number.isRequired,
 }
 
+
+export const FieldMeterLegend = DiagnosticColorBar;
 
 export default FieldMeter;

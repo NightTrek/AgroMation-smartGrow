@@ -6,7 +6,7 @@ import { compose } from "redux";
 import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles'; //useTheme
 import {
     Grid, Typography, Select, MenuItem, ListItemText, List, ListItem, ListItemIcon, Button, Modal, Backdrop, Fade,
-    Box, Slider, Input, IconButton, Snackbar, CircularProgress
+    Box, Slider, Input, IconButton, Snackbar, CircularProgress, useMediaQuery 
 } from '@material-ui/core'
 import Alert from '@material-ui/lab/Alert';
 import ReactSpeedometer from "react-d3-speedometer"
@@ -21,7 +21,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 
 //custom components
 import FieldMeter from "../../components/RoomMeter/RoomMeter"
-
+import {FieldMeterLegend} from "../../components/RoomMeter/RoomMeter";
 
 //Redux actions
 import { getRooms, setRoom, setExampleRooms, pendingRooms, updateRooms } from "../../actions/roomActions";
@@ -144,7 +144,7 @@ function StageMeter(props) {
                 <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                     <ReactSpeedometer
                         forceRender
-                        width={256}
+                        width={props.width}
                         needleTransitionDuration={2000}
                         needleTransition="easeElastic"
                         needleHeightRatio={0.7}
@@ -157,7 +157,7 @@ function StageMeter(props) {
                         segmentColors={[theme.palette.roomStatus.clone, theme.palette.roomStatus.veg, theme.palette.roomStatus.flower]}
                         customSegmentLabels={Labels} />
                 </div>
-                <DiagnosticColorBar handleOpen={handleOpen} datapoint={2} min={1} superMin={0}
+                <FieldMeterLegend left={"5%"} handleOpen={handleOpen} datapoint={2} min={1} superMin={0}
                     max={3} superMax={4} setPoint={rooms[pick].stage + " left in"} />
                 <Modal
                     aria-labelledby="transition-modal-title"
@@ -218,12 +218,12 @@ const useStyles = makeStyles((theme) => ({
     roomSummeryWidget: {
         background: theme.palette.secondary.main,
         color: theme.palette.text.main,
-        minWidth: "256px",
+        minWidth: "192px",
         minHeight: "360px",
         height: "auto",
         '@media (max-width: 460px)': {
             maxWidth: "300px",
-
+            paddingBottom:"48px"
         },
         '@media (max-width: 400px)': {
             maxWidth: "256px",
@@ -231,7 +231,7 @@ const useStyles = makeStyles((theme) => ({
         },
         '@media (max-width: 330px)': {
             maxWidth: "212px",
-
+            
         }
     },
     iconButton: {
@@ -239,15 +239,15 @@ const useStyles = makeStyles((theme) => ({
     },
     meterContainer: {
         // background:theme.palette.roomStatus.warning,
-        minWidth: "128px",
+        minWidth: "64px",
         maxWidth: "256px",
-        maxHeight: "256px",
+        minHeight:"256px",
+        maxHeight: "320px",
         position: "relative",
-        
-        // '@media (min-width: 425px)':{
-        //     width: "64px",
-        //     height: "64px",
-        // }
+        '@media (max-width: 400px)': {
+            minHeight: "300px",
+
+        },
     },
     ReactMeter: {
         // -webkit-filter: grayscale(100%);
@@ -288,6 +288,7 @@ const useStyles = makeStyles((theme) => ({
 
         },
         '@media (max-width: 330px)': {
+            minWidth:"192px",
             maxWidth: "256px",
 
         }
@@ -295,13 +296,28 @@ const useStyles = makeStyles((theme) => ({
     setPointWidget: {
         paddingTop: "0px",
         padding: "24px",
+        
     },
     sliderRow: {
         marginTop: "32px",
         marginBottom: "32px",
-        padding: "48px",
+        padding: "12px",
+        paddingRight:"18px",
         background: theme.palette.secondary.dark,
         borderRadius: "12px",
+        '@media (max-width: 550px)': {
+            maxWidth: "320px",
+
+        },
+        '@media (max-width: 400px)': {
+            
+
+        },
+        '@media (max-width: 330px)': {
+            minWidth: "204px",
+            marginLeft:"-12px"
+
+        }
         // border:`solid 2px ${theme.palette.secondary.dark}`
     },
     input: {
@@ -374,7 +390,7 @@ function RoomSummery(props) {
             CO2: 2988,
             pressure: 1114
         },
-        MeterArrayIndexStart: true,
+        StageMeter: true,
         errorMsg: "",
         invalidAlert: false,
         alertType: "error"
@@ -408,7 +424,10 @@ function RoomSummery(props) {
         }
 
     };
-
+    let ButtonText = "Show Pressure Meter";
+    if(!state.StageMeter){
+        ButtonText = "Show Stage Meter";
+    }
 
     const handleChange = (event) => {
         // console.log(name);
@@ -422,20 +441,27 @@ function RoomSummery(props) {
     };
 
     const handleRightShift = () => {
-        if (state.MeterArrayIndexStart) {
+        if (state.StageMeter) {
             setState({
                 ...state,
-                MeterArrayIndexStart: false
+                StageMeter: false
             });
         } else {
             setState({
                 ...state,
-                MeterArrayIndexStart: true
+                StageMeter: true
             });
         }
     }
 
-    
+    const smallMeter = useMediaQuery('(max-width:430px)');
+    const smallerMeter = useMediaQuery('(max-width:430px)');
+    let meterWidth = 256;
+    if(smallMeter){
+        meterWidth = 192;
+    }
+
+
     return (
         <Grid item container direction={"column"} className={classes.roomSummeryWidget} spacing={3}>
             <Grid container item direction="row" xs>
@@ -462,45 +488,45 @@ function RoomSummery(props) {
                 </Grid>
             </Grid>
             <Grid item container direction={'row'} spacing={1}>
-                <Grid item container direction={'column'} justify={"center"} spacing={0} xs={1} lg={1}>
-                    <LeftRightButton color={"primary"} onClick={handleRightShift}><KeyboardArrowLeftIcon style={{ fontSize: 48 }} /></LeftRightButton>
-                </Grid>
                 {/* <Grid item container direction={"column"} xs lg> */}
                 {loading ? (<CircularProgress color={"primary"} />) :
                     (
-                        <Grid item container direction={'row'} xs lg={10}>
+                        <Grid item container direction={'row'} xs={12} justify={'center'}>
                             <FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
                                 type={"temp"}
                                 title={"Temp"}
-                                longTitle={"Temprature"}
+                                longTitle={"Temperature"}
                                 setpoint={rooms[pick].tempSetPoint}
-                                min={rooms[pick].tempMin}
+                                min={rooms[pick].tempMin} width={meterWidth}
                                 max={rooms[pick].tempMax}
                                 UnitString={tempUnitString} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />
 
                             <FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
-                                type={"humidity"} title={"Humidity"} longTitle={"Humidity"}
+                                type={"humidity"} title={"Humidity"} longTitle={"Humidity"} width={meterWidth}
                                 setpoint={rooms[pick].humiditySetPoint} min={rooms[pick].humidityMin} max={rooms[pick].humidityMax}
                                 UnitString={" %"} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />
 
                             <FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
-                                type={"CO2"} title={"CO2 level"} longTitle={"CO2 level"}
+                                type={"CO2"} title={"CO2 level"} longTitle={"CO2 level"} width={meterWidth}
                                 setpoint={rooms[pick].CO2SetPoint} min={rooms[pick].CO2Min} max={rooms[pick].CO2Max}
                                 UnitString={" ppm"} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />
 
-                            {state.MeterArrayIndexStart ?
-                                (<StageMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />) :
+                            {state.StageMeter ?
+                                (<StageMeter state={state} rooms={rooms} pick={pick} theme={theme} width={meterWidth} classes={classes} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />) :
 
                                 (<FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
-                                    type={"pressure"} title={"pressure level"} longTitle={"Variable Pressure Deficit"}
+                                    type={"pressure"} title={"pressure level"} longTitle={"Variable Pressure Deficit"} width={meterWidth}
                                     setpoint={rooms[pick].pressureSetPont} min={rooms[pick].pressureMin} max={rooms[pick].pressureMax}
                                     UnitString={" mbar"} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />
                                 )}
                         </Grid>
                     )}
                 {/* </Grid> */}
-                <Grid item container direction={'column'} justify={"center"} xs={1} lg={1}>
-                    <LeftRightButton color={"primary"} onClick={handleRightShift}><KeyboardArrowRightIcon style={{ fontSize: 48 }} /></LeftRightButton>
+                <Grid item container direction={'column'} justify={"center"} xs >
+                        
+                </Grid>
+                <Grid item container direction={'column'} justify={"center"} xs={12} sm={3}>
+                        <Button variant="outlined" color={"primary"} onClick={handleRightShift}>{ButtonText}</Button>
                 </Grid>
             </Grid>
             <Snackbar open={state.invalidAlert} autoHideDuration={6000} onClose={handleInvalidAlertClose}>

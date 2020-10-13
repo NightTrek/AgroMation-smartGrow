@@ -145,6 +145,71 @@ const useStyles = makeStyles((theme) => ({
         color: theme.palette.text.main,
         minWidth: "624px",
         maxHeight: "442px",
+        '@media (max-width: 950px)': {
+            minWidth: "512px",
+
+        },
+        '@media (max-width: 750px)': {
+            minWidth: "448px",
+
+        },
+        '@media (max-width: 550px)': {
+            minWidth: "320px",
+            marginLeft:"-24px"
+
+        },
+        '@media (max-width: 450px)': {
+            minWidth: "256px",
+
+
+        },
+        '@media (max-width: 370px)': {
+            minWidth: "192px",
+        }
+    },
+    ChartTitle:{
+        '@media (max-width: 550px)': {
+            fontSize:"24px"
+
+        },
+        '@media (max-width: 450px)': {
+            fontSize:"20px"
+
+
+        },
+        '@media (max-width: 370px)': {
+            fontSize:"18px"
+        }
+    },
+    buttonArea:{
+        minWidth:"100%",
+        marginLeft:"24px",
+        '@media (max-width: 550px)': {
+            marginLeft:"12px",
+
+        },
+        '@media (max-width: 450px)': {
+            marginLeft:"0px",
+
+
+        },
+        '@media (max-width: 370px)': {
+            marginLeft:"-12px",
+        }
+    },
+    ChartButtonText:{
+        '@media (max-width: 550px)': {
+            fontSize:"16px"
+
+        },
+        '@media (max-width: 450px)': {
+            fontSize:"14px"
+
+
+        },
+        '@media (max-width: 370px)': {
+            fontSize:"12px"
+        }
     },
 
 }));
@@ -170,49 +235,81 @@ export const PrimaryLineChart = (props) => {
     });
     // console.log(state.dataSet);
     //react media queries that decide if the chart is responsive or static using a custom hook to get window size
-
+    /// sorry about these javascript if statement based media queries not getting paid by the hour apparently despite it being in the contract
     const [width] = useWindowSize(); //also has height available if needed
     let adjustedWidth = 0;    
     let responsiveChart = false;
-    if(width>1400){
-        // console.log("1200");
-        adjustedWidth = 1200;
-        responsiveChart=false;
-    }
-    else if(width>1200){
-        // console.log("1000");
-        adjustedWidth = 1100;
-        responsiveChart=false;
-    }
-    else if(width>1000){
-        // console.log("900");
-        adjustedWidth = 900
-        responsiveChart=false;
-    }
-    else if(width>850){
-        adjustedWidth = 800
-    }
-    else if(width<850){
-        responsiveChart=true;
-    }
-    else{
-        adjustedWidth = 400;
-        // console.log("base case")
-    }
-            
 
+    const setAdjustedWidth = (width) => {
+        if(width>1400){
+            // console.log("1200");
+            adjustedWidth = 1200;
+            responsiveChart=false;
+        }
+        else if(width>1300){
+            // console.log("1000");
+            adjustedWidth = 1100;
+            responsiveChart=false;
+        }
+        else if(width>1250){
+            // console.log("1000");
+            adjustedWidth = 1050;
+            responsiveChart=false;
+        }
+        else if(width>1200){
+            // console.log("1000");
+            adjustedWidth = 1000;
+            responsiveChart=false;
+        }
+        else if(width>1100){
+            // console.log("900");
+            adjustedWidth = 950
+            responsiveChart=false;
+        }
+        else if(width>1000){
+            // console.log("1000");
+            adjustedWidth = 850;
+            responsiveChart=false;
+        }
+        else if(width>950){
+            // console.log("1000");
+            adjustedWidth = 800;
+            responsiveChart=false;
+        }
+        else if(width>900){
+            adjustedWidth = 750
+        }
+        else if(width>850){
+            adjustedWidth = 700
+        }
+        else if(width<800){
+            responsiveChart=true;
+        }
+        else{
+            adjustedWidth = 400;
+            // console.log("base case")
+        }
+    }
+    setAdjustedWidth(width);
+            
+    let chartInputProps = {
+        containerComponent:<VictoryVoronoiContainer  />,
+        responsive:true,
+    }
+    if(!responsiveChart){
+        chartInputProps.width = adjustedWidth;
+    }
 
     
     return (
         <Grid container item direction={"column"}>
             <Grid container item direction={"row"} xs style={{marginLeft:"24px", marginTop:"12px"}}>
-                <Typography variant={"h4"}>{state.dataType}</Typography>
+                <Typography variant={"h4"} className={classes.ChartTitle}>{state.dataType}</Typography>
             </Grid>
-            <Grid container item direction={"row"} xs>
-                <Grid item className={classes.ChartContainer}>
+            <Grid container item direction={"row"} xs className={classes.ChartContainer}>
                     <VictoryChart
-                        containerComponent={<VictoryVoronoiContainer responsive={responsiveChart} />}
-                       width={responsiveChart ? 400: adjustedWidth}>
+                        {...chartInputProps}
+                       >
                         <VictoryAxis
                             dependentAxis
                             domain={state.domain}
@@ -259,27 +356,26 @@ export const PrimaryLineChart = (props) => {
                         }} data={state.dataSet.map((item) => {
                             return({x:item.x,y:item.sp})
                             })} interpolation="monotoneX" labels={({ datum }) => `SetPoint ${datum.y}`} labelComponent={<VictoryTooltip/>}/>
-                    </VictoryChart>
-                </Grid>
+                    </VictoryChart>      
             </Grid>
-            <Grid container item direction={"row"} xs={1} justify={'center'} style={{minWidth:"100%",marginLeft:"24px"}}>
-                        <Grid item xs={2}>
-                            <Button variant={"outlined"} color={"primary"} id={"Temp"} value="temp" onClick={e => {setState({...state, dataSet:tempData,dataType:"Temprature",domain:tempDomain, unit:" °F",})}}>Temp</Button>
+            <Grid container item direction={"row"} xs={1} justify={'center'} className={classes.buttonArea} >
+                        <Grid item xs={6} sm={4} md={2} style={{padding:"8px"}}>
+                            <Button variant={"outlined"} color={"primary"} className={classes.ChartButtonText}  id={"Temp"} value="temp" onClick={e => {setState({...state, dataSet:tempData,dataType:"Temprature",domain:tempDomain, unit:" °F",})}}>Temp</Button>
                         </Grid>
-                        <Grid item xs={2}>
-                            <Button variant={"outlined"} color={"primary"} id={"Humidity"} onClick={e => {setState({...state, dataSet:humidityData,dataType:"Humidity",domain:humidityDomain,unit:" %",})}}>Humidity</Button>
+                        <Grid item xs={6} sm={4} md={2} style={{padding:"8px"}}>
+                            <Button variant={"outlined"} color={"primary"} className={classes.ChartButtonText} id={"Humidity"} onClick={e => {setState({...state, dataSet:humidityData,dataType:"Humidity",domain:humidityDomain,unit:" %",})}}>Humidity</Button>
                         </Grid>
-                        <Grid item xs={2}> 
-                            <Button variant={"outlined"} color={"primary"} id={"CO2"} onClick={e => {setState({...state, dataSet:co2Data,dataType:"CO2 Level",domain:co2Domain,unit:" ppm",})}}>CO2 Level</Button>
+                        <Grid item xs={6} sm={4} md={2} style={{padding:"8px"}}> 
+                            <Button variant={"outlined"} color={"primary"} className={classes.ChartButtonText} id={"CO2"} onClick={e => {setState({...state, dataSet:co2Data,dataType:"CO2 Level",domain:co2Domain,unit:" ppm",})}}>CO2 Level</Button>
                         </Grid>
-                        <Grid item xs={2}>
-                            <Button variant={"outlined"} color={"primary"} id={"Pressure"} onClick={e => {setState({...state, dataSet:pressureData,dataType:"Pressure Level",domain:pressureDomain,unit:" mbar"})}}>Pressure</Button>
+                        <Grid item xs={6} sm={4} md={2} style={{padding:"8px"}}>
+                            <Button variant={"outlined"} color={"primary"} className={classes.ChartButtonText} id={"Pressure"} onClick={e => {setState({...state, dataSet:pressureData,dataType:"Pressure Level",domain:pressureDomain,unit:" mbar"})}}>Pressure</Button>
                         </Grid>
-                        <Grid item xs={2}>
-                            <Button variant={"outlined"} color={"primary"} id={"Lights"} disabled={true} >Lights</Button>
+                        <Grid item xs={6} sm={4} md={2} style={{padding:"8px"}}>
+                            <Button variant={"outlined"} color={"primary"} className={classes.ChartButtonText} id={"Lights"} disabled={true} >Lights</Button>
                         </Grid>
-                        <Grid item xs={2}>
-                            <Button variant={"outlined"} color={"primary"} id={"Warnings"} disabled={true} >Warnings</Button>
+                        <Grid item xs={6} sm={4} md={2} style={{padding:"8px"}}>
+                            <Button variant={"outlined"} color={"primary"} className={classes.ChartButtonText} id={"Warnings"} disabled={true} >Warnings</Button>
                         </Grid>
             </Grid>
         </Grid>

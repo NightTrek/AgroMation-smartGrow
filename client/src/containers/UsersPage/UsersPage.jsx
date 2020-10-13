@@ -6,6 +6,7 @@ import {
     Container, Grid, makeStyles, useTheme, withStyles, Button, Modal, Box, Typography, List,
     ListItem, ListItemText, ListItemIcon, Backdrop, Fade, IconButton, Input, Select, MenuItem, TextField, CircularProgress
 } from '@material-ui/core';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
@@ -17,13 +18,11 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect";
 import { fetchManagedUsers, pendingManagedUsers, resetPendingManagedUsers } from "../../actions/ManageUsersActions"
 
-import { exampleManagedUsers } from "../../exampleDataTypes/clientExamlpeDataTypes";
 import { db, auth } from "../../consts/firebase";
 
 
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
-import { error } from 'winston';
-import ManagedUsers from '../../reducers/ManagedUsers';
+
 // import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
 
 const EditUserButton = withStyles((theme) => ({
@@ -39,6 +38,19 @@ const EditUserButton = withStyles((theme) => ({
             boxShadow: 'none',
             color: "black"
         },
+        '@media (max-width: 550px)': {
+            fontSize: "12px"
+
+        },
+        '@media (max-width: 450px)': {
+            fontSize: "10px"
+
+
+        },
+        '@media (max-width: 370px)': {
+            fontSize: "12px"
+
+        }
     },
 
 }))(Button);
@@ -52,6 +64,19 @@ const EditUserInput = withStyles((theme) => ({
         boxShadow: `1px 1px 1px 1px ${theme.palette.secondary.main}`,
         color: "white",
         background: theme.palette.roomStatus.fault,
+        '@media (max-width: 550px)': {
+            fontSize: "12px"
+
+        },
+        '@media (max-width: 450px)': {
+            fontSize: "10px"
+
+
+        },
+        '@media (max-width: 370px)': {
+            fontSize: "12px"
+
+        }
     },
 
 }))(TextField);
@@ -76,6 +101,33 @@ const useStyles = makeStyles((theme) => ({
         minHeight: "512px",
         marginTop: "8px",
         padding: "24x",
+        '@media (max-width: 550px)': {
+
+
+        },
+        '@media (max-width: 450px)': {
+
+
+        },
+        '@media (max-width: 330px)': {
+
+
+        }
+    },
+    UserWidgetContainer: {
+        marginLeft: "48px",
+        '@media (max-width: 1100px)': {
+            marginLeft: "0px",
+
+        },
+        '@media (max-width: 450px)': {
+
+
+        },
+        '@media (max-width: 330px)': {
+
+
+        }
     },
     backgroundTab: {
         background: theme.palette.secondary.dark,
@@ -85,13 +137,34 @@ const useStyles = makeStyles((theme) => ({
         backgroundImage: ` url("https://cdn.discordapp.com/attachments/370759274621698048/755271571181928459/unknown.png")`,
         minWidth: "412px",
         maxWidth: "412px",
-
         height: "256px",
         marginLeft: "24px",
         marginBottom: "24px",
         position: "relative",
         borderRadius: "12px",
         boxShadow: "2px 2px 3px 3px " + theme.palette.secondary.dark,
+        '@media (max-width: 1100px)': {
+            marginLeft: "12px",
+
+        },
+        '@media (max-width: 550px)': {
+            minWidth: "320px",
+            maxWidth: "320px",
+            marginLeft: "0"
+
+        },
+        '@media (max-width: 450px)': {
+            minWidth: "256px",
+            maxWidth: "256px",
+
+        },
+        '@media (max-width: 370px)': {
+            minWidth: "192px",
+            maxWidth: "192px",
+            height: "512px",
+            background: theme.palette.secondary.dark
+
+        }
     },
     Profile: {
         background: theme.palette.secondary.main,
@@ -102,12 +175,104 @@ const useStyles = makeStyles((theme) => ({
         top: "0px",
         left: "0px",
         borderRadius: "12px",
+        '@media (max-width: 550px)': {
+            minWidth: "148px",
+            maxWidth: "148px",
+
+        },
+        '@media (max-width: 450px)': {
+            minWidth: "104px",
+            maxWidth: "104px",
+
+        },
+        '@media (max-width: 370px)': {
+            minWidth: "192px",
+            maxWidth: "192px",
+            minHeight: "50%",
+
+        }
+    },
+    userNameHeader: {
+        padding: "8px",
+        '@media (max-width: 550px)': {
+            fontSize: "16px"
+
+        },
+        '@media (max-width: 450px)': {
+            fontSize: "14px"
+
+
+        },
+        '@media (max-width: 370px)': {
+            fontSize: "16px"
+
+        }
+    },
+    profileIcon: {
+        color: theme.palette.primary.main,
+        fontSize: "64px",
+        '@media (max-width: 550px)': {
+            fontSize: "48px"
+
+        },
+        '@media (max-width: 450px)': {
+            fontSize: "36px"
+
+
+        },
+        '@media (max-width: 370px)': {
+            fontSize: "48px"
+
+        }
+    },
+    UserEmail: {
+        color: theme.palette.roomStatus.veg,
+        '@media (max-width: 550px)': {
+            fontSize: "12px"
+
+        },
+        '@media (max-width: 450px)': {
+            fontSize: "10px"
+
+
+        },
+        '@media (max-width: 370px)': {
+            fontSize: "12px"
+
+        }
     },
     zoneList: {
         position: "absolute",
         top: "6px",
-        left: "200px"
+        left: "200px",
+        '@media (max-width: 550px)': {
+            left: "148px"
 
+        },
+        '@media (max-width: 450px)': {
+            left: "100px"
+
+        },
+        '@media (max-width: 370px)': {
+            top: "256px",
+            left: "12px",
+
+        }
+
+    },
+    locatonListItem: {
+        '@media (max-width: 550px)': {
+            fontSize: "14px"
+
+        },
+        '@media (max-width: 450px)': {
+            fontSize: "12px"
+
+        },
+        '@media (max-width: 330px)': {
+
+
+        }
     },
     accountCircle: {
         padding: "8px",
@@ -125,16 +290,39 @@ const useStyles = makeStyles((theme) => ({
         minWidth: "512px",
         color: theme.palette.text.main,
         background: "url('https://cdn.discordapp.com/attachments/370759274621698048/755271239748157540/unknown.png')",
-        backgroundPosition: "top left",
+        backgroundPosition: "center left",
         backgroundColor: theme.palette.secondary.main,
         border: `2px solid ${theme.palette.secondary.dark}`,
         boxShadow: theme.shadows[5],
         padding: "12px",
         borderRadius: "12",
+        '@media (max-width: 600px)': {
+            minWidth: "448px",
+            maxWidth: "99vw",
+            maxHeight: "98vh"
+
+        },
+        '@media (max-width: 550px)': {
+            minWidth: "320px",
+
+
+        },
+        '@media (max-width: 450px)': {
+            minWidth: "256px",
+
+
+        },
+        '@media (max-width: 370px)': {
+            minWidth: "192px",
+
+        }
     },
     setPointWidget: {
-        paddingTop: "0px",
+        paddingTop: "24px",
         padding: "24px",
+    },
+    UserUpdateModalHeaderBar: {
+
     },
     sliderRow: {
         marginTop: "32px",
@@ -171,7 +359,7 @@ const UserWidget = (props) => {
     let zones = props.zones;
     let type = props.type;
     let accountType = ["Admin", "User", "Viewer"];
-
+    let fixedListWidth = 192;
     if (zones === undefined) {
         zones = ["loading rooms", "room Beta", "Veg Room 1", "veg Room 2"]
     }
@@ -179,9 +367,11 @@ const UserWidget = (props) => {
         // console.log("type is undefined")
         type = "Viewer";
     }
+    const max550 = useMediaQuery('(max-width:550px)');
 
-
-
+    if (max550) {
+        fixedListWidth = 128;
+    }
 
     const [open, setOpen] = React.useState(false);
 
@@ -353,15 +543,15 @@ const UserWidget = (props) => {
                 let data = UserDoc.data();
                 // console.log(data);
                 // console.log(output)
-                for(let key in data){
-                   let item = Object.keys(output).find((element)=>{
-                       if(key===element || key==="UID"){
-                           return true
-                       }
-                   });
-                   if(!item){
-                       throw "Keys missing in Output"
-                   }
+                for (let key in data) {
+                    let item = Object.keys(output).find((element) => {
+                        if (key === element || key === "UID") {
+                            return true
+                        }
+                    });
+                    if (!item) {
+                        throw "Keys missing in Output"
+                    }
                 }
                 transaction.update(UserRef, output);
                 return output;
@@ -379,38 +569,37 @@ const UserWidget = (props) => {
     };
 
     const sendPasswordResetEmail = () => {
-        auth.sendPasswordResetEmail(props.mUser.email).then(function() {
+        auth.sendPasswordResetEmail(props.mUser.email).then(function () {
             // Email sent.
             props.handleInvalidAlertOpen("Successfully sent password reset email", "success");
-          }).catch(function(error) {
+        }).catch(function (error) {
             // An error happened.
             console.log(error)
             props.handleInvalidAlertOpen("Error something went wrong");
-          });
+        });
     }
 
 
     const Row = ({ index, style }) => (
-        <div style={style}><ListItemIcon><CheckCircleRoundedIcon style={{ color: theme.palette.primary.main, fontSize: "18px" }} /></ListItemIcon>{zones[index].name}</div>
+        <div style={style} className={classes.locatonListItem}><ListItemIcon style={{ minWidth: "24px" }}><CheckCircleRoundedIcon style={{ color: theme.palette.primary.main, fontSize: "18px" }} /></ListItemIcon>{zones[index].name}</div>
     );
     return (
         <Grid item container direction={"row"} className={classes.userInfoContainer} xs>
-            <Grid item container xs className={classes.Profile} direction={"column"} alignItems={"center"}>
+            <Grid item container xs={12} sm className={classes.Profile} direction={"column"} alignItems={"center"}>
                 <Grid item xs></Grid>
-                <Grid item xs > <Typography variant={"h6"} >{props.userName}</Typography></Grid>
-                <Grid item xs ><Box className={classes.accountCircle}><AccountCircleRoundedIcon style={{ fontSize: "64px", color: theme.palette.primary.main }} /></Box></Grid>
+                <Grid item xs > <Typography variant={"h6"} className={classes.userNameHeader} >{props.userName}</Typography></Grid>
+                <Grid item xs ><Box className={classes.accountCircle}><AccountCircleRoundedIcon className={classes.profileIcon} /></Box></Grid>
                 <Grid item xs></Grid>
                 <Grid item xs>{type}</Grid>
-                <Grid item xs><Typography variant={"body2"} style={{ color: theme.palette.roomStatus.veg }}>{props.email}</Typography></Grid>
+                <Grid item xs><Typography variant={"body2"} className={classes.UserEmail} >{props.email}</Typography></Grid>
             </Grid>
-            <Grid item xs >
+            <Grid item xs={12} sm >
                 <List className={classes.zoneList}>
                     <ListItem>
-                        <ListItemIcon></ListItemIcon>
                         <ListItemText primary={"Locations"}></ListItemText>
                     </ListItem>
                     <ListItem >
-                        <FixedSizeList height={128} width={192} itemSize={32} itemCount={zones.length}>
+                        <FixedSizeList height={128} width={fixedListWidth} itemSize={48} itemCount={zones.length}>
                             {Row}
                         </FixedSizeList>
                     </ListItem>
@@ -435,58 +624,56 @@ const UserWidget = (props) => {
                     <Box className={classes.paper}>
                         <form noValidate >
                             <Grid item container direction={"column"} className={classes.setPointWidget}>
-                                <Grid item container direction={"row"}>
+                                <Grid item container direction={"row"} className={classes.UserUpdateModalHeaderBar}>
                                     <Grid item xs> <Grid item ><h3 id="update-user-modal">Edit User</h3></Grid></Grid>
                                     <Grid item> <IconButton onClick={handleClose} ><CancelIcon style={{ color: theme.palette.text.main }} /></IconButton></Grid>
                                 </Grid>
                                 <Grid item container direction={"row"} spacing={5}>
-                                    <Grid item xs={12} sm={6}>
+                                    <Grid item xs={6} sm={6}>
                                         <EditUserInput label={"First Name"} name={"firstName"} value={state.firstName} inputProps={{ 'aria-label': 'input first name' }} onChange={handleInputChange} />
                                     </Grid>
-                                    <Grid item xs={12} sm={6}>
+                                    <Grid item xs={6} sm={6}>
                                         <EditUserInput label={"Last Name"} name={"lastName"} value={state.lastName} inputProps={{ 'aria-label': 'input last name' }} onChange={handleInputChange} />
                                     </Grid>
-                                    <Grid item xs={12} sm={6}>
+                                    <Grid item xs={6} sm={6}>
                                         <EditUserInput label={"User Email"} name={"email"} value={state.email} inputProps={{ 'aria-label': 'input email' }} onChange={handleInputChange} />
                                     </Grid>
-                                    <Grid item xs={12} sm={6}>
+                                    <Grid item xs={6} sm={6}>
                                         <EditUserInput label={"User Phone"} name={"phone"} value={state.phone} inputProps={{ 'aria-label': 'input phone' }} onChange={handleInputChange} />
                                     </Grid>
 
 
                                 </Grid>
                                 <Grid item container direction={"column"} className={classes.sliderRow}>
-                                    <Grid item container direction={"row"} style={{ padding: "6px", marginBottom: "24px" }}>
-                                        <Grid item> <h4>Security</h4></Grid>
-                                        <Grid item xs> </Grid>
-                                    </Grid>
-                                    <Grid item container direction={'row'}>
-                                        <Grid item container direction={"column"} xs>
-                                            <Grid item xs>
-                                                <StandardRoundSelectForm className={classes.formControl} hiddenLabel>
-                                                    <Select
-                                                        value={pick}
-                                                        onChange={handleChange}
-                                                        inputProps={{
-                                                            name: 'pick',
-                                                            id: 'AccountType',
-                                                        }}
-                                                        defaultValue={2}
-                                                    >
-                                                        {accountType.map((Item, Index) => (
-                                                            <MenuItem key={Index} value={Index}>{Item}</MenuItem>
-                                                        ))}
-                                                    </Select>
-                                                </StandardRoundSelectForm>
-                                            </Grid>
-                                            <Grid item xs>
-                                                <EditUserButton color={"primary"} onClick={sendPasswordResetEmail}>
-                                                    Send Password Reset email
-                                                </EditUserButton>
-                                            </Grid>
-                                        </Grid>
 
-                                        <Grid item container xs>
+                                    <Grid item container direction={'row'}>
+                                        <Grid item container direction={"row"} xs={6} sm={12} style={{ padding: "6px", marginBottom: "24px" }}>
+                                            <Grid item> <h4>Security</h4></Grid>
+                                            <Grid item xs> </Grid>
+                                        </Grid>
+                                        <Grid item xs={6} sm={6}>
+                                            <StandardRoundSelectForm className={classes.formControl} hiddenLabel>
+                                                <Select
+                                                    value={pick}
+                                                    onChange={handleChange}
+                                                    inputProps={{
+                                                        name: 'pick',
+                                                        id: 'AccountType',
+                                                    }}
+                                                    defaultValue={2}
+                                                >
+                                                    {accountType.map((Item, Index) => (
+                                                        <MenuItem key={Index} value={Index}>{Item}</MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </StandardRoundSelectForm>
+                                        </Grid>
+                                        <Grid item xs={12} sm={6} style={{ paddingBottom: "12px", paddingRight: "12px" }}>
+                                            <EditUserButton color={"primary"} onClick={sendPasswordResetEmail} >
+                                                Send Password Reset email
+                                                </EditUserButton>
+                                        </Grid>
+                                        <Grid item container xs={12}>
                                             <div style={{ minHeight: '300px', minWidth: '200px', width: "98%" }} className="ag-theme-alpine-dark" >
                                                 <AgGridReact
                                                     rowData={props.location}
@@ -508,15 +695,14 @@ const UserWidget = (props) => {
                                                 </AgGridReact>
                                             </div>
                                         </Grid>
-                                    </Grid>
-
-                                </Grid>
-                                <Grid item container direction={"row"}>
-                                    <Grid item xs></Grid>
-                                    <Grid item xs>
-                                        <Button variant={"outlined"} color={"primary"} onClick={updateManagedUser}>
-                                            SAVE USER DETAILS
-                                        </Button>
+                                        <Grid item container direction={"row"} xs={12}>
+                                            <Grid item xs></Grid>
+                                            <Grid item xs={12} sm={6} style={{ paddingBottom: "24px", paddingTop: "24px" }}>
+                                                <Button variant={"outlined"} color={"primary"} onClick={updateManagedUser}>
+                                                    SAVE USER DETAILS
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
 
                                 </Grid>
@@ -609,7 +795,6 @@ const UsersPage = (props) => {
         ]
     }
 
-
     const [state, setState] = React.useState({
         firstName: "",
         lastName: "",
@@ -648,8 +833,6 @@ const UsersPage = (props) => {
 
     };
 
-
-
     const handleClose = () => {
         if (state.firstName.length > 0 || state.lastName.length > 0 || state.email.length > 0 || state.phone.length > 0) {
             setState({
@@ -680,8 +863,6 @@ const UsersPage = (props) => {
     const [Userpick, setPick] = React.useState(2)
     // console.log(pick)
 
-
-
     const handleChange = (event) => {
         setPick(event.target.value);
 
@@ -698,25 +879,18 @@ const UsersPage = (props) => {
     const [gridApi, setGridApi] = React.useState(null);
     const [gridColumnApi, setGridColumnApi] = React.useState(null);
 
-
     function onGridReady(params) {
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
     }
 
-
     //alerts 
-
-
     const handleInvalidAlertClose = () => {
         setState({
             ...state,
             invalidAlert: false
         });
     };
-
-
-
 
     const submitNewUser = async () => {
         if (state.firstName.length === 0 || state.firstName.length < 3) {
@@ -799,9 +973,6 @@ const UsersPage = (props) => {
 
     }
 
-
-
-
     return (
         <Container className={"containerMain"}>
             <Grid container item direction={"column"} spacing={5} className={classes.usersPageWidget} alignItems={"center"}>
@@ -812,13 +983,13 @@ const UsersPage = (props) => {
                     <Grid item xs>
                     </Grid>
                 </Grid>
-                <Grid item container direction={"row"} spacing={5} style={{ marginLeft: "48px" }} justify={"flex-start"}>
+                <Grid item container direction={"row"} spacing={5} className={classes.UserWidgetContainer} justify={"flex-start"}>
                     {managedUsers.map((item, index) => {
                         if (item.firstName !== "loading") {
                             return (
-                                <UserWidget key={index} UserIndex={index} mUserDocRef={item.ref} ownerID={user.UID} handleInvalidAlertOpen={handleInvalidAlertOpen} mUser={item} 
-                                userName={item.firstName+" "+item.lastName} firstName={item.firstName} lastName={item.lastName} email={item.email} type={item.accountType} phone={item.phone}
-                                 location={locations} zones={managedUsers[index].location} />
+                                <UserWidget key={index} UserIndex={index} mUserDocRef={item.ref} ownerID={user.UID} handleInvalidAlertOpen={handleInvalidAlertOpen} mUser={item}
+                                    userName={item.firstName + " " + item.lastName} firstName={item.firstName} lastName={item.lastName} email={item.email} type={item.accountType} phone={item.phone}
+                                    location={locations} zones={managedUsers[index].location} />
                             );
                         } else {
                             return (
@@ -853,43 +1024,27 @@ const UsersPage = (props) => {
                                     <Grid item xs> <Grid item ><h3 id="Add-User-Modal">Add New User</h3></Grid></Grid>
                                     <Grid item> <IconButton onClick={xExit} ><CancelIcon style={{ color: theme.palette.text.main }} /></IconButton></Grid>
                                 </Grid>
-                                <Grid item container direction={"row"} spacing={5}>
-                                    <Grid item xs={12} sm={6}>
-
+                                <Grid item container direction={"row"} spacing={3}>
+                                    <Grid item xs={6} sm={6}>
                                         <EditUserInput label={"First Name"} name={"firstName"} value={state.firstName} inputProps={{ 'aria-label': 'input first name' }} onChange={handleInputChange} />
-
-
                                     </Grid>
-                                    <Grid item xs={12} sm={6}>
+                                    <Grid item xs={6} sm={6}>
                                         <EditUserInput label={"Last Name"} name={"lastName"} value={state.lastName} inputProps={{ 'aria-label': 'input last name' }} onChange={handleInputChange} />
                                     </Grid>
-                                    <Grid item xs={12} sm={6}>
+                                    <Grid item xs={6} sm={6}>
                                         <EditUserInput label={"User Email"} name={"email"} value={state.email} inputProps={{ 'aria-label': 'input email' }} onChange={handleInputChange} />
                                     </Grid>
-                                    <Grid item xs={12} sm={6}>
+                                    <Grid item xs={6} sm={6}>
                                         <EditUserInput label={"User Phone"} name={"phone"} value={state.phone} inputProps={{ 'aria-label': 'input phone' }} onChange={handleInputChange} />
                                     </Grid>
-                                    <Grid item xs={12} sm={6}>
-
-                                    </Grid>
-
                                 </Grid>
                                 <Grid item container direction={"column"} className={classes.sliderRow}>
-                                    <Grid item container direction={"row"} style={{ padding: "6px", marginBottom: "24px" }}>
-                                        <Grid item> <h4>Security</h4></Grid>
-                                        <Grid item xs> </Grid>
-                                    </Grid>
                                     <Grid item container direction={'row'} >
-
-                                        {/* <Grid item xs>
-                                            <EditUserInput label={"Generated password"} defaultValue={"*********************"} inputProps={{ 'aria-label': 'description' }} />
+                                        <Grid item container direction={"row"} xs={6} style={{ padding: "6px", marginBottom: "24px" }}>
+                                            <Grid item> <h4>Security</h4></Grid>
+                                            <Grid item xs> </Grid>
                                         </Grid>
-                                        <Grid item xs>
-                                            <EditUserButton color={"primary"}>
-                                                Generate Password
-                                        </EditUserButton>
-                                        </Grid> */}
-                                        <Grid item xs={4}>
+                                        <Grid item xs={6}>
                                             <StandardRoundSelectForm className={classes.formControl} label={"Select account type"}>
                                                 <Select
                                                     value={Userpick}
@@ -906,7 +1061,7 @@ const UsersPage = (props) => {
                                                 </Select>
                                             </StandardRoundSelectForm>
                                         </Grid>
-                                        <Grid item container xs direction={'column'}>
+                                        <Grid item container xs direction={'column'} xs={12}>
                                             <Typography variant={'h5'}>Choose Locations</Typography>
                                             <div style={{ minHeight: '300px', minWidth: '200px', width: "98%" }} className="ag-theme-alpine-dark" >
                                                 <AgGridReact
@@ -929,18 +1084,18 @@ const UsersPage = (props) => {
                                                 </AgGridReact>
                                             </div>
                                         </Grid>
+                                        <Grid item container direction={"row"} xs={12} style={{paddingTop:"12px"}}>
+                                            <Grid item xs></Grid>
+                                            <Grid item xs={12} sm={3} md={2}>
+                                                <Button variant={"outlined"} color={"primary"} onClick={submitNewUser}>
+                                                    SAVE USER DETAILS
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
 
                                 </Grid>
-                                <Grid item container direction={"row"}>
-                                    <Grid item xs></Grid>
-                                    <Grid item xs>
-                                        <Button variant={"outlined"} color={"primary"} onClick={submitNewUser}>
-                                            SAVE USER DETAILS
-                                        </Button>
-                                    </Grid>
 
-                                </Grid>
                             </Grid>
                         </form>
 

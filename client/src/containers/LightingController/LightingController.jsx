@@ -488,7 +488,7 @@ const calcTotalUptime = (timeA, timeB) => {
     let now, then;
     if(timeArrayA.length>1 && timeArrayB.length>1){
         now = moment().hour(timeArrayA[0]).minute(timeArrayA[1]);
-        console.log(now)
+        // console.log(now)
         then = moment().hour(timeArrayB[0]).minute(timeArrayB[1]);
         if(timeArrayB[0]<timeArrayA[0]){
             then.add(1,"day")
@@ -499,13 +499,13 @@ const calcTotalUptime = (timeA, timeB) => {
         let MinuteA = parseInt(timeA.slice(2,4))
         let MinuteB = parseInt(timeB.slice(2,4))
         now = moment().hour(HoursA).minute(MinuteA);
-        console.log(now)
+        // console.log(now)
         then = moment().hour(HoursB).minute(MinuteB);
         if(HoursB<HoursA){
             then.add(1,"day")
         }
     } 
-    console.log(then)
+    // console.log(then)
     let ms = moment(now,"DD/MM/YYYY HH:mm:ss").diff(moment(then,"DD/MM/YYYY HH:mm:ss"));
     let d = moment.duration(ms);
     return d.humanize();
@@ -713,7 +713,6 @@ const LightingController = (props) => {
     const openSpectrumControl = (event) => {
 
         let selectedRows = gridApi.getSelectedRows()
-        console.log(selectedRows)
         if (selectedRows !== undefined && selectedRows.length > 0) {
             setState({
                 ...state,
@@ -724,7 +723,6 @@ const LightingController = (props) => {
         }
         else {
             // TODO nothing selected warning
-            console.log("provide warning that nothing is selected");
             handleAlertOpen("Error please Select some zones to edit");
         }
 
@@ -922,7 +920,6 @@ const LightingController = (props) => {
     };
 
     const handleStartTimeChange = (event) => {
-        console.log(event.target.value)
         setState({
             ...state,
             timeOn: event.target.value,
@@ -931,7 +928,6 @@ const LightingController = (props) => {
     }
 
     const handleEndTimeChange = (event) => {
-        console.log(event.target.value)
         setState({
             ...state,
             timeOff: event.target.value,
@@ -940,7 +936,6 @@ const LightingController = (props) => {
     }
 
     const setSchedule = async ()  => {
-        console.log(state)
         try {
             let updatedZones = []
             for (let i = 0; i < state.selectedZones.length; i++) {

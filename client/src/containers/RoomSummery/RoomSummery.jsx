@@ -295,16 +295,17 @@ const useStyles = makeStyles((theme) => ({
     },
     setPointWidget: {
         paddingTop: "0px",
-        padding: "24px",
+        // padding: "24px",
         
     },
     sliderRow: {
         marginTop: "32px",
         marginBottom: "32px",
         padding: "12px",
-        paddingRight:"18px",
+        paddingRight:"48px",
         background: theme.palette.secondary.dark,
         borderRadius: "12px",
+        width:"98%",
         '@media (max-width: 550px)': {
             maxWidth: "320px",
 
@@ -314,8 +315,8 @@ const useStyles = makeStyles((theme) => ({
 
         },
         '@media (max-width: 330px)': {
-            minWidth: "204px",
-            marginLeft:"-12px"
+            // minWidth: "204px",
+            // marginLeft:"-12px"
 
         }
         // border:`solid 2px ${theme.palette.secondary.dark}`
@@ -469,7 +470,7 @@ function RoomSummery(props) {
                     <Typography variant={"h4"}>Summary</Typography>
                 </Grid>
                 <Grid item xs ></Grid>
-                <Grid item>
+                <Grid item style={{ paddingLeft: "24px" }}>
                     <StandardRoundSelectForm className={classes.formControl} hiddenLabel >
 
                         <Select
@@ -487,7 +488,7 @@ function RoomSummery(props) {
                     </StandardRoundSelectForm>
                 </Grid>
             </Grid>
-            <Grid item container direction={'row'} spacing={1}>
+            <Grid item container direction={'row'} spacing={1} style={{marginTop:"48px"}}>
                 {/* <Grid item container direction={"column"} xs lg> */}
                 {loading ? (<CircularProgress color={"primary"} />) :
                     (

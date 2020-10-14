@@ -14,8 +14,7 @@ import ReactSpeedometer from "react-d3-speedometer"
 import ErrorIcon from '@material-ui/icons/Error';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import HelpIcon from '@material-ui/icons/Help';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
+import VerticalDivider from "../VerticalDivider/VerticalDivider";
 import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect.js";
 import CancelIcon from '@material-ui/icons/Cancel';
 
@@ -52,7 +51,7 @@ function DiagnosticColorBar(props) {
             left: left,
         }}>
             <ListItem key={1}>
-                <ListItemText variant={"button"} style={{paddingRight:"12px"}}>SetPoint:</ListItemText>
+                <ListItemText variant={"button"} style={{ paddingRight: "12px" }}>SetPoint:</ListItemText>
                 <Button variant="outlined" color={"primary"} onClick={props.handleOpen} style={{ marginLeft: "12px" }}>
 
                     {props.setPoint}
@@ -88,7 +87,7 @@ function FieldMeter(props) {
     const theme = props.theme;
     const UnitString = props.UnitString;
 
-    
+
     const setType = () => {
         switch (props.type) {
             case "temp":
@@ -98,7 +97,7 @@ function FieldMeter(props) {
                     max: 2,
                     superMax: 30,
                     sliderMin: 0,
-                    sliderMax:110,
+                    sliderMax: 110,
                     output: {
                         tempSetPoint: props.setPoint,
                         tempMin: props.min,
@@ -113,7 +112,7 @@ function FieldMeter(props) {
                     max: 5,
                     superMax: 30,
                     sliderMin: 0,
-                    sliderMax:100,
+                    sliderMax: 100,
                     output: {
                         humiditySetPoint: props.setPoint,
                         humidityMin: props.min,
@@ -127,7 +126,7 @@ function FieldMeter(props) {
                     max: 100,
                     superMax: 1000,
                     sliderMin: 0,
-                    sliderMax:6000,
+                    sliderMax: 6000,
                     output: {
                         CO2SetPoint: props.setPoint,
                         CO2Min: props.min,
@@ -141,7 +140,7 @@ function FieldMeter(props) {
                     max: 25,
                     superMax: 500,
                     sliderMin: 0,
-                    sliderMax:1500,
+                    sliderMax: 1500,
                     output: {
                         pressureSetPoint: props.setPoint,
                         pressureMin: props.min,
@@ -166,7 +165,7 @@ function FieldMeter(props) {
             setPoint: props.setpoint,
             max: props.max,
             min: props.min,
-            minMax: [props.min, props.max] 
+            minMax: [props.min, props.max]
         });
     }, [props])
     // console.log(props.rooms[props.pick].name)
@@ -288,23 +287,23 @@ function FieldMeter(props) {
                     return data;
                 }
                 //do the update and return output
-                
+
                 let output = {
                     ...data,
-                    doc:props.rooms[props.pick].doc
+                    doc: props.rooms[props.pick].doc
                 };
-                for(let key in TypeData.output){
-                    if(key.slice(-3) === "int"){
+                for (let key in TypeData.output) {
+                    if (key.slice(-3) === "int") {
                         output[key] = parseInt(meterState.setPoint)
                     }
-                    if(key.slice(-3) === "Min"){
+                    if (key.slice(-3) === "Min") {
                         output[key] = parseInt(meterState.minMax[0])
                     }
-                    if(key.slice(-3) === "Max"){
+                    if (key.slice(-3) === "Max") {
                         output[key] = parseInt(meterState.minMax[1])
                     }
                 }
-                
+
                 transaction.update(roomRef, output);
                 return output;
 
@@ -326,7 +325,7 @@ function FieldMeter(props) {
     }
 
     return (
-        <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'} style={{paddingBottom:"24px",minWidth:"192px", maxWidth:"320px"}}>
+        <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'} style={{ paddingBottom: "24px", minWidth: "192px", maxWidth: "320px" }}>
             <Typography variant={"h6"} align={'center'}>{props.title}</Typography>
             <Grid item xs className={classes.meterContainer}>
                 <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
@@ -377,6 +376,7 @@ function FieldMeter(props) {
                                         <Grid item> <h4>{props.longTitle}</h4></Grid>
                                         <Grid item xs> </Grid>
                                     </Grid>
+                                    {/* setpoint slider */}
                                     <Grid item container direction={'row'}>
                                         <Grid item xs>
                                             <Typography variant={"body1"}>SetPoint</Typography>
@@ -410,6 +410,7 @@ function FieldMeter(props) {
                                             <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "24px" }}> {UnitString}</Typography>
                                         </Grid>
                                     </Grid>
+                                    {/* minMax Input */}
                                     <Grid item container direction={'row'} style={{ marginTop: "24px" }}>
                                         <Grid item>
                                             <Typography variant={"body1"}>Minimum</Typography>
@@ -428,18 +429,10 @@ function FieldMeter(props) {
                                             />
                                         </Grid>
                                         <Grid item style={{ position: "relative" }}>
-                                            <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "48px" }}> {UnitString}</Typography>
+                                            <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "48px", left:"-12px" }}> {UnitString}</Typography>
                                         </Grid>
                                         <Grid item xs>
-
-                                            <Slider
-                                                value={meterState.minMax}
-                                                onChange={handleMinMaxSliderChange}
-                                                aria-labelledby="min-slider"
-                                                min={TypeData.sliderMin}
-                                                max={TypeData.sliderMax}
-                                                style={{ width: "95%", marginTop: "24px" }}
-                                            />
+                                            <VerticalDivider/>
                                         </Grid>
                                         <Grid item>
                                             <Typography variant={"body1"}>Maximum</Typography>
@@ -459,7 +452,21 @@ function FieldMeter(props) {
                                             />
                                         </Grid>
                                         <Grid item style={{ position: "relative" }}>
-                                            <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "48px" }}> {UnitString}</Typography>
+                                            <Typography variant={"caption"} style={{ padding: "4px", position: "absolute", top: "48px", left:"-12px" }}> {UnitString}</Typography>
+                                        </Grid>
+                                    </Grid>
+                                    {/* minMax slider */}
+                                    <Grid item container direction={'row'}>
+                                        <Grid item xs>
+
+                                            <Slider
+                                                value={meterState.minMax}
+                                                onChange={handleMinMaxSliderChange}
+                                                aria-labelledby="min-slider"
+                                                min={TypeData.sliderMin}
+                                                max={TypeData.sliderMax}
+                                                style={{ width: "95%", marginTop: "24px" }}
+                                            />
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -491,7 +498,7 @@ FieldMeter.propTypes = {
     classes: PropTypes.object.isRequired,
     UnitString: PropTypes.string.isRequired,
     handleAlertOpen: PropTypes.func.isRequired,
-    width:PropTypes.number.isRequired,
+    width: PropTypes.number.isRequired,
 }
 
 

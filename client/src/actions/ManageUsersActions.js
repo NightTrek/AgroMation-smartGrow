@@ -45,3 +45,7 @@ export const fetchManagedUsers = (UID) => async  dispatch => {
     }
 
 }
+
+export const setManagedUsers = (managedUsers) => dispatch => {
+    dispatch({type: FETCH_MANAGED_USERS, payload: managedUsers})
+};

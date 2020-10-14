@@ -325,6 +325,26 @@ const useStyles = makeStyles((theme) => ({
         border: `2px solid ${theme.palette.secondary.dark}`,
         boxShadow: theme.shadows[5],
         padding: "12px",
+        '@media (max-width: 600px)': {
+            minWidth: "448px",
+            maxWidth: "99vw",
+            // maxHeight: "98vh"
+
+        },
+        '@media (max-width: 550px)': {
+            minWidth: "320px",
+
+
+        },
+        '@media (max-width: 450px)': {
+            minWidth: "256px",
+
+
+        },
+        '@media (max-width: 370px)': {
+            minWidth: "192px",
+
+        }
     },
     sliderRow: {
         marginTop: "32px",
@@ -338,6 +358,14 @@ const useStyles = makeStyles((theme) => ({
         height: "24px",
         marginTop: "8px",
         marginLeft: "8px"
+    },
+    RGBSliders:{
+        marginLeft: "48px", 
+        marginBottom: "24px",
+        '@media (max-width: 370px)': {
+            marginLeft:"0px",
+
+        }
     },
     textField: {
         marginLeft: theme.spacing(1),
@@ -456,7 +484,7 @@ const RGBInensities = (props) => {
         })
     }
     return (
-        <Grid item container direction={"row"} xs={5} wrap={'nowrap'} style={{ marginLeft: "48px", marginBottom: "24px" }}>
+        <Grid item container direction={"row"} xs={5} wrap={'nowrap'} className={props.RGBSliders}>
             <PowerIntensity type={1} value={props.state.spectrum[0]} setFunc={setR} topCaption={"Color Spectrum"} bottomHeading={"Red"} color={"red"} />
             <Divider orientation={"vertical"} flexItem></Divider>
             <PowerIntensity type={2} value={props.state.spectrum[1]} setFunc={setY} topCaption={" "} bottomHeading={"Yellow"} color={"yellow"} />
@@ -1121,7 +1149,7 @@ const LightingController = (props) => {
                                 </div>
                             </Grid>
                             <Grid item container direction={"row"}>
-                                <RGBInensities state={state} setState={setState} />
+                                <RGBInensities state={state} setState={setState} RGBSliders={classes.RGBSliders}/>
                             </Grid>
                             <Grid item container direction={"row"}>
                                 <Button variant={"outlined"} color={"primary"} onClick={setSpectrum}>
@@ -1165,7 +1193,7 @@ const LightingController = (props) => {
                                         })
                                     }} />
                                 </Box>
-                                <div className="ag-theme-balham-dark" style={{ width: "50%", height: "256px", marginLeft: "48px", marginTop: "28px" }}>
+                                <div className="ag-theme-balham-dark" style={{ width: "50%", height: "128px", marginLeft: "48px", marginTop: "28px",paddingBottom:"12px" }}>
                                     <AgGridReact
                                         rowData={state.selectedZones}
                                         defaultColDef={{
@@ -1222,21 +1250,19 @@ const LightingController = (props) => {
                                     </AgGridReact>
                                 </div>
                             </Grid>
-                            <Grid item container direction={"row"}>
-                                <Grid item container direction={"column"} className={classes.sliderRow}>
-                                    <Grid item container direction={"row"} style={{ padding: "6px", marginBottom: "24px" }}>
-                                        <Grid item> <h4>Schedule Lighting times</h4></Grid>
-                                        <Grid item xs> </Grid>
-                                    </Grid>
+                            {/* <Grid item container direction={"row"}> */}
+                                <Grid item container direction={"row"} className={classes.sliderRow}>
+                                    <Grid item> <h6>Schedule Lighting times</h6></Grid>
+                                    
                                     <Grid item container direction={"row"}>
                                         <Typography variant={'body1'}>
                                             Lights on for {state.totalUptimePerDay} 
                                         </Typography>
                                     </Grid>
-                                    <Grid item container direction={"row"} style={{ padding: "6px", marginBottom: "24px" }}>
+                                    <Grid item container direction={"row"} style={{ padding: "6px", marginBottom: "24px" }} spacing={1}>
                                         <TextField
-                                            id="time"
-                                            label="start time"
+                                            id="Start-time"
+                                            label="Start Time"
                                             type="time"
                                             value={state.timeOn}
                                             onChange={handleStartTimeChange}
@@ -1250,8 +1276,8 @@ const LightingController = (props) => {
                                         />
 
                                         <TextField
-                                            id="time"
-                                            label="Alarm clock"
+                                            id="End-time"
+                                            label="End Time"
                                             type="time"
                                             value={state.timeOff}
                                             onChange={handleEndTimeChange}
@@ -1267,7 +1293,7 @@ const LightingController = (props) => {
                                     </Grid>
 
                                 </Grid>
-                            </Grid>
+                            
                             <Grid item container direction={"row"}>
                                 <Button variant={"outlined"} color={"primary"} onClick={setSchedule}>
                                     Set

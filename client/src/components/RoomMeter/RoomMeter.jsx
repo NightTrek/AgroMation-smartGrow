@@ -367,7 +367,7 @@ function FieldMeter(props) {
                         <Box className={classes.paper}>
                             <Grid item container direction={"column"} className={classes.setPointWidget}>
                                 <Grid item container direction={"row"}>
-                                    <Grid item xs> <Grid item ><h3 id="transition-modal-title">Adjust Setpoint</h3></Grid></Grid>
+                                    <Grid item xs> <Grid item ><Typography variant={"h5"}>Adjust Setpoint</Typography></Grid></Grid>
                                     <Grid item> <IconButton onClick={handleClose} ><CancelIcon style={{ color: theme.palette.text.main }} /></IconButton></Grid>
                                 </Grid>
 

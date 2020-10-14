@@ -14,3 +14,7 @@ error.log
 /publicBuild/
 
 /client/src/consts/
+
+./firebase
+
+firestore.rules

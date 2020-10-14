@@ -249,43 +249,8 @@ const ZoneSearchInput = withStyles((theme) => ({
 
 
 const useStyles = makeStyles((theme) => ({
-    roomSummeryWidget: {
-        background: theme.palette.secondary.main,
-        color: theme.palette.text.main,
-        minWidth: "256px",
-        minHeight: "360px",
-    },
-    iconButton: {
-        color: "white",
-    },
-    meterContainer: {
-        // background:theme.palette.roomStatus.warning,
-        minWidth: "128px",
-        maxWidth: "256px",
-        maxHeight: "256px",
-        position: "relative",
-    },
-    sliderBackground: {
-        background: theme.palette.secondary.dark,
-        minWidth: "64px",
-        maxWidth: "192px",
-        minHeight: "128px",
-        padding: "12px",
-        marginRight: "48px",
-        borderRadius: "4px"
-    },
-    SliderBottomLabel: {
-        background: theme.palette.secondary.dark,
-        minWidth: "128px",
-        minHeight: "48px",
-        borderRadius: "24px",
-        marginTop: "24px"
-    },
-    topCaption: {
-        height: "24px",
-        marginTop: "8px",
-        marginLeft: "8px"
-    },
+   
+    
     lightZoneWidget: {
         background: theme.palette.secondary.dark,
         color: theme.palette.text.main,
@@ -330,6 +295,22 @@ const useStyles = makeStyles((theme) => ({
             
         }
     },
+    agGrid:{
+        minHeight: '300px', 
+        minWidth: '128px', 
+        width: "98%",
+        '@media (max-width: 550px)': {
+            width:"94%"
+
+        },
+        '@media (max-width: 450px)': {
+          width:"64vw"  
+        },
+        '@media (max-width: 370px)': {
+            
+        }
+        
+    },
     modal: {
         display: 'flex',
         alignItems: 'center',
@@ -352,6 +333,11 @@ const useStyles = makeStyles((theme) => ({
         background: theme.palette.secondary.dark,
         borderRadius: "12px",
         // border:`solid 2px ${theme.palette.secondary.dark}`
+    },
+    topCaption: {
+        height: "24px",
+        marginTop: "8px",
+        marginLeft: "8px"
     },
     textField: {
         marginLeft: theme.spacing(1),
@@ -1072,7 +1058,7 @@ const LightingController = (props) => {
             </Grid>
             {/*this is the main AG grid bar with light zone information  */}
             <Grid item container direction={'row'} className={classes.agGridContainer}>
-                <div className="ag-theme-alpine-dark" style={{ minHeight: '300px', minWidth: '192px', width: "98%" }}>
+                <div className={`${classes.agGrid} ag-theme-alpine-dark`}>
                     <AgGridReact
                         rowData={lightZones}
                         rowSelection="multiple"

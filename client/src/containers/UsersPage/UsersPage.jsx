@@ -25,7 +25,7 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
 
 // import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
 
-const EditUserButton = withStyles((theme) => ({
+export const EditUserButton = withStyles((theme) => ({
 
     root: {
         borderRadius: "32px",
@@ -56,7 +56,7 @@ const EditUserButton = withStyles((theme) => ({
 }))(Button);
 
 
-const EditUserInput = withStyles((theme) => ({
+export const EditUserInput = withStyles((theme) => ({
 
     root: {
         borderRadius: "32px",
@@ -344,11 +344,15 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const validateEmail = (email) => {
+export const validateEmail = (email) => {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
 
+export const validatePhone = (phone) => {
+    const phoneTest = /^\d{10}$/;
+    return phoneTest.test(phone);
+}
 
 
 

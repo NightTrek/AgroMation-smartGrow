@@ -289,9 +289,21 @@ const useStyles = makeStyles((theme) => ({
     lightZoneWidget: {
         background: theme.palette.secondary.dark,
         color: theme.palette.text.main,
-        minWidth: "256px",
+        minWidth: "192px",
         maxWidth: "320px",
         maxHeight: "348px",
+    },
+    lightZoneHeader:{
+        '@media (max-width: 550px)': {
+            
+            fontSize:"20px"
+        },
+        '@media (max-width: 450px)': {
+            fontSize:"18px"
+        },
+        '@media (max-width: 370px)': {
+            fontSize:"16px"
+        }
     },
     lightZoneButtonBox: {
         border: "solid white 2px",
@@ -1042,9 +1054,9 @@ const LightingController = (props) => {
     return (
         <Grid item container direction={"column"} >
             {/* This is the topBar */}
-            <Grid item container direction={"row"} spacing={5} style={{ paddingTop: "12px" }}>
+            <Grid item container direction={"row"} spacing={1} style={{ paddingTop: "12px" }}>
                 <Grid item xs={12} sm={12} md={3} style={{ marginLeft: "24px" }}>
-                    <Typography variant={"h5"}>{`(${numberOfActiveZones()}) Light Zones Active`}</Typography>
+                    <Typography variant={"h5"} className={classes.lightZoneHeader}>{`(${numberOfActiveZones()}) Light Zones Active`}</Typography>
                 </Grid>
                 <Grid item xs={false} sm md></Grid>
                 <Grid item xs={2} sm={2} md={1}>

@@ -144,7 +144,8 @@ const useStyles = makeStyles((theme) => ({
         // background: theme.palette.secondary.main,
         color: theme.palette.text.main,
         minWidth: "624px",
-        maxHeight: "442px",
+        minHeight:"192px",
+        height: "auto",
         '@media (max-width: 950px)': {
             minWidth: "512px",
 
@@ -229,7 +230,7 @@ export const PrimaryLineChart = (props) => {
     const pressureDomain = [950, 1200]
     const [state, setState] = useState({
         dataSet: tempData,
-        dataType:"Temprature",
+        dataType:"Temperature",
         domain:tempDomain,
         unit:" °F",
     });

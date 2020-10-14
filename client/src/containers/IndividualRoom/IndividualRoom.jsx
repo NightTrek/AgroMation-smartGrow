@@ -105,7 +105,7 @@ const IndividualRoom = () => {
 
     const [state, setState] = React.useState({ //setState
         Tabs: ["Analytics", "Lights", "Alarms", "Logs"],
-        pick: 0,
+        pick: 1,
     });
 
     //if true display menue if false display tabs

@@ -23,7 +23,7 @@ export const fetchUser = (UID, EMAIL) => async dispatch => {
                     querySnapshot.forEach((doc) => {
                         if (doc.exists) {
                             // console.log("user dispatched")
-                            dispatch({ type: FETCH_USER, payload: doc.data() })
+                            dispatch({ type: FETCH_USER, payload: {doc:doc.id, ...doc.data()} })
                         } else {
                             console.log("Example user dispatched")
                             dispatch({ type: FETCH_USER, payload: exampleAccount });
@@ -40,7 +40,7 @@ export const fetchUser = (UID, EMAIL) => async dispatch => {
                                 querySnapshot.forEach((doc) => {
                                     if (doc.exists) {
                                         // console.log("user dispatched")
-                                        dispatch({ type: FETCH_USER, payload: doc.data() })
+                                        dispatch({ type: FETCH_USER, payload: {doc:doc.id, ...doc.data()} })
                                     } else {
                                         console.log("Example user dispatched")
                                         dispatch({ type: FETCH_USER, payload: exampleAccount });

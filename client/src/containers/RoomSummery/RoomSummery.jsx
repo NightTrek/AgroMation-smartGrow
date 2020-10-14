@@ -138,7 +138,7 @@ function StageMeter(props) {
     }
 
     return (
-        <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'}>
+        <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'} style={{paddingBottom:"24px",minWidth:"192px", maxWidth:"320px"}}>
             <Typography variant={"h6"} align={'center'}>Life Stage</Typography>
             <Grid item xs className={classes.meterContainer}>
                 <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>

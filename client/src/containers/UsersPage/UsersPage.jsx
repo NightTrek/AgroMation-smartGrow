@@ -284,12 +284,12 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: "12",
-        overflow:"scroll",
+        overflow: "scroll",
     },
     paper: {
         position: "absolute",
         minWidth: "512px",
-        top:"0px",
+        top: "0px",
         color: theme.palette.text.main,
         background: "url('https://cdn.discordapp.com/attachments/370759274621698048/755271239748157540/unknown.png')",
         backgroundPosition: "center left",
@@ -367,6 +367,7 @@ const UserWidget = (props) => {
     let accountType = ["Admin", "User", "Viewer"];
     let fixedListWidth = 192;
     if (zones === undefined) {
+        console.log("zones undefined")
         zones = ["loading rooms", "room Beta", "Veg Room 1", "veg Room 2"]
     }
     if (type === undefined) {
@@ -379,16 +380,8 @@ const UserWidget = (props) => {
         fixedListWidth = 128;
     }
 
-    const [open, setOpen] = React.useState(false);
 
-    const handleOpen = () => {
-
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
+    
 
     ///Grid stuff
     const [gridApi, setGridApi] = React.useState(null);
@@ -407,24 +400,37 @@ const UserWidget = (props) => {
         lastName: props.mUser.lastName,
         email: props.mUser.email,
         phone: props.mUser.phone,
-        firstTimeLoad: false
+        open:false,
     });
 
+    const handleOpen = () => {
+
+        setState({
+            ...state,
+            open:true
+        });
+    };
+
+    const handleClose = () => {
+        setState({
+            ...state,
+            open:false,
+            
+        })
+    };
     //Select any locations the account already has access too
-    if (!state.firstTimeLoad && gridApi && zones[0] !== "loading rooms") {
+    if ( gridApi && zones[0] !== "loading rooms") {
+        console.log("setting selected locations")
         gridApi.forEachNode((node, index) => {
             zones.forEach((item, index) => {
                 if (node.data.name === item.name && node.data.address === item.address) {
+                    console.log("selecting Zone")
                     node.setSelected(true);
                 }
             })
 
 
         });
-        setState({
-            ...state,
-            firstTimeLoad: true
-        })
     }
 
     const setAccountTypePick = () => {
@@ -618,7 +624,7 @@ const UserWidget = (props) => {
                 aria-labelledby="update-user-modal"
                 aria-describedby="update-user-modal-description"
                 className={classes.modal}
-                open={open}
+                open={state.open}
                 onClose={handleClose}
                 closeAfterTransition
                 disableScrollLock
@@ -627,7 +633,7 @@ const UserWidget = (props) => {
                     timeout: 500,
                 }}
             >
-                <Fade in={open}>
+                <Fade in={state.open}>
                     <Box className={classes.paper}>
                         <form noValidate >
                             <Grid item container direction={"column"} className={classes.setPointWidget}>
@@ -663,6 +669,7 @@ const UserWidget = (props) => {
                                                     id: 'AccountType',
                                                 }}
                                                 defaultValue={2}
+                                                label={"Account Type"}
                                             >
                                                 {accountType.map((Item, Index) => (
                                                     <MenuItem key={Index} value={Index}>{Item}</MenuItem>
@@ -1037,61 +1044,56 @@ const UsersPage = (props) => {
                                         <EditUserInput label={"User Phone"} name={"phone"} value={state.phone} inputProps={{ 'aria-label': 'input phone' }} onChange={handleInputChange} />
                                     </Grid>
                                 </Grid>
-                                <Grid item container direction={"column"} className={classes.sliderRow}>
-                                    <Grid item container direction={'row'} >
-                                        <Grid item container direction={"row"} xs={6} style={{ padding: "6px", marginBottom: "24px" }}>
-                                            <Grid item> <h4>Security</h4></Grid>
-                                            <Grid item xs> </Grid>
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <StandardRoundSelectForm className={classes.formControl} label={"Select account type"}>
-                                                <Select
-                                                    value={Userpick}
-                                                    onChange={handleChange}
-                                                    inputProps={{
-                                                        name: 'pick',
-                                                        id: 'AddAccountType',
-                                                    }}
-                                                    defaultValue={2}
-                                                >
-                                                    {accountType.map((Item, Index) => (
-                                                        <MenuItem key={Index} value={Index}>{Item}</MenuItem>
-                                                    ))}
-                                                </Select>
-                                            </StandardRoundSelectForm>
-                                        </Grid>
-                                        <Grid item container xs direction={'column'} xs={12}>
-                                            <Typography variant={'h5'}>Choose Locations</Typography>
-                                            <div style={{ minHeight: '300px', minWidth: '200px', width: "98%" }} className="ag-theme-alpine-dark" >
-                                                <AgGridReact
-                                                    rowData={locations}
-                                                    rowSelection="multiple"
-                                                    rowMultiSelectWithClick={true}
-                                                    animateRows={true}
-                                                    defaultColDef={{
-                                                        flex: 1,
-                                                        minWidth: 128,
-                                                        sortable: true,
-                                                        filter: true,
-                                                    }}
-                                                    // 
-                                                    onGridReady={onGridReady}>
+                                <Grid item container direction={"row"} className={classes.sliderRow}>
+                                    <Grid item xs={6}> <h4>Security</h4></Grid>
 
-                                                    <AgGridColumn field="name" sortable={true} filter={true} checkboxSelection={true}></AgGridColumn>
-                                                    <AgGridColumn field="address" sortable={true}></AgGridColumn>
-
-                                                </AgGridReact>
-                                            </div>
-                                        </Grid>
-                                        <Grid item container direction={"row"} xs={12} style={{ paddingTop: "12px" }}>
-                                            <Grid item xs></Grid>
-                                            <Grid item xs={12} sm={3} md={2}>
-                                                <Button variant={"outlined"} color={"primary"} onClick={submitNewUser}>
-                                                    SAVE USER DETAILS
-                                                </Button>
-                                            </Grid>
-                                        </Grid>
+                                    <Grid item xs={6}>
+                                        <StandardRoundSelectForm className={classes.formControl} label={"Select account type"}>
+                                            <Select
+                                                value={Userpick}
+                                                onChange={handleChange}
+                                                inputProps={{
+                                                    name: 'pick',
+                                                    id: 'AddAccountType',
+                                                }}
+                                                defaultValue={2}
+                                                label={"Account Type"}
+                                            >
+                                                {accountType.map((Item, Index) => (
+                                                    <MenuItem key={Index} value={Index}>{Item}</MenuItem>
+                                                ))}
+                                            </Select>
+                                        </StandardRoundSelectForm>
                                     </Grid>
+                                    <Grid item container xs={12} style={{paddingTop:"8px"}}>
+                                        <Typography variant={"body1"}>Choose locations</Typography>
+                                        <div style={{ minHeight: '300px', minWidth: '200px', width: "98%" }} className="ag-theme-alpine-dark" >
+                                            <AgGridReact
+                                                rowData={locations}
+                                                rowSelection="multiple"
+                                                rowMultiSelectWithClick={true}
+                                                animateRows={true}
+                                                defaultColDef={{
+                                                    flex: 1,
+                                                    minWidth: 128,
+                                                    sortable: true,
+                                                    filter: true,
+                                                }}
+                                                // 
+                                                onGridReady={onGridReady}>
+
+                                                <AgGridColumn field="name" sortable={true} filter={true} checkboxSelection={true}></AgGridColumn>
+                                                <AgGridColumn field="address" sortable={true}></AgGridColumn>
+
+                                            </AgGridReact>
+                                        </div>
+                                    </Grid>
+                                    <Grid item xs={12} sm={3} md={2} style={{paddingTop:"8px"}}>
+                                        <Button variant={"outlined"} color={"primary"} onClick={submitNewUser}>
+                                            SAVE USER DETAILS
+                                        </Button>
+                                    </Grid>
+
 
                                 </Grid>
 

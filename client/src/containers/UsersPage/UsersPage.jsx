@@ -16,7 +16,7 @@ import CheckCircleRoundedIcon from '@material-ui/icons/CheckCircleRounded';
 import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect";
-import { fetchManagedUsers, pendingManagedUsers, resetPendingManagedUsers } from "../../actions/ManageUsersActions"
+import { fetchManagedUsers, pendingManagedUsers, resetPendingManagedUsers, setManagedUsers } from "../../actions/ManageUsersActions"
 
 import { db, auth } from "../../consts/firebase";
 
@@ -566,9 +566,13 @@ const UserWidget = (props) => {
                     }
                 }
                 transaction.update(UserRef, output);
+                output.doc = UserDoc.id;
                 return output;
                 //do the update and return output
             }).then((output) => {
+                let newReduxManagedLocationsArray = props.managedUsers
+                newReduxManagedLocationsArray[props.UserIndex] = output
+                props.setManagedUsers(newReduxManagedLocationsArray);
                 props.handleInvalidAlertOpen("Successfully updated User profile", "success");
                 handleClose();
             }).catch((err) => {
@@ -959,7 +963,11 @@ const UsersPage = (props) => {
                 db.collection('Users').add(output).then((response) => {
                     console.log(response)
                     if (response.id !== undefined) {
-                        handleInvalidAlertOpen("Success added User they can not login and access your data", 'success')
+                        
+                        let newReduxManagedLocationsArray = managedUsers
+                        newReduxManagedLocationsArray.push({doc:response.id, ...output})
+                        props.setManagedUsers(newReduxManagedLocationsArray);
+                        handleInvalidAlertOpen("Success added User they can now login and access your data", 'success')
                         setOpen(false);
                     } else {
                         handleInvalidAlertOpen("failed to add User Server error please wait and try again.")
@@ -995,7 +1003,7 @@ const UsersPage = (props) => {
                             return (
                                 <UserWidget key={index} UserIndex={index} mUserDocRef={item.ref} ownerID={user.UID} handleInvalidAlertOpen={handleInvalidAlertOpen} mUser={item}
                                     userName={item.firstName + " " + item.lastName} firstName={item.firstName} lastName={item.lastName} email={item.email} type={item.accountType} phone={item.phone}
-                                    location={locations} zones={managedUsers[index].location} />
+                                    location={locations} managedUsers={managedUsers} zones={managedUsers[index].location} setManagedUsers={props.setManagedUsers}/>
                             );
                         } else {
                             return (
@@ -1117,6 +1125,6 @@ const mapStateToProps = (state) => {
 }
 
 const formedComponent = compose(
-    connect(mapStateToProps, { fetchManagedUsers: fetchManagedUsers, pendingManagedUsers: pendingManagedUsers, resetPendingManagedUsers: resetPendingManagedUsers }))(UsersPage);
+    connect(mapStateToProps, { fetchManagedUsers: fetchManagedUsers, pendingManagedUsers: pendingManagedUsers, resetPendingManagedUsers: resetPendingManagedUsers, setManagedUsers:setManagedUsers }))(UsersPage);
 
 export default formedComponent;

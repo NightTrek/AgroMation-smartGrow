@@ -284,10 +284,12 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: "12",
+        overflow:"scroll",
     },
     paper: {
         position: "absolute",
         minWidth: "512px",
+        top:"0px",
         color: theme.palette.text.main,
         background: "url('https://cdn.discordapp.com/attachments/370759274621698048/755271239748157540/unknown.png')",
         backgroundPosition: "center left",
@@ -299,7 +301,7 @@ const useStyles = makeStyles((theme) => ({
         '@media (max-width: 600px)': {
             minWidth: "448px",
             maxWidth: "99vw",
-            maxHeight: "98vh"
+            // maxHeight: "98vh"
 
         },
         '@media (max-width: 550px)': {
@@ -318,15 +320,15 @@ const useStyles = makeStyles((theme) => ({
         }
     },
     setPointWidget: {
-        paddingTop: "24px",
+        paddingTop: "8px",
         padding: "24px",
     },
     UserUpdateModalHeaderBar: {
 
     },
     sliderRow: {
-        marginTop: "32px",
-        marginBottom: "32px",
+        // marginTop: "32px",
+        // marginBottom: "32px",
         padding: "24px",
         background: theme.palette.secondary.dark,
         borderRadius: "12px",
@@ -619,6 +621,7 @@ const UserWidget = (props) => {
                 open={open}
                 onClose={handleClose}
                 closeAfterTransition
+                disableScrollLock
                 BackdropComponent={Backdrop}
                 BackdropProps={{
                     timeout: 500,
@@ -632,7 +635,7 @@ const UserWidget = (props) => {
                                     <Grid item xs> <Grid item ><h3 id="update-user-modal">Edit User</h3></Grid></Grid>
                                     <Grid item> <IconButton onClick={handleClose} ><CancelIcon style={{ color: theme.palette.text.main }} /></IconButton></Grid>
                                 </Grid>
-                                <Grid item container direction={"row"} spacing={5}>
+                                <Grid item container direction={"row"} spacing={2}>
                                     <Grid item xs={6} sm={6}>
                                         <EditUserInput label={"First Name"} name={"firstName"} value={state.firstName} inputProps={{ 'aria-label': 'input first name' }} onChange={handleInputChange} />
                                     </Grid>
@@ -648,66 +651,58 @@ const UserWidget = (props) => {
 
 
                                 </Grid>
-                                <Grid item container direction={"column"} className={classes.sliderRow}>
-
-                                    <Grid item container direction={'row'}>
-                                        <Grid item container direction={"row"} xs={6} sm={12} style={{ padding: "6px", marginBottom: "24px" }}>
-                                            <Grid item> <h4>Security</h4></Grid>
-                                            <Grid item xs> </Grid>
-                                        </Grid>
-                                        <Grid item xs={6} sm={6}>
-                                            <StandardRoundSelectForm className={classes.formControl} hiddenLabel>
-                                                <Select
-                                                    value={pick}
-                                                    onChange={handleChange}
-                                                    inputProps={{
-                                                        name: 'pick',
-                                                        id: 'AccountType',
-                                                    }}
-                                                    defaultValue={2}
-                                                >
-                                                    {accountType.map((Item, Index) => (
-                                                        <MenuItem key={Index} value={Index}>{Item}</MenuItem>
-                                                    ))}
-                                                </Select>
-                                            </StandardRoundSelectForm>
-                                        </Grid>
-                                        <Grid item xs={12} sm={6} style={{ paddingBottom: "12px", paddingRight: "12px" }}>
-                                            <EditUserButton color={"primary"} onClick={sendPasswordResetEmail} >
-                                                Send Password Reset email
-                                                </EditUserButton>
-                                        </Grid>
-                                        <Grid item container xs={12}>
-                                            <div style={{ minHeight: '300px', minWidth: '200px', width: "98%" }} className="ag-theme-alpine-dark" >
-                                                <AgGridReact
-                                                    rowData={props.location}
-                                                    rowSelection="multiple"
-                                                    rowMultiSelectWithClick={true}
-                                                    animateRows={true}
-                                                    defaultColDef={{
-                                                        flex: 1,
-                                                        minWidth: 128,
-                                                        sortable: true,
-                                                        filter: true,
-                                                    }}
-                                                    // 
-                                                    onGridReady={onGridReady}>
-
-                                                    <AgGridColumn field="name" sortable={true} filter={true} checkboxSelection={true}></AgGridColumn>
-                                                    <AgGridColumn field="address" sortable={true}></AgGridColumn>
-
-                                                </AgGridReact>
-                                            </div>
-                                        </Grid>
-                                        <Grid item container direction={"row"} xs={12}>
-                                            <Grid item xs></Grid>
-                                            <Grid item xs={12} sm={6} style={{ paddingBottom: "24px", paddingTop: "24px" }}>
-                                                <Button variant={"outlined"} color={"primary"} onClick={updateManagedUser}>
-                                                    SAVE USER DETAILS
-                                                </Button>
-                                            </Grid>
-                                        </Grid>
+                                <Grid item container direction={"row"} className={classes.sliderRow}>
+                                    <Grid item xs={6} sm={4} md={12}> <h4>Security</h4></Grid>
+                                    <Grid item xs={6} sm={4} md={6}>
+                                        <StandardRoundSelectForm className={classes.formControl} hiddenLabel>
+                                            <Select
+                                                value={pick}
+                                                onChange={handleChange}
+                                                inputProps={{
+                                                    name: 'pick',
+                                                    id: 'AccountType',
+                                                }}
+                                                defaultValue={2}
+                                            >
+                                                {accountType.map((Item, Index) => (
+                                                    <MenuItem key={Index} value={Index}>{Item}</MenuItem>
+                                                ))}
+                                            </Select>
+                                        </StandardRoundSelectForm>
                                     </Grid>
+                                    <Grid item xs={12} sm={4} md={6} style={{ paddingBottom: "12px", paddingRight: "12px" }}>
+                                        <EditUserButton color={"primary"} onClick={sendPasswordResetEmail} >
+                                            Send Password Reset email
+                                                </EditUserButton>
+                                    </Grid>
+                                    <Grid item container xs={12}>
+                                        <div style={{ minHeight: '300px', minWidth: '200px', width: "98%" }} className="ag-theme-alpine-dark" >
+                                            <AgGridReact
+                                                rowData={props.location}
+                                                rowSelection="multiple"
+                                                rowMultiSelectWithClick={true}
+                                                animateRows={true}
+                                                defaultColDef={{
+                                                    flex: 1,
+                                                    minWidth: 128,
+                                                    sortable: true,
+                                                    filter: true,
+                                                }}
+                                                // 
+                                                onGridReady={onGridReady}>
+
+                                                <AgGridColumn field="name" sortable={true} filter={true} checkboxSelection={true}></AgGridColumn>
+                                                <AgGridColumn field="address" sortable={true}></AgGridColumn>
+
+                                            </AgGridReact>
+                                        </div>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} style={{ paddingBottom: "24px", paddingTop: "4px" }}>
+                                        <Button variant={"outlined"} color={"primary"} onClick={updateManagedUser}>
+                                            SAVE USER DETAILS
+                                        </Button>
+                                    </Grid>
+
 
                                 </Grid>
                             </Grid>
@@ -1088,7 +1083,7 @@ const UsersPage = (props) => {
                                                 </AgGridReact>
                                             </div>
                                         </Grid>
-                                        <Grid item container direction={"row"} xs={12} style={{paddingTop:"12px"}}>
+                                        <Grid item container direction={"row"} xs={12} style={{ paddingTop: "12px" }}>
                                             <Grid item xs></Grid>
                                             <Grid item xs={12} sm={3} md={2}>
                                                 <Button variant={"outlined"} color={"primary"} onClick={submitNewUser}>

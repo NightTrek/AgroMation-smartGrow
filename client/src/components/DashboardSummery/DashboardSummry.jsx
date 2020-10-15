@@ -270,13 +270,13 @@ function DashboardSummary(props) {
     };
 
     return (
-        <Grid container direction="column" justify={"center"} spacing={2} className={`${classes.dashboardSummery} `} >
-            <Grid container item direction="row" xs style={{maxHeight:"128px"}}>
-                <Grid item xs={2} style={{ paddingLeft: "24px" }}>
+        <Grid container direction="row" justify={"center"} spacing={2} className={`${classes.dashboardSummery} `} >
+            {/* <Grid container item direction="row" xs style={{maxHeight:"128px"}}> */}
+                <Grid item xs={12} sm={8} md={9} lg={10} style={{ paddingLeft: "24px" }}>
                     <Typography variant={"h6"} className={classes.Title}>Summary</Typography>
                 </Grid>
-                <Grid item xs ></Grid>
-                <Grid item >
+                {/* <Grid item xs={0} sm={4}  md={4}></Grid> */}
+                <Grid item xs={12} sm={4} md={3} lg={2}>
                     <StandardRoundSelectForm className={classes.formControl} >
 
                         <Select
@@ -295,22 +295,23 @@ function DashboardSummary(props) {
                         </Select>
                     </StandardRoundSelectForm>
                 </Grid>
-            </Grid>
+            {/* </Grid> */}
 
             {/* ========= charts start here =================================*/}
-            <Grid container item direction="row" xs >
-                {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
-                <DashboardPieChart chartName={"Temp"} classes={classes} theme={theme} dataSet={generateTempData()} colorScale={defaultColorScale} />
+            {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
+            <DashboardPieChart chartName={"Temp"} classes={classes} theme={theme} dataSet={generateTempData()} colorScale={defaultColorScale} />
                 {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
                 <DashboardPieChart chartName={"Humidity"} classes={classes} theme={theme} dataSet={sampleHumidityData} colorScale={defaultColorScale} />
                 {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
                 <DashboardPieChart chartName={"CO2"} classes={classes} theme={theme} dataSet={sampleCO2Data} colorScale={defaultColorScale} />
                 {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
                 <DashboardPieChart chartName={"Progress"} classes={classes} theme={theme} dataSet={sampleProgressData} colorScale={progressColorScale} ExtraClass={"#bottomPieChart"}/>
+            {/* <Grid container item direction="row" xs >
+                
             </Grid>
             <Grid container item direction={"row"} xs>
 
-            </Grid>
+            </Grid> */}
         </Grid>
     )
 }

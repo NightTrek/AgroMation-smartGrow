@@ -389,8 +389,8 @@ export const SystemNotifications = () => {
     }
 
     return (
-        <Grid container item className={classes.notificationsWidget} xs justify={"center"} spacing={1} direction={"column"}>
-            <Grid container item xs direction={"row"}>
+        <Grid container item className={classes.notificationsWidget} xs justify={"center"} spacing={1} direction={"row"}>
+            {/* <Grid container item xs direction={"row"}> */}
                 <Grid container item xs={8}>
                     <Typography variant={"h5"} className={classes.headerText} style={{ paddingLeft: "12px" }}>System Notifications ({state.notifications.length})</Typography>
                 </Grid>
@@ -424,8 +424,8 @@ export const SystemNotifications = () => {
                         ))}
                     </Menu>
                 </Grid>
-            </Grid>
-            <Grid container item xs direction={"row"}>
+            {/* </Grid> */}
+            <Grid container item xs={12}>
                 {/* <List className={classes.notificationsList}>
                     {<NotificationsListItems pick={state.pick}/>}
                 </List> */}

@@ -206,11 +206,12 @@ function DashboardSummary(props) {
         // console.log(pending !== true && user !== undefined && rooms[0].ownerID === undefined)
         // console.log(user)
         // console.log(rooms)
-        if (pending !== true && user !== undefined && rooms[0].ownerID === undefined) {
+        if (pending !== true && user !== undefined && rooms[0].name !== undefined) {
             if(user.example){
                 props.setExampleRooms()
                 props.pendingRooms()
-            }else if(user.UID !== undefined  && rooms[0].ownerID === undefined){
+            }else if(user.UID !== undefined  && rooms[0].name !== undefined){
+                // console.log("getting rooms")
                 props.getRooms(user, locationIndex)
                 props.pendingRooms()
             }

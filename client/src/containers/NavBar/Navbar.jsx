@@ -1,5 +1,5 @@
-import React, { useEffect} from 'react';
-import { NavLink, useLocation, withRouter} from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { NavLink, useLocation, withRouter } from 'react-router-dom';
 import { compose } from "redux";
 import { connect, useSelector, shallowEqual } from "react-redux";
 import { reduxForm } from "redux-form";
@@ -35,7 +35,7 @@ import "./style.css";
 import { Grid, withStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import { fetchUser, setLocation, fetchUserPending } from "../../actions/User";
-import {resetPendingRooms, getRooms} from "../../actions/roomActions";
+import { resetPendingRooms, getRooms } from "../../actions/roomActions";
 
 
 //
@@ -46,15 +46,15 @@ const drawerWidth = 240;
 const StandardRoundSelectForm = withStyles((theme) => ({
 
     root: {
-        borderRadius:"24px",
-        background:theme.palette.secondary.dark,
-        paddingLeft:"24px",
-        paddingRight:'6px',
-        "& .muiSelect-select":{
-            
+        borderRadius: "24px",
+        background: theme.palette.secondary.dark,
+        paddingLeft: "24px",
+        paddingRight: '6px',
+        "& .muiSelect-select": {
+
         }
     },
-    
+
 }))(FormControl);
 
 
@@ -95,7 +95,7 @@ const useStyles = makeStyles((theme) => ({
         // background: theme.palette.secondary.dark,
         background: `url('https://cdn.discordapp.com/attachments/370759274621698048/755271571181928459/unknown.png')`,
         backgroundSize: "cover",
-        backgroundPosition:"bottom center",
+        backgroundPosition: "bottom center",
         color: "white",
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
@@ -104,7 +104,7 @@ const useStyles = makeStyles((theme) => ({
     },
     drawerClose: {
         background: theme.palette.secondary.dark,
-        
+
         color: "white",
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
@@ -131,7 +131,7 @@ const useStyles = makeStyles((theme) => ({
     },
     drawerBox: {
         background: theme.palette.secondary.main,
-        
+
         width: "200px",
         height: "128px",
         margin: "20px",
@@ -143,7 +143,7 @@ const useStyles = makeStyles((theme) => ({
 
     },
     bottomdrawerBox: {
-        background: theme.palette.secondary.main, 
+        background: theme.palette.secondary.main,
         width: "200px",
         height: "160px",
         margin: "20px",
@@ -170,50 +170,50 @@ const useStyles = makeStyles((theme) => ({
 
 
 
- const MiniDrawer = (props) => {
+const MiniDrawer = (props) => {
     const classes = useStyles();
     const theme = useTheme();
     const PageName = useLocation();
     // const dispatch = useDispatch();
 
-    let {user,pick, auth, pending} = useSelector( state => ({
-        user:state.users.user,
-        pending:state.users.pending,
-        pick:state.users.activeLocation,
-        auth:state.auth.authenticated
+    let { user, pick, auth, pending } = useSelector(state => ({
+        user: state.users.user,
+        pending: state.users.pending,
+        pick: state.users.activeLocation,
+        auth: state.auth.authenticated
 
-    }),shallowEqual)
+    }), shallowEqual)
 
     // console.log(user);
-    
 
-    useEffect(()=>{
-;
-        if(auth === null){
+
+    useEffect(() => {
+        ;
+        if (auth === null) {
             console.log("auth == null")
-        }else if(!pending && user.firstName === undefined &&  auth.uid !== undefined && auth.email){
-                console.log("getting user");
-                props.fetchUserPending()
-                props.fetchUser(auth.uid, auth.email)
-                
-            }
+        } else if (!pending && user.firstName === undefined && auth.uid !== undefined && auth.email) {
+            console.log("getting user");
+            props.fetchUserPending()
+            props.fetchUser(auth.uid, auth.email)
+
+        }
     })
-    
+
     //check if data has loaded and if not display loading text
-    if(user.firstName === undefined || user.location.length === undefined){
+    if (user.firstName === undefined || user.location.length === undefined) {
         console.log("setting loading data")
         user = {
-            name:"loading",
-            location:[
+            name: "loading",
+            location: [
                 {
-                    name:"loading",
+                    name: "loading",
                     address: "Loading Address"
                 },
                 {
-                    name:"loading locations",
+                    name: "loading locations",
                     address: "loading address"
                 },
-                
+
             ]
         };
         pick = 0;
@@ -231,23 +231,28 @@ const useStyles = makeStyles((theme) => ({
 
     //checks if auth has a value and opens if it does
     const handleDrawerOpen = () => {
-        if(auth){
+        if (auth) {
             setOpen(true);
         }
     };
-    
+
     const handleDrawerClose = () => {
         setOpen(false);
     };
-    
+
     const getPageNameFromAddress = () => {
         const array = PageName.pathname.split('/');
-        const name =array[1]
-        return name.charAt(0).toUpperCase()+name.slice(1);
+        const name = array[1]
+        return name.charAt(0).toUpperCase() + name.slice(1);
     }
 
-    const menuIcons = [<DashboardIcon data-index={"dashboard"} color={"primary"} />, <BusinessIcon data-index={"rooms"} color={"primary"} />, <GroupIcon data-index={"users"} color={"primary"} />, <SettingsIcon data-index={"settings"} color={"primary"} />, <ExitToAppIcon data-index={'signout'} color={"primary"}/>]
-    
+    const menuItems = [
+        { name: 'Dashboard', icon: <DashboardIcon data-index={"dashboard"} color={"primary"} /> },
+        { name: 'Rooms', icon: <BusinessIcon data-index={"rooms"} color={"primary"} /> },
+        { name: 'Users', icon: <GroupIcon data-index={"users"} color={"primary"} /> },
+        { name: 'Settings', icon: <SettingsIcon data-index={"settings"} color={"primary"} /> },
+        { name: 'Signout', icon: <ExitToAppIcon data-index={'signout'} color={"primary"} /> }]
+
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -336,20 +341,43 @@ const useStyles = makeStyles((theme) => ({
                 <Divider />
 
                 <List>
-                    {['Dashboard', 'Rooms', 'Users', 'Settings','Signout'].map((text, index) => (
-                        <NavLink to={"/" + text} key={text} onClick={(e) =>{
-                            if(auth == undefined || auth === ""){
-                                e.preventDefault()
+                    {menuItems.map((text, index) => {
+                        
+                            if (text.name !== "Users") {
+                                console.log(text)
+                                return (
+                                    <NavLink to={"/" + text.name} key={text.name} onClick={(e) => {
+                                        if (auth == undefined || auth === "") {
+                                            e.preventDefault()
+                                        }
+                                    }}>
+                                        <ListItem button data-index={text.name} key={text.name} value={text.name}>
+    
+                                            <ListItemIcon data-index={text.name} value={text.name} >{text.icon}</ListItemIcon>
+                                            <ListItemText data-index={text.name} value={text.name} primary={text.name} />
+    
+                                        </ListItem>
+                                    </NavLink>
+                                );
+                            } else if (user.accountType !== "Viewer" && user.accountType !== "User") {
+                                console.log(text)
+                                return (
+                                    <NavLink to={"/" + text.name} key={text.name} onClick={(e) => {
+                                        if (auth == undefined || auth === "") {
+                                            e.preventDefault()
+                                        }
+                                    }}>
+                                        <ListItem button data-index={text.name} key={text.name} value={text.name}>
+    
+                                            <ListItemIcon data-index={text.name} value={text.name} >{text.icon}</ListItemIcon>
+                                            <ListItemText data-index={text.name} value={text.name} primary={text.name} />
+    
+                                        </ListItem>
+                                    </NavLink>
+                                );
                             }
-                        }}> 
-                            <ListItem button data-index={text} key={text} value={text}>
-
-                                <ListItemIcon data-index={text} value={text} >{menuIcons[index]}</ListItemIcon>
-                                <ListItemText data-index={text} value={text} primary={text} />
-
-                            </ListItem>
-                        </NavLink>
-                    ))}
+                        
+                    })}
                 </List>
             </Drawer>
             <main className={classes.content}>
@@ -360,12 +388,12 @@ const useStyles = makeStyles((theme) => ({
     );
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = (state) => {
     return { user: state.user };
 }
 
 const formedComponent = compose(
-    connect(mapStateToProps, { fetchUser: fetchUser, setLocation: setLocation, fetchUserPending:fetchUserPending, resetPendingRooms:resetPendingRooms, getRooms:getRooms }),
+    connect(mapStateToProps, { fetchUser: fetchUser, setLocation: setLocation, fetchUserPending: fetchUserPending, resetPendingRooms: resetPendingRooms, getRooms: getRooms }),
     reduxForm({ form: 'Add todo' })
 )(MiniDrawer);
 

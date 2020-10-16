@@ -378,7 +378,7 @@ export const SystemNotifications = () => {
 
     if (gridApi) {
         if (state.pick === 2) {
-            console.log('destroy')
+            // console.log('destroy')
             gridApi.setFilterModel({
 
             });
@@ -394,7 +394,7 @@ export const SystemNotifications = () => {
 
 
         var filterState = gridApi.getFilterModel();
-        console.log('filterState: ', filterState);
+        // console.log('filterState: ', filterState);
         // props.setRoom(event.target.value);
         gridApi.onFilterChanged();
 
@@ -469,7 +469,7 @@ export const SystemNotifications = () => {
                         <AgGridColumn resizable field="type" sortable={true} filter={true}
                             maxWidth={24} cellRenderer={"notificationType"}></AgGridColumn>
                         <AgGridColumn field="room" sortable={true} filter={true} ></AgGridColumn>
-                        <AgGridColumn  headerName={"message"} field="msg" sortable={true}></AgGridColumn>
+                        <AgGridColumn flex={1}  headerName={"message"} field="msg" sortable={true}></AgGridColumn>
                         <AgGridColumn  field="timeStamp" sortable={true} cellRenderer={"timeStamp"}></AgGridColumn>
 
                     </AgGridReact>

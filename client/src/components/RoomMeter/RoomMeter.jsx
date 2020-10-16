@@ -208,7 +208,11 @@ function FieldMeter(props) {
     //modal stuff
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => {
-        setOpen(true);
+        if(props.userType !== "Viewer"){
+            setOpen(true);
+        }else{
+            props.handleAlertOpen("You do not have permission to edit the set values")
+        }
     };
 
     const handleClose = () => {

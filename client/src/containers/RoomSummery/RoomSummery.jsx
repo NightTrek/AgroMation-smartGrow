@@ -497,7 +497,7 @@ function RoomSummery(props) {
                     (
                         <Grid item container direction={'row'} xs={12} justify={'center'}>
                             <FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
-                                type={"temp"}
+                                type={"temp"} userType={user.accountType}
                                 title={"Temp"}
                                 longTitle={"Temperature"}
                                 setpoint={rooms[pick].tempSetPoint}
@@ -506,12 +506,12 @@ function RoomSummery(props) {
                                 UnitString={tempUnitString} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />
 
                             <FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
-                                type={"humidity"} title={"Humidity"} longTitle={"Humidity"} width={meterWidth}
+                                type={"humidity"} title={"Humidity"} longTitle={"Humidity"} width={meterWidth} userType={user.accountType}
                                 setpoint={rooms[pick].humiditySetPoint} min={rooms[pick].humidityMin} max={rooms[pick].humidityMax}
                                 UnitString={" %"} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />
 
                             <FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
-                                type={"CO2"} title={"CO2 level"} longTitle={"CO2 level"} width={meterWidth}
+                                type={"CO2"} title={"CO2 level"} longTitle={"CO2 level"} width={meterWidth} userType={user.accountType}
                                 setpoint={rooms[pick].CO2SetPoint} min={rooms[pick].CO2Min} max={rooms[pick].CO2Max}
                                 UnitString={" ppm"} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />
 
@@ -519,7 +519,7 @@ function RoomSummery(props) {
                                 (<StageMeter state={state} rooms={rooms} pick={pick} theme={theme} width={meterWidth} classes={classes} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />) :
 
                                 (<FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
-                                    type={"pressure"} title={"pressure level"} longTitle={"Variable Pressure Deficit"} width={meterWidth}
+                                    type={"pressure"} title={"pressure level"} longTitle={"Variable Pressure Deficit"} width={meterWidth} userType={user.accountType}
                                     setpoint={rooms[pick].pressureSetPont} min={rooms[pick].pressureMin} max={rooms[pick].pressureMax}
                                     UnitString={" mbar"} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />
                                 )}

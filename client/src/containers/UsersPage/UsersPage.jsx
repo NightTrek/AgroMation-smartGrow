@@ -960,13 +960,14 @@ const UsersPage = (props) => {
             firstName: state.firstName,
             lastName: state.lastName,
             phone: state.phone,
-            email: state.email,
+            email: state.email.toLowerCase(),
             location: selectedRows,
             accountOwner: user.UID,
             accountType: accountType[Userpick]
         };
+        let lowerCaseEmail = state.email.toLowerCase()
 
-        db.collection("Users").where("email", "==", state.email).get().then((UsersSnapshot) => {
+        db.collection("Users").where("email", "==", lowerCaseEmail).get().then((UsersSnapshot) => {
             if (UsersSnapshot.empty) {
                 db.collection('Users').add(output).then((response) => {
                     console.log(response)

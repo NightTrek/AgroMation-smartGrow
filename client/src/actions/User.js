@@ -25,7 +25,7 @@ export const fetchUser = (UID, EMAIL) => async dispatch => {
                             // console.log("user dispatched")
                             dispatch({ type: FETCH_USER, payload: {doc:doc.id, ...doc.data()} })
                         } else {
-                            console.log("Example user dispatched")
+                            console.log("User Doc From UID does not exist")
                             dispatch({ type: FETCH_USER, payload: exampleAccount });
 
                         }
@@ -40,9 +40,42 @@ export const fetchUser = (UID, EMAIL) => async dispatch => {
                                 querySnapshot.forEach((doc) => {
                                     if (doc.exists) {
                                         // console.log("user dispatched")
-                                        dispatch({ type: FETCH_USER, payload: {doc:doc.id, ...doc.data()} })
+                                        //Consider adding the UID to the User account for easy access
+                                        if(!doc.data().UID){
+                                            const UserRef = db.collection("Users").doc(doc.id);
+                                            db.runTransaction((transaction) => {
+                                                return transaction.get(UserRef).then((UserDoc) => {
+                                                    if (!UserDoc.exists) {
+                                                        throw "Document does not exist"
+                                                    }
+                                                    let data = UserDoc.data();
+                                                    let output = {
+                                                        ...data,
+                                                        UID:UID
+                                                    }
+                                                    if(data.UID && data.UID === UID){
+                                                        output.doc = UserDoc.id;
+                                                        return output;
+                                                    }
+                                                    transaction.update(UserRef, output);
+                                                    output.doc = UserDoc.id;
+                                                    return output;
+                                                    //do the update and return output
+                                                }).then((output) => {
+                                                    dispatch({ type: FETCH_USER, payload: output })
+                                                    
+                                                }).catch((err) => {
+                                                    console.log(err);
+                                                })
+                                            })
+                                        }
+                                        else{
+                                            console.log("ERROR UID exists but email method was used")
+                                        }
+                                        
+                                        
                                     } else {
-                                        console.log("Example user dispatched")
+                                        console.log("Example user dispatched no docs found")
                                         dispatch({ type: FETCH_USER, payload: exampleAccount });
 
                                     }
@@ -50,7 +83,7 @@ export const fetchUser = (UID, EMAIL) => async dispatch => {
                             }
                             else {
 
-                                console.log("Example user dispatched")
+                                console.log("user not found from email dispatched")
                                 dispatch({ type: FETCH_USER, payload: exampleAccount });
                             }
 

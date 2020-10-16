@@ -757,20 +757,24 @@ const LightingController = (props) => {
     };
 
     const openSpectrumControl = (event) => {
-
-        let selectedRows = gridApi.getSelectedRows()
-        if (selectedRows !== undefined && selectedRows.length > 0) {
-            setState({
-                ...state,
-                spectrumModal: true,
-                spectrum: [selectedRows[0].red, selectedRows[0].yellow, selectedRows[0].blue],
-                selectedZones: selectedRows
-            })
+        if(user.accountType !== "Viewer"){
+            let selectedRows = gridApi.getSelectedRows()
+            if (selectedRows !== undefined && selectedRows.length > 0) {
+                setState({
+                    ...state,
+                    spectrumModal: true,
+                    spectrum: [selectedRows[0].red, selectedRows[0].yellow, selectedRows[0].blue],
+                    selectedZones: selectedRows
+                })
+            }
+            else {
+                // TODO nothing selected warning
+                handleAlertOpen("Error please Select some zones to edit");
+            }
+        }else{
+            handleAlertOpen("Error you do not have permission to edit values");
         }
-        else {
-            // TODO nothing selected warning
-            handleAlertOpen("Error please Select some zones to edit");
-        }
+            
 
     };
 
@@ -853,19 +857,23 @@ const LightingController = (props) => {
 
 
     const openPowerControl = (event) => {
-
-        let selectedRows = gridApi.getSelectedRows()
-        // console.log(selectedRows)
-        if (selectedRows !== undefined && selectedRows.length > 0) {
-            setState({
-                ...state,
-                powerModal: true,
-                selectedZones: selectedRows
-            })
+        if(user.accountType !== "Viewer"){
+            let selectedRows = gridApi.getSelectedRows()
+            // console.log(selectedRows)
+            if (selectedRows !== undefined && selectedRows.length > 0) {
+                setState({
+                    ...state,
+                    powerModal: true,
+                    selectedZones: selectedRows
+                })
+            }
+            else {
+                handleAlertOpen("Error please Select some zones to edit");
+            } 
+        }else{
+            handleAlertOpen("Error you do not have permission to edit values");
         }
-        else {
-            handleAlertOpen("Error please Select some zones to edit");
-        }
+        
 
     };
 
@@ -944,8 +952,8 @@ const LightingController = (props) => {
     }
 
     const openScheduleControl = (event) => {
-
-        let selectedRows = gridApi.getSelectedRows()
+        if(user.accountType !== "Viewer"){
+            let selectedRows = gridApi.getSelectedRows()
         // console.log(selectedRows)
         if (selectedRows !== undefined && selectedRows.length > 0) {      
             setState({
@@ -962,6 +970,10 @@ const LightingController = (props) => {
             handleAlertOpen("Error please Select some zones to edit");
             // console.log("provide warning that nothing is selected");
         }
+        }else{
+            handleAlertOpen("Error you do not have permission to edit values");
+        }
+        
 
     };
 

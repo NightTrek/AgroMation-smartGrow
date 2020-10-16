@@ -247,7 +247,7 @@ const HighestProgress = (props) => {
             </Grid>
             {/* </Grid> */}
             <Grid container item xs={12} direction={"row"} justify={"center"}>
-                <Grid item justify={"center"} style={{ marginBottom: "36px", }}>
+                <Grid item  style={{ marginBottom: "36px", }}>
                     <Button variant="outlined" color="primary">
                         Show more info
                     </Button>

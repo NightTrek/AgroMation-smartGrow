@@ -344,7 +344,6 @@ const MiniDrawer = (props) => {
                     {menuItems.map((text, index) => {
                         
                             if (text.name !== "Users") {
-                                console.log(text)
                                 return (
                                     <NavLink to={"/" + text.name} key={text.name} onClick={(e) => {
                                         if (auth == undefined || auth === "") {
@@ -360,7 +359,6 @@ const MiniDrawer = (props) => {
                                     </NavLink>
                                 );
                             } else if (user.accountType !== "Viewer" && user.accountType !== "User") {
-                                console.log(text)
                                 return (
                                     <NavLink to={"/" + text.name} key={text.name} onClick={(e) => {
                                         if (auth == undefined || auth === "") {

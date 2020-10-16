@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { connect, useSelector, shallowEqual } from 'react-redux';
 import { compose } from "redux";
+import { withRouter } from "react-router";
 import { Grid, Typography, Button } from '@material-ui/core'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { VictoryPie } from "victory";
@@ -199,6 +200,11 @@ const HighestProgress = (props) => {
     { x: "Total", y: Progress.stageCompletion - Progress.currentData },
     ];
 
+    const handleShowRoom = () => {
+        console.log(props)
+        props.history.push("/rooms");
+    }
+
     return (
         <Grid item container className={classes.ProgressWidget} direction={"row"}>
             {/* widget Top bar menu */}
@@ -248,7 +254,7 @@ const HighestProgress = (props) => {
             {/* </Grid> */}
             <Grid container item xs={12} direction={"row"} justify={"center"}>
                 <Grid item  style={{ marginBottom: "36px", }}>
-                    <Button variant="outlined" color="primary">
+                    <Button variant="outlined" color="primary" onClick={handleShowRoom}>
                         Show more info
                     </Button>
                 </Grid>
@@ -267,4 +273,4 @@ const formedComponent = compose(
     connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom })
 )(HighestProgress);
 
-export default formedComponent;
+export default withRouter(formedComponent);

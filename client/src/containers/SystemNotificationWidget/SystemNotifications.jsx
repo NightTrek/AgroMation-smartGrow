@@ -20,6 +20,7 @@ import { sampleNotifications } from "../../exampleDataTypes/clientExamlpeDataTyp
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
 import { useTheme } from '@material-ui/core';
 
+
 const useStyles = makeStyles((theme) => ({
     notificationsWidget: {
         background: theme.palette.secondary.main,
@@ -305,6 +306,17 @@ export const SystemNotifications = () => {
         }
     };
 
+    const generateTimestamp = (props) => {
+        const activeTime = moment.unix(props.value);
+        const mainStyle = {
+            width: "12px",
+            height: "12px",
+            borderRadius: "6px",
+            margin: "8px"
+        }
+        return (<div style={{ ...mainStyle }}>{activeTime.format('HH:mm, MM:DD:YYYY')} </div>)
+    }
+
 
     const NotificationsListItems = (props, style) => {
 
@@ -451,13 +463,14 @@ export const SystemNotifications = () => {
                         }}
                         frameworkComponents={{
                             notificationType: notificationType,
+                            timeStamp:generateTimestamp,
                         }}
                         onGridReady={onGridReady}>
                         <AgGridColumn resizable field="type" sortable={true} filter={true}
                             maxWidth={24} cellRenderer={"notificationType"}></AgGridColumn>
                         <AgGridColumn field="room" sortable={true} filter={true} ></AgGridColumn>
                         <AgGridColumn  headerName={"message"} field="msg" sortable={true}></AgGridColumn>
-                        <AgGridColumn flex={1} resizable field="timeStamp" sortable={true}></AgGridColumn>
+                        <AgGridColumn  field="timeStamp" sortable={true} cellRenderer={"timeStamp"}></AgGridColumn>
 
                     </AgGridReact>
                 </div>

@@ -24,7 +24,8 @@ export const fetchManagedUsers = (UID) => async  dispatch => {
             querySnapshot.forEach((doc, index) => {
                 if (doc.exists) {
                     managedUsers.push({
-                        ref:doc.ref,
+                        // ref:doc.ref,
+                        doc:doc.id,
                         ...doc.data()
                     })
                 } else {

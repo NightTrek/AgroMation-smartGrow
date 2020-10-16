@@ -25,6 +25,8 @@ const useStyles = makeStyles((theme) => ({
     dashboardSummery: {
         background: theme.palette.secondary.main,
         color: theme.palette.text.main,
+        minWidth:"128px",
+        width:"100%",
         '@media (max-width: 460px)':{
             maxWidth: "300px !important",
             minHeight:"1024px"
@@ -36,6 +38,11 @@ const useStyles = makeStyles((theme) => ({
         },
         '@media (max-width: 330px)':{
             maxWidth: "212px !important",
+            
+        },
+        '@media (max-width: 280px)':{
+            maxWidth: "192px !important",
+            marginLeft:'-12px'
             
         }
     },

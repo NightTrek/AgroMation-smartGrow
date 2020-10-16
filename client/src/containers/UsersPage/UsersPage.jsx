@@ -498,20 +498,28 @@ const UserWidget = (props) => {
                 count++
             }
             //if the value is an Array check if the two arrays have the same name for each variables 
+
             if (Array.isArray(output[key])) {
+                console.log(output[key])
+                console.log(props.mUser[key]);
                 let arrayCount = 0;
                 let i;
-                for (i = 0; i < props.mUser[key].length; i++) {
-                    //for each item of the array where both name values are equal count
-                    if (output[key][i] && output[key][i].name === props.mUser[key][i].name) {
-                        arrayCount++
+                if(output[key].length === props.mUser[key].length){
+                    for (i = 0; i < props.mUser[key].length; i++) {
+                        //for each item of the array where both name values are equal count
+                        if (output[key][i] && output[key][i].name === props.mUser[key][i].name) {
+                            arrayCount++
+                        }
                     }
-                }
-                //if the arrayCount and the index are equal then the two arrays are the same
-                if (arrayCount === i) {
-                    count++
+                    //if the arrayCount and the index are equal then the two arrays are the same
+                    if (arrayCount === i) {
+                        count++
+    
+                    }
+                }else{
 
                 }
+                
             }
             if (!output[key] || output[key].length === 0) {
                 props.handleInvalidAlertOpen(`${key} seems to be missing`)
@@ -545,7 +553,7 @@ const UserWidget = (props) => {
             return 0
         }
 
-        let UserRef = props.mUserDocRef;//db.collection("Users").where("email", '==', props.mUser.email)
+        let UserRef = db.collection("Users").doc(props.mUserDocRef)
         //then start a transaction to update the User
         db.runTransaction((transaction) => {
             return transaction.get(UserRef).then((UserDoc) => {
@@ -1001,7 +1009,7 @@ const UsersPage = (props) => {
                     {managedUsers.map((item, index) => {
                         if (item.firstName !== "loading") {
                             return (
-                                <UserWidget key={index} UserIndex={index} mUserDocRef={item.ref} ownerID={user.UID} handleInvalidAlertOpen={handleInvalidAlertOpen} mUser={item}
+                                <UserWidget key={index} UserIndex={index} mUserDocRef={item.doc} ownerID={user.UID} handleInvalidAlertOpen={handleInvalidAlertOpen} mUser={item}
                                     userName={item.firstName + " " + item.lastName} firstName={item.firstName} lastName={item.lastName} email={item.email} type={item.accountType} phone={item.phone}
                                     location={locations} managedUsers={managedUsers} zones={managedUsers[index].location} setManagedUsers={props.setManagedUsers}/>
                             );

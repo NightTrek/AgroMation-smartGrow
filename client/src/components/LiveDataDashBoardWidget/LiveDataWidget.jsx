@@ -5,7 +5,8 @@ import { Grid, Typography, List, ListItem, Button } from '@material-ui/core'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { getRooms, setRoom } from "../../actions/roomActions";
 import { withRouter } from "react-router";
-
+import {DeveloperID, AccountPassword} from "../../consts/talk2m";
+import axios from "axios";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -52,6 +53,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
+const EwonName = "Agro_Office";
+const EwonUser = "Agro";
+const EwonPass = "Agro2019!"; 
+
+const parseEwonLiveData = (rawData) => {
+    const liveData = {}
+    for(let i = 0; i<rawData.length;i++){
+        if(typeof rawData[i] === 'string'){
+            liveData[rawData[i]]= rawData[i+1]
+        }
+    }
+    return liveData
+
+}
 
 const LiveDataWidget = (props) => {
     const theme = useTheme();
@@ -67,7 +82,7 @@ const LiveDataWidget = (props) => {
         PressureColor: theme.palette.primary.main
     };
     const classes = useStyles();
-    const LiveData = props.LiveData || exampleLiveData;
+    let LiveData = props.LiveData || exampleLiveData;
 
     let { rooms, pick, user } = useSelector(state => ({
         rooms: state.growRooms.rooms,
@@ -76,14 +91,19 @@ const LiveDataWidget = (props) => {
 
     }), shallowEqual)
 
-    // useEffect(() => {
-    //     if (rooms === undefined || rooms[0].stage === "loading") {
-    //         console.log(user)
-    //         if(user.uid !== undefined){
-    //             props.getRooms(user.uid)
-    //         }
-    //     }
-    // })
+    useEffect(() => {
+        axios.get(`https://m2web.talk2m.com/t2mapi/get/${EwonName}/rcgi.bin/ParamForm?AST_Param=$dtIV$ftT&t2maccount=agro&t2musername=daniel&t2mpassword=${AccountPassword}&t2mdeveloperid=${DeveloperID}&t2mdeviceusername=${EwonUser}&t2mdevicepassword=${EwonPass}`, {})
+        .then((res) => {
+            let data = parseEwonLiveData(res.data.split(";"));
+
+            console.log(data);
+            LiveData.Temp = data.Temperature;
+            LiveData.humidity = data.RH;
+            LiveData.CO2Level = data.CO2;
+        }).catch((err) => {
+           console.log(err); 
+        })
+    })
 
     //check if data has loaded and if not display loading text
     if (rooms === undefined || rooms.length === 0) {
@@ -109,7 +129,7 @@ const LiveDataWidget = (props) => {
         console.log(props)
         props.history.push("/rooms");
     }
-
+    console.log(LiveData);
 
     return (
         <Grid item container className={classes.LiveDataWidget} direction={"column"}>
@@ -138,13 +158,13 @@ const LiveDataWidget = (props) => {
                 </Grid>
                 <Grid item xs={6} sm={3} md>
                     <List>
-                        <ListItem> CO2 level</ListItem>
+                        <ListItem> CO2 Level</ListItem>
                         <ListItem> <Typography variant={"h4"} style={{ color: LiveData.CO2Color }}>{LiveData.CO2Level}</Typography></ListItem>
                     </List>
                 </Grid>
                 <Grid item xs={6} sm={3} md>
                     <List>
-                        <ListItem> Pressure level</ListItem>
+                        <ListItem> Variable Pressure Deficit</ListItem>
                         <ListItem> <Typography variant={"h4"} style={{ color: LiveData.PressureColor }}>{LiveData.PressureLevel}</Typography></ListItem>
                     </List>
                 </Grid>

@@ -144,7 +144,7 @@ const useStyles = makeStyles((theme) => ({
         // background: theme.palette.secondary.main,
         color: theme.palette.text.main,
         minWidth: "624px",
-        minHeight:"192px",
+        minHeight:"256px",
         height: "auto",
         marginTop:"24px",
         '@media (max-width: 950px)': {
@@ -157,8 +157,8 @@ const useStyles = makeStyles((theme) => ({
         },
         '@media (max-width: 550px)': {
             minWidth: "320px",
-            marginLeft:"-24px"
-
+            marginLeft:"-24px",
+            minHeight:"192px",
         },
         '@media (max-width: 450px)': {
             minWidth: "256px",
@@ -186,17 +186,19 @@ const useStyles = makeStyles((theme) => ({
     buttonArea:{
         minWidth:"100%",
         marginLeft:"24px",
+        paddingTop:"64px",
         '@media (max-width: 550px)': {
             marginLeft:"12px",
 
         },
         '@media (max-width: 450px)': {
             marginLeft:"0px",
-
+            paddingTop:"12px",
 
         },
         '@media (max-width: 370px)': {
             marginLeft:"-12px",
+            paddingTop:"0px",
         }
     },
     ChartButtonText:{
@@ -356,13 +358,14 @@ export const PrimaryLineChart = (props) => {
                                 color: "white"
                             }
                         }} data={state.dataSet.map((item) => {
+                            
                             return({x:item.x,y:item.sp})
                             })} interpolation="monotoneX" labels={({ datum }) => `SetPoint ${datum.y}`} labelComponent={<VictoryTooltip/>}/>
                     </VictoryChart>      
             </Grid>
             <Grid container item direction={"row"} xs={1} justify={'center'} className={classes.buttonArea} >
                         <Grid item xs={6} sm={4} md={2} style={{padding:"8px"}}>
-                            <Button variant={"outlined"} color={"primary"} className={classes.ChartButtonText}  id={"Temp"} value="temp" onClick={e => {setState({...state, dataSet:tempData,dataType:"Temprature",domain:tempDomain, unit:" °F",})}}>Temp</Button>
+                            <Button variant={"outlined"} color={"primary"} className={classes.ChartButtonText}  id={"Temp"} value="temp" onClick={e => {setState({...state, dataSet:tempData,dataType:"Temperature",domain:tempDomain, unit:" °F",})}}>Temp</Button>
                         </Grid>
                         <Grid item xs={6} sm={4} md={2} style={{padding:"8px"}}>
                             <Button variant={"outlined"} color={"primary"} className={classes.ChartButtonText} id={"Humidity"} onClick={e => {setState({...state, dataSet:humidityData,dataType:"Humidity",domain:humidityDomain,unit:" %",})}}>Humidity</Button>
@@ -371,7 +374,7 @@ export const PrimaryLineChart = (props) => {
                             <Button variant={"outlined"} color={"primary"} className={classes.ChartButtonText} id={"CO2"} onClick={e => {setState({...state, dataSet:co2Data,dataType:"CO2 Level",domain:co2Domain,unit:" ppm",})}}>CO2 Level</Button>
                         </Grid>
                         <Grid item xs={6} sm={4} md={2} style={{padding:"8px"}}>
-                            <Button variant={"outlined"} color={"primary"} className={classes.ChartButtonText} id={"Pressure"} onClick={e => {setState({...state, dataSet:pressureData,dataType:"Pressure Level",domain:pressureDomain,unit:" mbar"})}}>Pressure</Button>
+                            <Button variant={"outlined"} color={"primary"} className={classes.ChartButtonText} id={"Pressure"} onClick={e => {setState({...state, dataSet:pressureData,dataType:"Variable Pressure deficit",domain:pressureDomain,unit:" mbar"})}}>VPD</Button>
                         </Grid>
                         <Grid item xs={6} sm={4} md={2} style={{padding:"8px"}}>
                             <Button variant={"outlined"} color={"primary"} className={classes.ChartButtonText} id={"Lights"} disabled={true} >Lights</Button>

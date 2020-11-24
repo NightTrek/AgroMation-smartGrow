@@ -187,7 +187,7 @@ DashboardSummary.propTypes = {
 function DashboardSummary(props) {
     const classes = useStyles();
     const theme = useTheme();
-    const defaultColorScale = [theme.palette.roomStatus.fault, theme.palette.roomStatus.warning, theme.palette.primary.main];
+    const defaultColorScale = [theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.veg];
     const progressColorScale = [theme.palette.roomStatus.clone, theme.palette.roomStatus.veg, theme.palette.roomStatus.flower];
 
 
@@ -281,7 +281,7 @@ function DashboardSummary(props) {
         <Grid container direction="row" justify={"center"} spacing={2} className={`${classes.dashboardSummery} `} >
             {/* <Grid container item direction="row" xs style={{maxHeight:"128px"}}> */}
                 <Grid item xs={12} sm={8} md={9} lg={10} style={{ paddingLeft: "24px" }}>
-                    <Typography variant={"h6"} className={classes.Title}>Summary</Typography>
+                    <Typography variant={"h5"} className={classes.Title}>Summary</Typography>
                 </Grid>
                 {/* <Grid item xs={0} sm={4}  md={4}></Grid> */}
                 <Grid item xs={12} sm={4} md={3} lg={2}>

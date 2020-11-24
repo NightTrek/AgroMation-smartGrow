@@ -382,7 +382,7 @@ const PowerIntensity = (props) => {
     const defaultValue = props.value
     // const [value, setValue] = React.useState(defaultValue);
 
-    const topCaption = props.topCaption || "power";
+    const topCaption = props.topCaption || "Power";
     const type = props.type || 0;
     // const bottomHeading = props.bottomHeading || "Intensity";
     // const color = props.color || "white";
@@ -769,7 +769,7 @@ const LightingController = (props) => {
             }
             else {
                 // TODO nothing selected warning
-                handleAlertOpen("Error please Select some zones to edit");
+                handleAlertOpen("Please select one or more zones to edit");
             }
         }else{
             handleAlertOpen("Error you do not have permission to edit values");
@@ -868,7 +868,7 @@ const LightingController = (props) => {
                 })
             }
             else {
-                handleAlertOpen("Error please Select some zones to edit");
+                handleAlertOpen("Please select one or more zones to edit");
             } 
         }else{
             handleAlertOpen("Error you do not have permission to edit values");
@@ -967,7 +967,7 @@ const LightingController = (props) => {
         }
         else {
             // TODO nothing selected warning
-            handleAlertOpen("Error please Select some zones to edit");
+            handleAlertOpen("Please select one or more zones to edit");
             // console.log("provide warning that nothing is selected");
         }
         }else{
@@ -1120,7 +1120,10 @@ const LightingController = (props) => {
                         <AgGridColumn field="active" sortable={true} cellRenderer={"activeRenderer"}></AgGridColumn>
                         <AgGridColumn field="timeOn" sortable={true}></AgGridColumn>
                         <AgGridColumn field="timeOff" sortable={true}></AgGridColumn>
-                        <AgGridColumn field="totalRuntime" sortable={true}></AgGridColumn>
+                        <AgGridColumn field="intensity" sortable={true}></AgGridColumn>
+                        <AgGridColumn field="red" sortable={true}></AgGridColumn>
+                        <AgGridColumn field="yellow" sortable={true}></AgGridColumn>
+                        <AgGridColumn field="blue" sortable={true}></AgGridColumn>
                     </AgGridReact>
                 </div>
             </Grid>
@@ -1264,7 +1267,7 @@ const LightingController = (props) => {
                             </Grid>
                             {/* <Grid item container direction={"row"}> */}
                                 <Grid item container direction={"row"} className={classes.sliderRow}>
-                                    <Grid item> <h6>Schedule Lighting times</h6></Grid>
+                                    <Grid item> <h6>Schedule lighting times</h6></Grid>
                                     
                                     <Grid item container direction={"row"}>
                                         <Typography variant={'body1'}>

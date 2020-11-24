@@ -201,10 +201,10 @@ const IndividualRoom = () => {
                             <LightingController />
                         </TabPanel>
                         <TabPanel value={state.pick} index={2} id={`scrollable-auto-tabpanel-${2}`}>
-                            Alarms Are currently in development. You will be able to set the alert levels for each datapoint monitored.
+                            Alarms are currently in development. You will be able to set the alert levels for each datapoint monitored.
                         </TabPanel>
                         <TabPanel value={state.pick} index={3} id={`scrollable-auto-tabpanel-${3}`}>
-                            Logs is currently in development. You will be able to view a list of alarts and alarms for this room.
+                            Logs is currently in development. You will be able to view a list of alerts and alarms for this room.
                         </TabPanel>
                     </Grid>
                 </Grid>

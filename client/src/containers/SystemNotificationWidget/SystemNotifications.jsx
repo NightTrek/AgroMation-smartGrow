@@ -113,10 +113,10 @@ const useStyles = makeStyles((theme) => ({
     },
     warning: {
         // background:theme.palette.roomStatus.warning,
-        background: theme.palette.roomStatus.warning
+        background: theme.palette.primary.main
     },
     warningItem: {
-        background: theme.palette.roomStatus.warning,
+        background: theme.palette.primary.main,
         borderRadius: "12px",
         // padding: "2px",
         // marginLeft: "8px",
@@ -127,7 +127,7 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: "4px",
     },
     warningText: {
-        background: theme.palette.roomStatus.warning,
+        background: theme.palette.primary.main,
         borderRadius: "12px",
         padding: "2px",
         // marginLeft: "8px",
@@ -142,7 +142,7 @@ const useStyles = makeStyles((theme) => ({
         color: theme.palette.text.main
     },
     faultItem: {
-        background: theme.palette.roomStatus.fault,
+        background: theme.palette.roomStatus.warning,
         borderRadius: "12px",
         // padding: "2px",
         // marginLeft: "8px",
@@ -153,7 +153,7 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: "4px",
     },
     faultText: {
-        background: theme.palette.roomStatus.fault,
+        background: theme.palette.roomStatus.warning,
         borderRadius: "12px",
         padding: "2px",
         paddingLeft: "8px",
@@ -255,7 +255,7 @@ export const SystemNotifications = () => {
         pick: 2
     });
     const options = [
-        'warning',
+        'Warning',
         'FAULT',
         'All'];
 
@@ -344,7 +344,7 @@ export const SystemNotifications = () => {
                     case "FAULT":
                         if (pick === 1 || pick === 2) {
                             return (
-                                <ListItem button alignItems="flex-start" style={style} className={`${classes.faultItem} ${classes.globalListItemQueries}`} key={index}>
+                                <ListItem button alignItems="flex-start" style={style} className={`${classes.warningItem} ${classes.globalListItemQueries}`} key={index}>
                                     <ListItemIcon className={classes.listItemIcon} ><BrokenImageIcon className={classes.listItemIcon} /></ListItemIcon>
                                     <ListItemText className={`${classes.globalListItemText}`}>{item.room + ": "}</ListItemText>
                                     <ListItemText className={`${classes.globalListItemText} ${classes.faultText}`}>{item.msg + " "}</ListItemText>
@@ -469,7 +469,7 @@ export const SystemNotifications = () => {
                         <AgGridColumn resizable field="type" sortable={true} filter={true}
                             maxWidth={24} cellRenderer={"notificationType"}></AgGridColumn>
                         <AgGridColumn field="room" sortable={true} filter={true} ></AgGridColumn>
-                        <AgGridColumn flex={1}  headerName={"message"} field="msg" sortable={true}></AgGridColumn>
+                        <AgGridColumn flex={1}  headerName={"Message"} field="msg" sortable={true}></AgGridColumn>
                         <AgGridColumn  field="timeStamp" sortable={true} cellRenderer={"timeStamp"}></AgGridColumn>
 
                     </AgGridReact>

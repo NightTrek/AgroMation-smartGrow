@@ -27,7 +27,7 @@ function DiagnosticColorBar(props) {
     let color = theme.palette.roomStatus.nominal;
     let top = props.top || "60%";
     let left = props.left || "10%";
-    let msg = "nominal";
+    let msg = "Nominal";
     let iconMsg = <CheckCircleIcon style={{ color: color }} />;
     // console.log(` supermin ${props.superMax} < value: ${props.datapoint} < max ${props.max}`);
     // console.log(` supermin ${props.superMin} > value: ${props.datapoint} < min ${props.min}`);

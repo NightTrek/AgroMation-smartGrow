@@ -21,7 +21,10 @@ export const SET_LOCATION               = 'SET_LOCATION';
 export const SET_ROOM                   = 'SET_ROOM';
 export const GET_ROOMS                  = 'GET_ROOMS';
 export const PENDING_ROOMS              = 'PENDING_ROOMS';
+
 export const FETCH_RECENT               = 'FETCH_RECENT';
+export const FETCH_RECENT_PENDING       = 'FETCH_RECENT_PENDING';
+
 
 export const FETCH_ZONES                = 'FETCH_ZONES';
 export const PENDING_ZONES              = "PENDING_ZONES";

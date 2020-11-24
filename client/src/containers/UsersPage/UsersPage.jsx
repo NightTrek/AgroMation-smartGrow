@@ -772,7 +772,12 @@ const UsersPage = (props) => {
         } else if (!pending && testManagedUsers(managedUsers) && auth.uid !== undefined && user.UID !== undefined) {
             console.log("getting managed user");
             props.pendingManagedUsers()
-            props.fetchManagedUsers(auth.uid)
+            if(user.accountOwner){
+                props.fetchManagedUsers(user.accountOwner)
+            }else{
+                props.fetchManagedUsers(auth.uid)
+            }
+            
 
         }
     })

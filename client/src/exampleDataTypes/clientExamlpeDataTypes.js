@@ -169,12 +169,12 @@ export const sampleCO2Data = [{ x: 1, y: 1, catName: "Fault" },
 export const sampleNotifications = [{
     type: "FAULT",
     room: "Room Alpha",
-    msg: "Controller offline",
-    timeStamp: "1597477764"
+    msg: "Controller Offline",
+    timeStamp: "1597476643"
 }, {
     type: "warning",
     room: "Room Beta",
-    msg: "Temperature warning",
+    msg: "Temperature Warning",
     timeStamp: "1597477764"
 }, {
     type: "warning",
@@ -189,8 +189,8 @@ export const sampleNotifications = [{
 }, {
     type: "info",
     room: "Veg room Alpha",
-    msg: "only 7 days left",
-    timeStamp: "1597477764"
+    msg: "Only 7 days left",
+    timeStamp: "1597478821"
 }, {
     type: "info",
     room: "Room Alpha",

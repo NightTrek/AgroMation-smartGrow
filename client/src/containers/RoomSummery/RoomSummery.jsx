@@ -184,7 +184,7 @@ function StageMeter(props) {
                                     <Grid item> <h4>Growth Stage</h4></Grid>
                                 </Grid>
                                 <Grid item container direction={"row"} className={classes.sliderRow}>
-                                    <Typography variant={'h5'}>Adjusting Staging values is not Allowed at this time</Typography>
+                                    <Typography variant={'h5'}>Adjusting staging values is not allowed at this time</Typography>
                                 </Grid>
                                 <Grid item container direction={"row"}>
                                     <Button variant={"outlined"} color={"primary"} disabled>
@@ -511,7 +511,7 @@ function RoomSummery(props) {
                                 UnitString={" %"} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />
 
                             <FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
-                                type={"CO2"} title={"CO2 level"} longTitle={"CO2 level"} width={meterWidth} userType={user.accountType}
+                                type={"CO2"} title={"CO2 Level"} longTitle={"CO2 level"} width={meterWidth} userType={user.accountType}
                                 setpoint={rooms[pick].CO2SetPoint} min={rooms[pick].CO2Min} max={rooms[pick].CO2Max}
                                 UnitString={" ppm"} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />
 
@@ -519,7 +519,7 @@ function RoomSummery(props) {
                                 (<StageMeter state={state} rooms={rooms} pick={pick} theme={theme} width={meterWidth} classes={classes} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />) :
 
                                 (<FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
-                                    type={"pressure"} title={"pressure level"} longTitle={"Variable Pressure Deficit"} width={meterWidth} userType={user.accountType}
+                                    type={"pressure"} title={"VPD"} longTitle={"Variable Pressure Deficit"} width={meterWidth} userType={user.accountType}
                                     setpoint={rooms[pick].pressureSetPont} min={rooms[pick].pressureMin} max={rooms[pick].pressureMax}
                                     UnitString={" mbar"} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />
                                 )}

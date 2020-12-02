@@ -166,6 +166,13 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         padding: theme.spacing(3),
     },
+    signOutOpen: {
+    },
+    singoutSplitter: {
+        display:"flex",
+        flexGrow:1,
+        height:"100%"
+    }
 }));
 
 
@@ -251,8 +258,8 @@ const MiniDrawer = (props) => {
         { name: 'Rooms', icon: <BusinessIcon data-index={"rooms"} color={"primary"} /> },
         { name: 'Users', icon: <GroupIcon data-index={"users"} color={"primary"} /> },
         { name: 'Settings', icon: <SettingsIcon data-index={"settings"} color={"primary"} /> },
-        { name: 'Signout', icon: <ExitToAppIcon data-index={'signout'} color={"primary"} /> }]
-
+    ]
+    //{ name: 'Signout', icon: <ExitToAppIcon data-index={'signout'} color={"primary"} /> }
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -339,44 +346,81 @@ const MiniDrawer = (props) => {
                         </Typography>
                     </Grid> : <div></div>}
                 <Divider />
-
                 <List>
                     {menuItems.map((text, index) => {
-                        
-                            if (text.name !== "Users") {
-                                return (
-                                    <NavLink to={"/" + text.name} key={text.name} onClick={(e) => {
-                                        if (auth == undefined || auth === "") {
-                                            e.preventDefault()
-                                        }
-                                    }}>
-                                        <ListItem button data-index={text.name} key={text.name} value={text.name}>
-    
-                                            <ListItemIcon data-index={text.name} value={text.name} >{text.icon}</ListItemIcon>
-                                            <ListItemText data-index={text.name} value={text.name} primary={text.name} />
-    
-                                        </ListItem>
-                                    </NavLink>
-                                );
-                            } else if (user.accountType !== "Viewer" && user.accountType !== "User") {
-                                return (
-                                    <NavLink to={"/" + text.name} key={text.name} onClick={(e) => {
-                                        if (auth == undefined || auth === "") {
-                                            e.preventDefault()
-                                        }
-                                    }}>
-                                        <ListItem button data-index={text.name} key={text.name} value={text.name}>
-    
-                                            <ListItemIcon data-index={text.name} value={text.name} >{text.icon}</ListItemIcon>
-                                            <ListItemText data-index={text.name} value={text.name} primary={text.name} />
-    
-                                        </ListItem>
-                                    </NavLink>
-                                );
-                            }
-                        
+
+                        if (text.name !== "Users") {
+                            return (
+                                <NavLink to={"/" + text.name} key={text.name} onClick={(e) => {
+                                    if (auth == undefined || auth === "") {
+                                        e.preventDefault()
+                                    }
+                                }}>
+                                    <ListItem button data-index={text.name} key={text.name} value={text.name}>
+
+                                        <ListItemIcon data-index={text.name} value={text.name} >{text.icon}</ListItemIcon>
+                                        <ListItemText data-index={text.name} value={text.name} primary={text.name} />
+
+                                    </ListItem>
+                                </NavLink>
+                            );
+                        } else if (user.accountType !== "Viewer" && user.accountType !== "User") {
+                            return (
+                                <NavLink to={"/" + text.name} key={text.name} onClick={(e) => {
+                                    if (auth == undefined || auth === "") {
+                                        e.preventDefault()
+                                    }
+                                }}>
+                                    <ListItem button data-index={text.name} key={text.name} value={text.name}>
+
+                                        <ListItemIcon data-index={text.name} value={text.name} >{text.icon}</ListItemIcon>
+                                        <ListItemText data-index={text.name} value={text.name} primary={text.name} />
+
+                                    </ListItem>
+                                </NavLink>
+                            );
+                        }
+
                     })}
+
                 </List>
+                <Divider />
+                <div className={classes.singoutSplitter}>
+
+                </div>
+                {open ? (
+                <List className={classes.signOutOpen}>
+                    <ListItem button data-index={"AccountName"} key={"AccountName"} value={user.email}>
+                        <Typography variant={"subtitle1"} className={classes.locationName}>
+                            {user.email}
+                        </Typography>
+                    </ListItem>
+                    <NavLink to={"/Signout"} key={"Signout"} onClick={(e) => {
+                        if (auth == undefined || auth === "") {
+                            e.preventDefault()
+                        }
+                    }}>
+                        <ListItem button data-index={"Signout"} key={"Signout"} value={"Signout"}>
+
+                            <ListItemIcon data-index={"Signout"} value={"Signout"} >{<ExitToAppIcon data-index={'Signout'} color={"primary"} />}</ListItemIcon>
+                            <ListItemText data-index={"Signout"} value={"Signout"} primary={"Signout"} />
+
+                        </ListItem>
+                    </NavLink>
+                </List>) : (<List className={classes.signOutClose}>
+                    <NavLink to={"/Signout"} key={"Signout"} onClick={(e) => {
+                        if (auth == undefined || auth === "") {
+                            e.preventDefault()
+                        }
+                    }}>
+                        <ListItem button data-index={"Signout"} key={"Signout"} value={"Signout"}>
+
+                            <ListItemIcon data-index={"Signout"} value={"Signout"} >{<ExitToAppIcon data-index={'Signout'} color={"primary"} />}</ListItemIcon>
+                            <ListItemText data-index={"Signout"} value={"Signout"} primary={"Signout"} />
+
+                        </ListItem>
+                    </NavLink>
+                </List>)}
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.toolbar} />

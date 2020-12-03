@@ -92,17 +92,17 @@ const LiveDataWidget = (props) => {
     }), shallowEqual)
 
     useEffect(() => {
-        axios.get(`https://m2web.talk2m.com/t2mapi/get/${EwonName}/rcgi.bin/ParamForm?AST_Param=$dtIV$ftT&t2maccount=agro&t2musername=daniel&t2mpassword=${AccountPassword}&t2mdeveloperid=${DeveloperID}&t2mdeviceusername=${EwonUser}&t2mdevicepassword=${EwonPass}`, {})
-        .then((res) => {
-            let data = parseEwonLiveData(res.data.split(";"));
+        // axios.get(`https://m2web.talk2m.com/t2mapi/get/${EwonName}/rcgi.bin/ParamForm?AST_Param=$dtIV$ftT&t2maccount=agro&t2musername=daniel&t2mpassword=${AccountPassword}&t2mdeveloperid=${DeveloperID}&t2mdeviceusername=${EwonUser}&t2mdevicepassword=${EwonPass}`, {})
+        // .then((res) => {
+        //     let data = parseEwonLiveData(res.data.split(";"));
 
-            console.log(data);
-            LiveData.Temp = data.Temperature;
-            LiveData.humidity = data.RH;
-            LiveData.CO2Level = data.CO2;
-        }).catch((err) => {
-           console.log(err); 
-        })
+        //     console.log(data);
+        //     LiveData.Temp = data.Temperature;
+        //     LiveData.humidity = data.RH;
+        //     LiveData.CO2Level = data.CO2;
+        // }).catch((err) => {
+        //    console.log(err); 
+        // })
     })
 
     //check if data has loaded and if not display loading text

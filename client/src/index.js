@@ -20,11 +20,15 @@ import Welcome from "./components/Welcome";
 import IndividualRoom from "./containers/IndividualRoom/IndividualRoom";
 import UsersPage from "./containers/UsersPage/UsersPage";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
+import SubscriptionChoicePage from "./containers/SubscriptionChoicePage/SubsciptionChoicePage";
+import PaymentDetailsPage from "./containers/PaymentDetailsPage/PaymentDetailsPage";
+
 
 import './style.css';
 
 import reducers from "./reducers";
 import { startListeningToAuth } from "./actions/auth"
+
 // configure redux dev tools
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -58,6 +62,8 @@ ReactDOM.render(
             <PrivateRoute exact path="/Dashboard" component={Dashboard2} />
             <PrivateRoute exact path="/Rooms" component={IndividualRoom} />
             <PrivateRoute exact path="/Settings" component={Settings} />
+            <PrivateRoute exact path="/Subscribe" component={SubscriptionChoicePage} />
+            <PrivateRoute exact path="/secure/payment" component={PaymentDetailsPage} />
             {/* <Route exact path="/signup" component={Signup} />
             <Route exact path="/signin" component={Signin} /> */}
             <PrivateRoute exact path="/Users" component={UsersPage} />

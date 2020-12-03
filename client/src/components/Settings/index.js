@@ -4,11 +4,11 @@ import { compose } from "redux";
 import { connect, useSelector, shallowEqual } from "react-redux";
 
 import agroLogo from "./../../img/AgroMationLogosquare512.png"
-import { makeStyles, Container, Grid, Typography, Divider, Snackbar, Button } from "@material-ui/core";
+import { makeStyles, Container, Grid, Typography, Divider, Snackbar, Button, List, ListItem } from "@material-ui/core";
 import Alert from '@material-ui/lab/Alert';
 //User imports
 import { EditUserInput, EditUserButton, validateEmail, validatePhone } from "../../containers/UsersPage/UsersPage";
-import {setUser} from "../../actions/User"
+import { setUser } from "../../actions/User"
 //firebase
 import { db, auth } from "../../consts/firebase";
 
@@ -18,11 +18,20 @@ import { db, auth } from "../../consts/firebase";
 const useStyles = makeStyles((theme) => ({
   settingsWidget: {
     backgroundImage: ` url("https://cdn.discordapp.com/attachments/370759274621698048/755271571181928459/unknown.png")`,
+    backgroundRepeat:"repeat-x",
     backgroundColor: theme.palette.secondary.main,
     width: "100%",
     minHeight: "512px",
     padding: "24px",
     color: "white",
+  },
+  SubContainer: {
+    background: theme.palette.secondary.vdark,
+    minHeight: "128px",
+    borderRadius: '4px',
+    marginBottom: "12px",
+    marginTop: "12px",
+
   }
 
 }));
@@ -135,69 +144,75 @@ const Settings = (props) => {
 
   const saveSettings = async () => {
     //verify there are changes to save
-      if(user.firstName === state.firstName && user.lastName === state.lastName && user.email === state.email && user.phone === state.phone){
-        handleAlertOpen("No changes detected");
-        return 0;
-      }
-      if(state.firstName.length < 3 || typeof state.firstName !== "string"){
-        handleAlertOpen("First name is invalid or blank");
-        return 0;
-      }
-      if(state.lastName.length < 3 || typeof state.lastName !== "string"){
-        handleAlertOpen("last name is invalid or blank");
-        return 0;
-      }
-      //validate email
-      if(typeof state.email !== "string" || !validateEmail(state.email)){
-        handleAlertOpen("Email invalid or blank");
-        return 0;
-      }
-      //validate phone
-      if( !validatePhone(state.phone) || state.phone === "Set phone"){
-        handleAlertOpen("Please add a valid 10 digit phone number no special characters or spaces");
-        return 0;
-      }
-  
-      const UserRef = db.collection("Users").doc(user.doc)
+    if (user.firstName === state.firstName && user.lastName === state.lastName && user.email === state.email && user.phone === state.phone) {
+      handleAlertOpen("No changes detected");
+      return 0;
+    }
+    if (state.firstName.length < 3 || typeof state.firstName !== "string") {
+      handleAlertOpen("First name is invalid or blank");
+      return 0;
+    }
+    if (state.lastName.length < 3 || typeof state.lastName !== "string") {
+      handleAlertOpen("last name is invalid or blank");
+      return 0;
+    }
+    //validate email
+    if (typeof state.email !== "string" || !validateEmail(state.email)) {
+      handleAlertOpen("Email invalid or blank");
+      return 0;
+    }
+    //validate phone
+    if (!validatePhone(state.phone) || state.phone === "Set phone") {
+      handleAlertOpen("Please add a valid 10 digit phone number no special characters or spaces");
+      return 0;
+    }
 
-      db.runTransaction((transaction) => {
-        return transaction.get(UserRef).then((UserDocSnapshot) => {
-            if (!UserDocSnapshot.exists) {
-                throw "Document does not exist"
-            }
-            let data = UserDocSnapshot.data();
-            //maybe check and see if the document needs to be updated
-            if(data.firstName === state.firstName && data.lastName === state.lastName && data.email === state.email && data.phone === state.phone){
-              return {doc:UserDocSnapshot.id, ...data};
-            }
-            //do the update and return output
-            
-            let output = {
-                ...data,
-                firstName:state.firstName,
-                lastName:state.lastName,
-                email:state.email,
-                phone:state.phone,
-            };
-            
-            
-            transaction.update(UserRef, output);
-            output.doc = user.doc;
-            return output;
+    const UserRef = db.collection("Users").doc(user.doc)
 
-        }).then((data) => {
-            
-            props.setUser(data);
-            handleAlertOpen("Successfully updated User data", "success");
-        }).catch((err) => {
-            handleAlertOpen("error during transaction");
-            console.log(err);
-        })
+    db.runTransaction((transaction) => {
+      return transaction.get(UserRef).then((UserDocSnapshot) => {
+        if (!UserDocSnapshot.exists) {
+          throw "Document does not exist"
+        }
+        let data = UserDocSnapshot.data();
+        //maybe check and see if the document needs to be updated
+        if (data.firstName === state.firstName && data.lastName === state.lastName && data.email === state.email && data.phone === state.phone) {
+          return { doc: UserDocSnapshot.id, ...data };
+        }
+        //do the update and return output
+
+        let output = {
+          ...data,
+          firstName: state.firstName,
+          lastName: state.lastName,
+          email: state.email,
+          phone: state.phone,
+        };
+
+
+        transaction.update(UserRef, output);
+        output.doc = user.doc;
+        return output;
+
+      }).then((data) => {
+
+        props.setUser(data);
+        handleAlertOpen("Successfully updated User data", "success");
+      }).catch((err) => {
+        handleAlertOpen("error during transaction");
+        console.log(err);
       })
+    })
 
 
   }
 
+  const upgradePlan = () => {
+    props.history.push({
+      pathname:"/Subscribe",
+      state:{PaymentType:"Annual"}
+    })
+  }
 
   return (
     <Container className={"containerMain"}>
@@ -227,8 +242,77 @@ const Settings = (props) => {
           </EditUserButton>
         </Grid>
         <Grid item xs={12} sm={6}>
-            <Button variant={"outlined"} color={"primary"} onClick={saveSettings}>
-                Save Settings
+
+        </Grid>
+        {user.accountType==="Owner" ? (<Grid item container xs={12} className={classes.SubContainer} spacing={3}>
+          <Grid item xs={12} >
+            <Typography variant={'h5'}>
+              Subscription
+              </Typography>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <List>
+              <ListItem>
+              <Typography variant={'body2'}>
+                  {"Account Type"}
+                </Typography>
+              </ListItem>
+              <ListItem>
+                <Typography variant={'h6'}>
+                  {"Business"}
+                </Typography>
+              </ListItem>
+              <ListItem>
+                <Typography variant={'body2'}>
+                  {"Monthly Account"}
+                </Typography>
+              </ListItem>
+            </List>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <List>
+              <ListItem>
+                <Typography variant={"body2"}> Current monthly bill</Typography>
+              </ListItem>
+              <ListItem>
+                <Typography variant={"h6"}>{user.billDue || "$ 100.00"}</Typography>
+              </ListItem>
+              <ListItem>
+                <Typography variant={"body2"}> Next Bill Due</Typography>
+              </ListItem>
+              <ListItem>
+                <Typography variant={"subtitle1"}> December 1st</Typography>
+              </ListItem>
+            </List>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <List>
+              <ListItem>
+                <Typography variant={"body2"}>Account seats</Typography>
+              </ListItem>
+              <ListItem>
+                <Typography variant={"h6"}>{"4/10"}</Typography>
+              </ListItem>
+            </List>
+          </Grid>
+          <Grid item xs={12} sm={8} md={10}>
+          <Button variant={"outlined"} color={"primary"} onClick={upgradePlan}>
+            Upgrade plan
+            </Button>
+          </Grid>
+          <Grid item xs={12} sm={4} md={2}>
+          <Button variant={"outlined"} color={"primary"} >
+            Edit Billing info
+            </Button>
+          </Grid>
+        </Grid>):(<Grid item xs={12}> </Grid>) }
+        
+        <Grid item xs={12} sm={8} md={10}>
+
+        </Grid>
+        <Grid item xs={12} sm={4} md={2}>
+          <Button variant={"outlined"} color={"primary"} onClick={saveSettings}>
+            Save Settings
             </Button>
         </Grid>
       </Grid>
@@ -246,7 +330,7 @@ function mapStateToProps(state) {
 }
 
 
-const formedComponent = compose(connect(mapStateToProps, {setUser:setUser}))(Settings);
+const formedComponent = compose(connect(mapStateToProps, { setUser: setUser }))(Settings);
 
 
 export default formedComponent;

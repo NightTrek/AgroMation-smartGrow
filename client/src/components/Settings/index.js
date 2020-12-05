@@ -73,6 +73,25 @@ const Settings = (props) => {
     user.phone = "Set phone"
   }
 
+  let GetActiveSub = () => {
+    let canceled = [];
+    let active = null;
+    user.subscriptions.forEach((item) => {
+      if(item.status === 'canceled'){
+        canceled.push(item);
+      }
+      if(item.status === 'active'){
+        active = item;
+      }
+    })
+    if(active){
+      return active;
+    }else{
+      return canceled[0];
+    }
+
+  }
+
   const [state, setState] = useState({
     firstName: user.firstName,
     lastName: user.lastName,

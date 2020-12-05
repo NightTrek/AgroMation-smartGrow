@@ -111,8 +111,26 @@ const SubscriptionChoicePage = (props) => {
 
         })
     }
+    
+    const handlePremiumPlan = () => {
+        props.history.push({
+            pathname:"/secure/payment",
+            state:{
+                PlanType:"Premium",
+                PaymentType:state.monthly
+            }
+          })
+    }
 
-
+    const handleBusinessPlan = () => {
+        props.history.push({
+            pathname:"/secure/payment",
+            state:{
+                PlanType:"Business",
+                PaymentType:state.monthly
+            }
+          })
+    }
 
     return (
         <Container className={"containerMain"}>
@@ -141,7 +159,7 @@ const SubscriptionChoicePage = (props) => {
                         <Typography className={classes.SubscriptionGlobalText} variant={'h6'}>{state.monthly ? ("$50 / Month") : ("$540 / Year. 10% off!")}</Typography>
                         <Typography className={classes.SubscriptionGlobalText} variant={'body1'}>5 seats</Typography>
 
-                        <Button variant={"outlined"} color={"primary"} >
+                        <Button variant={"outlined"} color={"primary"} onClick={handlePremiumPlan} >
                             Select Plan
                         </Button>
                         <Divider style={{ background: "white", width: "100%", marginTop: "16px" }} variant={'fullWidth'} />
@@ -181,7 +199,7 @@ const SubscriptionChoicePage = (props) => {
                         <Typography className={classes.SubscriptionGlobalText} variant={'body1'}>For Business and teams to manage production environments.</Typography>
                         <Typography className={classes.SubscriptionGlobalText} variant={'h6'}>{state.monthly ? ("$100 / Month") : ("$1080 / Year. 10% off!")}</Typography>
                         <Typography className={classes.SubscriptionGlobalText} variant={'body1'}>10 seats</Typography>
-                        <Button variant={"outlined"} color={"primary"} >
+                        <Button variant={"outlined"} color={"primary"} onClick={handleBusinessPlan} >
                             Select Plan
                         </Button>
                         <Divider style={{ background: "white", width: "100%", marginTop: "16px" }} variant={'fullWidth'} />

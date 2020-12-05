@@ -20,10 +20,35 @@ export const fetchUser = (UID, EMAIL) => async dispatch => {
             .get()
             .then((querySnapshot) => {
                 if (!querySnapshot.empty) {
-                    querySnapshot.forEach((doc) => {
+                    querySnapshot.forEach( async (doc) => {
                         if (doc.exists) {
                             // console.log("user dispatched")
-                            dispatch({ type: FETCH_USER, payload: {doc:doc.id, ...doc.data()} })
+                            console.log('checking if user has owner')
+                            let subscriptionsArray = [];
+                            if (doc.data().accountOwner === null) {
+                                console.log("user has no owner")
+                                const docRef = await db
+                                    .collection('StripeCustomers')
+                                    .doc(UID)
+                                    .collection('subscriptions').get()
+                                    if(!docRef.empty){
+                                        if(docRef.length>1){
+                                            //TODO 
+                                            docRef.forEach((doc) =>{
+                                                subscriptionsArray.push(doc.data())
+                                            })
+                                        }else{
+                                            docRef.forEach((doc) =>{
+                                                subscriptionsArray.push(doc.data())
+                                            })
+                                        }
+                                    }
+                                    else{
+                                        console.log("USER DOES NOT HAVE STRIPE Subscription")
+                                    }
+                            }
+                            let userOutputObject = { doc: doc.id, subscriptions:subscriptionsArray, ...doc.data() };
+                            dispatch({ type: FETCH_USER, payload: userOutputObject })
                         } else {
                             console.log("User Doc From UID does not exist")
                             dispatch({ type: FETCH_USER, payload: exampleAccount });
@@ -41,7 +66,7 @@ export const fetchUser = (UID, EMAIL) => async dispatch => {
                                     if (doc.exists) {
                                         // console.log("user dispatched")
                                         //Consider adding the UID to the User account for easy access
-                                        if(!doc.data().UID){
+                                        if (!doc.data().UID) {
                                             const UserRef = db.collection("Users").doc(doc.id);
                                             db.runTransaction((transaction) => {
                                                 return transaction.get(UserRef).then((UserDoc) => {
@@ -51,9 +76,9 @@ export const fetchUser = (UID, EMAIL) => async dispatch => {
                                                     let data = UserDoc.data();
                                                     let output = {
                                                         ...data,
-                                                        UID:UID
+                                                        UID: UID
                                                     }
-                                                    if(data.UID && data.UID === UID){
+                                                    if (data.UID && data.UID === UID) {
                                                         output.doc = UserDoc.id;
                                                         return output;
                                                     }
@@ -63,17 +88,17 @@ export const fetchUser = (UID, EMAIL) => async dispatch => {
                                                     //do the update and return output
                                                 }).then((output) => {
                                                     dispatch({ type: FETCH_USER, payload: output })
-                                                    
+
                                                 }).catch((err) => {
                                                     console.log(err);
                                                 })
                                             })
                                         }
-                                        else{
+                                        else {
                                             console.log("ERROR UID exists but email method was used")
                                         }
-                                        
-                                        
+
+
                                     } else {
                                         console.log("Example user dispatched no docs found")
                                         dispatch({ type: FETCH_USER, payload: exampleAccount });

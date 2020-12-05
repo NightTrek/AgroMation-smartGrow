@@ -6,21 +6,21 @@ import { connect, useSelector, shallowEqual } from "react-redux";
 import agroLogo from "./../../img/AgroMationLogosquare512.png"
 import { useTheme, makeStyles, Container, Grid, Typography, Divider, Snackbar, Button, List, ListItem, ListItemText, MenuItem, Select } from "@material-ui/core";
 import Alert from '@material-ui/lab/Alert';
-import {loadStripe} from '@stripe/stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import {
-  CardElement,
-  Elements,
-  useStripe,
-  useElements,
+    CardElement,
+    Elements,
+    useStripe,
+    useElements,
 } from '@stripe/react-stripe-js';
 //User imports
 import { EditUserInput, EditUserButton, validateEmail, validatePhone } from "../../containers/UsersPage/UsersPage";
 import { setUser } from "../../actions/User"
 //firebase
-import { db, auth } from "../../consts/firebase";
+import { db, auth, StripeTestKey } from "../../consts/firebase";
 import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect";
 
-
+import "./index.css"
 
 const useStyles = makeStyles((theme) => ({
     settingsWidget: {
@@ -41,9 +41,25 @@ const useStyles = makeStyles((theme) => ({
         // margin: theme.spacing(1),
         minWidth: "80%",
     },
+    changePlanButton: {
+        textDecoration: "underline",
+        '&:hover': {
+            // fontSize:"18px",
+            fontWeight: 900,
+        }
+    },
+    StipeFormControl: {
+        background: "white",
+    }
 
 
 }));
+
+
+
+/// card number that always works  4242424242424242
+/// card number that fails for  "insufficient_funds"   || 4000000000009995
+
 
 const PaymentDetailsPage = (props) => {
     const classes = useStyles();
@@ -51,11 +67,59 @@ const PaymentDetailsPage = (props) => {
     const prevPageState = props.history.location.state;
 
     let pick = 0;
-    if (prevPageState !== undefined && prevPageState.PaymentType === "Annual") {
-        pick = 1;
+    let PlanType = 0
+
+    const PlanText = ["Premium Plan - 5 seats", "Business Plan - 10 seats"];
+    const BusinessPaymentPlanText = ['$99.99 per Month', "$1079.99 per Year "];
+    const PremiumPaymentPlanText = ['$49.99 per Month', '$539.99 per year'];
+    const DueTodayText = ['$ 49.99 USD', '$539.99 USD','$99.99 USD',"$1079.99 USD"];
+
+    const PremiumPlanID = ["price_1Hu9bfHUiGgklW51C6da93HQ",'price_1Hu9bfHUiGgklW5140h11XmN'];
+    const BusinessPlanID = ['price_1Hu9dkHUiGgklW51PpDQ1XZY','price_1Hu9dkHUiGgklW51cJ6V5TPJ'];
+
+    // Parse Previous state
+    if (prevPageState !== undefined) {
+        if (!prevPageState.PaymentType) {
+            pick = 1;
+        }
+        if (prevPageState.PlanType === 'Business') {
+            PlanType = 1;
+        }
     }
+
+    let { user, authData } = useSelector(state => ({
+        user: state.users.user,
+        authData: state.auth.authenticated,
+
+
+    }), shallowEqual);
+
+    //check if data has loaded and if not display loading text
+    if (user.firstName === undefined || user.location.length === undefined) {
+        // console.log("settings loading data")
+        user = {
+            firstName: "loading",
+            lastName: "loading",
+            email: "loading",
+            phone: "set phone",
+            location: [
+                {
+                    name: "loading",
+                    address: "Loading Address"
+                },
+                {
+                    name: "loading locations",
+                    address: "loading address"
+                },
+
+            ]
+        };
+    }
+
+
     const [state, setState] = useState({
         pick: pick,
+        PlanType: PlanType,
     })
 
     const handleChange = (event) => {
@@ -66,6 +130,91 @@ const PaymentDetailsPage = (props) => {
         })
     }
 
+    const handleChangePlanType = () => {
+        props.history.push({
+            pathname: "/Subscribe",
+            state: {
+                PaymentType: `${state.pick === 0 ? ("Monthly") : ("Annual")}`
+            }
+        })
+    }
+
+    const GeneratePlanText = () => {
+        if (PlanType === 0) {
+            if (state.pick === 0) {
+                return PremiumPaymentPlanText[0]
+            } else {
+                return PremiumPaymentPlanText[1]
+            }
+        } else {
+            if (state.pick === 0) {
+                return BusinessPaymentPlanText[0]
+            } else {
+                return BusinessPaymentPlanText[1]
+            }
+        }
+    }
+
+    const GenerateDueTodayString = () => {
+        if(PlanType === 0){
+            if(state.pick == 0){
+                return DueTodayText[0];
+            }else{
+                return DueTodayText[1];
+            }
+        }else{
+            if(state.pick == 0){
+                return DueTodayText[2];
+            }else{
+                return DueTodayText[3];
+            }
+        }
+    }
+
+    const GeneratePriceID = () => {
+        if(PlanType === 0){
+            if(state.pick == 0){
+                return PremiumPlanID[0];
+            }else{
+                return PremiumPlanID[1];
+            }
+        }else{
+            if(state.pick == 0){
+                return BusinessPlanID[0];
+            }else{
+                return BusinessPlanID[1];
+            }
+        }
+    }
+
+    const StartCheckoutFlow = async () => {
+        const docRef = await db
+            .collection('StripeCustomers')
+            .doc(user.UID)
+            .collection('checkout_sessions')
+            .add({
+                price: GeneratePriceID(),
+                success_url: window.location.origin,
+                cancel_url: window.location.origin,
+            });
+
+        docRef.onSnapshot(async (snap) => {
+            const { error, sessionId } = snap.data();
+            if (error) {
+                console.log(snap);
+
+                // Show an error to your customer and 
+                // inspect your Cloud Function logs in the Firebase console.
+                alert(`An error occured: ${error.message}`);
+            }
+            if (sessionId) {
+                // We have a session, let's redirect to Checkout
+                // Init Stripe
+                const stripe = await loadStripe(StripeTestKey);
+                stripe.redirectToCheckout({ sessionId });
+            }
+        });
+    }
     return (
         <Container className={"containerMain"}>
             <Grid item container direction={"row"} className={classes.settingsWidget} spacing={2} >
@@ -78,29 +227,29 @@ const PaymentDetailsPage = (props) => {
                 <Grid item container direction={"column"} xs={12} sm={6} md={8}>
                     <Grid item container direction={'row'} className={classes.yourPlanPanel} spacing={1}>
                         <Grid item xs={8} md={10}>
-                            <Typography variant={'h5'}> Your Plan</Typography>
+                            <Typography variant={'h5'} > Your Plan</Typography>
                         </Grid>
-                        <Grid item xs={4} md={2}>
-                            <Typography variant={'body1'} color={'primary'}> Change Plan</Typography>
+                        <Grid item xs={4} md={2} onClick={handleChangePlanType}>
+                            <Typography variant={'body1'} color={'primary'} className={classes.changePlanButton}> Change Plan</Typography>
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant={"body1"}>
-                                Email@domain.com
+                                {user.email}
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant={"body1"}>
-                                Business Plan - 5 seats
+                                {state.PlanType === 0 ? (PlanText[0]) : (PlanText[1])}
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant={"h6"}>
-                                $100 per Month
+                                {GeneratePlanText()}
                             </Typography>
                         </Grid>
                     </Grid>
 
-                    <Grid item container direction={'row'} className={classes.yourPlanPanel} style={{marginTop:"32px"}} spacing={1}>
+                    <Grid item container direction={'row'} className={classes.yourPlanPanel} style={{ marginTop: "32px" }} spacing={1}>
                         <Grid item xs={12}>
                             <Typography variant={'h5'}> Payment Details</Typography>
                         </Grid>
@@ -108,7 +257,7 @@ const PaymentDetailsPage = (props) => {
                             <Typography variant={'body1'}>Don't worry you can cancel anytime</Typography>
                         </Grid>
                         <Grid item xs={12}>
-                            
+
                         </Grid>
                     </Grid>
                 </Grid>
@@ -137,7 +286,10 @@ const PaymentDetailsPage = (props) => {
                             </StandardRoundSelectForm>
                         </Grid>
                         <Grid item xs={12}>
-                            <Typography variant={'body2'} style={{ color: theme.palette.roomStatus.veg }}> Switch to Annual plan and save 10% </Typography>
+                            {state.pick === 0 ?
+                                (<Typography variant={'body2'} style={{ color: theme.palette.roomStatus.veg }}> Switch to Annual plan and save 10% </Typography>) :
+                                (<div></div>)}
+
                         </Grid>
 
                         <Divider style={{ background: theme.palette.secondary.main, width: "100%", marginTop: "128px", marginBottom: "24px" }} variant={'fullWidth'} />
@@ -145,12 +297,12 @@ const PaymentDetailsPage = (props) => {
                             <Typography variant={'h6'}>Due Today</Typography>
                         </Grid>
                         <Grid item xs={6}>
-                            <Typography variant={'h6'}>$100.00 USD</Typography>
+                            <Typography variant={'h6'}>{GenerateDueTodayString()}</Typography>
                             <Typography variant={'body2'}>+ applicable fees</Typography>
                         </Grid>
-                        
-                        <Grid item xs={12} style={{marginTop:"24px"}}>
-                            <Button variant={"outlined"} color={"primary"} style={{ width: "90%" }}>
+
+                        <Grid item xs={12} style={{ marginTop: "24px" }}>
+                            <Button variant={"outlined"} color={"primary"} style={{ width: "90%" }} onClick={StartCheckoutFlow}>
                                 Pay now
                         </Button>
                         </Grid>

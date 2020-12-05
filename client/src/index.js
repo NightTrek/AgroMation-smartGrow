@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Provider } from "react-redux";
 import { createStore, applyMiddleware, compose } from "redux";
 import reduxThunk from "redux-thunk";
-
+import '@stripe/stripe-js';
 
 // Import Containers
 import Navbar from "./containers/NavBar/Navbar";

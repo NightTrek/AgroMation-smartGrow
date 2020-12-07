@@ -10,7 +10,7 @@ import Alert from '@material-ui/lab/Alert';
 import { EditUserInput, EditUserButton, validateEmail, validatePhone } from "../../containers/UsersPage/UsersPage";
 import { setUser } from "../../actions/User"
 //firebase
-import { db, auth } from "../../consts/firebase";
+import { db, auth, getCustomClaimRole } from "../../consts/firebase";
 
 
 
@@ -55,6 +55,7 @@ const Settings = (props) => {
       lastName: "loading",
       email: "loading",
       phone: "set phone",
+      subscriptions:[],
       location: [
         {
           name: "loading",
@@ -91,6 +92,9 @@ const Settings = (props) => {
     }
 
   }
+
+  let ActiveSubsArray = GetActiveSub();
+  // console.log(getCustomClaimRole());
 
   const [state, setState] = useState({
     firstName: user.firstName,

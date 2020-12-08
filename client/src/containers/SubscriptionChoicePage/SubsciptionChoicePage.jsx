@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 const SubscriptionChoicePage = (props) => {
     const classes = useStyles();
     const theme = useTheme();
-    const prevPageState = props.history.location.state;
+    let prevPageState = props.history.location.state;
 
     let { user, authData } = useSelector(state => ({
         user: state.users.user,
@@ -88,6 +88,9 @@ const SubscriptionChoicePage = (props) => {
 
             ]
         };
+    }
+    if(!prevPageState || !prevPageState.PaymentType){
+        prevPageState = {PaymentType:"Monthly"};
     }
 
     let isMonthlyTrue = true;
@@ -132,10 +135,19 @@ const SubscriptionChoicePage = (props) => {
           })
     }
 
+    const handleBack = () => {
+        props.history.push({
+            pathname:"/settings"
+          })
+    }
+
     return (
         <Container className={"containerMain"}>
             <Grid item container direction={"row"} className={classes.settingsWidget} spacing={0} >
-                <Grid item container direction={'column'} xs={12} justify={'center'} alignItems="center">
+                <Grid item container xs={4} sm={2} md={1}>
+                    <Button variant={'outlined'} color={'primary'} style={{maxHeight:"48px", marginRight:"12px"}} onClick={handleBack}>Back</Button>
+                </Grid>
+                <Grid item container direction={'column'} xs={8} sm={10} md={11} justify={'center'} alignItems="center">
                     <Typography variant={'h5'} > Choose Your Plan</Typography>
                     <Typography variant={'body1'}> Get the features you need and control your systems remotely </Typography>
                 </Grid>

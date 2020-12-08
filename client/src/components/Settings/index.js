@@ -6,11 +6,13 @@ import { connect, useSelector, shallowEqual } from "react-redux";
 import agroLogo from "./../../img/AgroMationLogosquare512.png"
 import { makeStyles, Container, Grid, Typography, Divider, Snackbar, Button, List, ListItem } from "@material-ui/core";
 import Alert from '@material-ui/lab/Alert';
+import moment from "moment";
 //User imports
 import { EditUserInput, EditUserButton, validateEmail, validatePhone } from "../../containers/UsersPage/UsersPage";
 import { setUser } from "../../actions/User"
+import { fetchManagedUsers } from "../../actions/ManageUsersActions";
 //firebase
-import { db, auth, getCustomClaimRole } from "../../consts/firebase";
+import {app, createPortalLink, db, auth, getCustomClaimRole } from "../../consts/firebase";
 
 
 
@@ -18,7 +20,7 @@ import { db, auth, getCustomClaimRole } from "../../consts/firebase";
 const useStyles = makeStyles((theme) => ({
   settingsWidget: {
     backgroundImage: ` url("https://cdn.discordapp.com/attachments/370759274621698048/755271571181928459/unknown.png")`,
-    backgroundRepeat:"repeat-x",
+    backgroundRepeat: "repeat-x",
     backgroundColor: theme.palette.secondary.main,
     width: "100%",
     minHeight: "512px",
@@ -40,9 +42,10 @@ const useStyles = makeStyles((theme) => ({
 
 const Settings = (props) => {
   const classes = useStyles();
-  let { user, authData } = useSelector(state => ({
+  let { user, authData, managedUsers } = useSelector(state => ({
     user: state.users.user,
     authData: state.auth.authenticated,
+    managedUsers: state.managedUsers,
 
 
   }), shallowEqual);
@@ -55,7 +58,7 @@ const Settings = (props) => {
       lastName: "loading",
       email: "loading",
       phone: "set phone",
-      subscriptions:[],
+      subscription: { status: null },
       location: [
         {
           name: "loading",
@@ -68,32 +71,42 @@ const Settings = (props) => {
 
       ]
     };
+    managedUsers = {
+      user: []
+    }
   }
   //if the user has not set a phone set the phone to say that
   if (!user.phone) {
     user.phone = "Set phone"
   }
 
-  let GetActiveSub = () => {
-    let canceled = [];
-    let active = null;
-    user.subscriptions.forEach((item) => {
-      if(item.status === 'canceled'){
-        canceled.push(item);
-      }
-      if(item.status === 'active'){
-        active = item;
-      }
-    })
-    if(active){
-      return active;
-    }else{
-      return canceled[0];
-    }
 
+  let accountType = "Free";
+  let accountInterval = "month";
+  let accountBillDue = "$ 50.00";
+  let accountBillDueDate = "";
+  let accountUsedSeats = "1/1";
+
+  if (user.accountType === "Owner" && user.subscription.status) {
+    accountType = user.subscription.role[0].toUpperCase() + user.subscription.role.substring(1);
+    accountInterval = user.subscription.interval + "ly Account";
+    accountBillDue = "$ " + user.subscription.unitCost / 100;
+    let dueDateObj = moment.unix(user.subscription.current_period_end.seconds);
+    accountBillDueDate = dueDateObj.format('MMMM, Do, YYYY');
+    switch (user.subscription.role) {
+      case "premium":
+        accountUsedSeats = managedUsers.user.length + " / 5";
+        break;
+      case "business":
+        accountUsedSeats = managedUsers.user.length + " / 10";
+        break;
+      default:
+        console.log("free account handle managed users")
+        break;
+    }
   }
 
-  let ActiveSubsArray = GetActiveSub();
+
   // console.log(getCustomClaimRole());
 
   const [state, setState] = useState({
@@ -105,6 +118,9 @@ const Settings = (props) => {
 
   //effect pattern to update state with new values  when they arrive
   useEffect(() => {
+    if (user.accountOwner === null && managedUsers.user.length === 0) {
+      props.fetchManagedUsers();
+    }
     if (state.firstName === "loading" && user.firstName !== "loading") {
       setState({
         firstName: user.firstName,
@@ -231,10 +247,19 @@ const Settings = (props) => {
   }
 
   const upgradePlan = () => {
-    props.history.push({
-      pathname:"/Subscribe",
-      state:{PaymentType:"Annual"}
-    })
+    if (user.subscription.status !== "active") {
+      props.history.push({
+        pathname: "/Subscribe",
+        state: { PaymentType: "monthly" }
+      })
+    }else{
+      createPortalLink();
+    }
+
+  }
+
+  const EditBillingInfo = async () => {
+    createPortalLink();
   }
 
   return (
@@ -267,7 +292,7 @@ const Settings = (props) => {
         <Grid item xs={12} sm={6}>
 
         </Grid>
-        {user.accountType==="Owner" ? (<Grid item container xs={12} className={classes.SubContainer} spacing={3}>
+        {user.accountType === "Owner" ? (<Grid item container xs={12} className={classes.SubContainer} spacing={3}>
           <Grid item xs={12} >
             <Typography variant={'h5'}>
               Subscription
@@ -276,18 +301,18 @@ const Settings = (props) => {
           <Grid item xs={12} sm={6} md={4}>
             <List>
               <ListItem>
-              <Typography variant={'body2'}>
+                <Typography variant={'body2'}>
                   {"Account Type"}
                 </Typography>
               </ListItem>
               <ListItem>
                 <Typography variant={'h6'}>
-                  {"Business"}
+                  {accountType}
                 </Typography>
               </ListItem>
               <ListItem>
                 <Typography variant={'body2'}>
-                  {"Monthly Account"}
+                  {accountInterval}
                 </Typography>
               </ListItem>
             </List>
@@ -295,16 +320,16 @@ const Settings = (props) => {
           <Grid item xs={12} sm={6} md={4}>
             <List>
               <ListItem>
-                <Typography variant={"body2"}> Current monthly bill</Typography>
+                <Typography variant={"body2"}> Next Bill Due</Typography>
               </ListItem>
               <ListItem>
-                <Typography variant={"h6"}>{user.billDue || "$ 100.00"}</Typography>
+                <Typography variant={"h6"}>{accountBillDue}</Typography>
               </ListItem>
               <ListItem>
                 <Typography variant={"body2"}> Next Bill Due</Typography>
               </ListItem>
               <ListItem>
-                <Typography variant={"subtitle1"}> December 1st</Typography>
+                <Typography variant={"subtitle1"}>{accountBillDueDate}</Typography>
               </ListItem>
             </List>
           </Grid>
@@ -314,22 +339,22 @@ const Settings = (props) => {
                 <Typography variant={"body2"}>Account seats</Typography>
               </ListItem>
               <ListItem>
-                <Typography variant={"h6"}>{"4/10"}</Typography>
+                <Typography variant={"h6"}>{accountUsedSeats}</Typography>
               </ListItem>
             </List>
           </Grid>
           <Grid item xs={12} sm={8} md={10}>
-          <Button variant={"outlined"} color={"primary"} onClick={upgradePlan}>
-            Upgrade plan
+            <Button variant={"outlined"} color={"primary"} onClick={upgradePlan}>
+              Upgrade plan
             </Button>
           </Grid>
           <Grid item xs={12} sm={4} md={2}>
-          <Button variant={"outlined"} color={"primary"} >
-            Edit Billing info
+            <Button variant={"outlined"} color={"primary"} onClick={EditBillingInfo}>
+              Edit Billing info
             </Button>
           </Grid>
-        </Grid>):(<Grid item xs={12}> </Grid>) }
-        
+        </Grid>) : (<Grid item xs={12}> </Grid>)}
+
         <Grid item xs={12} sm={8} md={10}>
 
         </Grid>
@@ -353,7 +378,7 @@ function mapStateToProps(state) {
 }
 
 
-const formedComponent = compose(connect(mapStateToProps, { setUser: setUser }))(Settings);
+const formedComponent = compose(connect(mapStateToProps, { setUser: setUser, fetchManagedUsers: fetchManagedUsers }))(Settings);
 
 
 export default formedComponent;

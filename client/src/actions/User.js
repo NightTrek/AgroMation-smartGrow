@@ -20,34 +20,52 @@ export const fetchUser = (UID, EMAIL) => async dispatch => {
             .get()
             .then((querySnapshot) => {
                 if (!querySnapshot.empty) {
-                    querySnapshot.forEach( async (doc) => {
+                    querySnapshot.forEach(async (doc) => {
                         if (doc.exists) {
+                            console.log(doc);
                             // console.log("user dispatched")
-                            console.log('checking if user has owner')
-                            let subscriptionsArray = [];
+                            // console.log('checking if user has owner')
+                            let subscriptionObj = {};
                             if (doc.data().accountOwner === null) {
                                 console.log("user has no owner")
+                                //Get Stripe Subscription Data
                                 const docRef = await db
                                     .collection('StripeCustomers')
                                     .doc(UID)
-                                    .collection('subscriptions').get()
-                                    if(!docRef.empty){
-                                        if(docRef.length>1){
-                                            //TODO 
-                                            docRef.forEach((doc) =>{
-                                                subscriptionsArray.push(doc.data())
-                                            })
-                                        }else{
-                                            docRef.forEach((doc) =>{
-                                                subscriptionsArray.push(doc.data())
-                                            })
-                                        }
+                                    .collection('subscriptions').get();
+                                if (!docRef.empty) {
+
+                                    //Get Pricing data to attach to subscription data
+
+                                    let mostRecentSub = docRef.docs[docRef.docs.length - 1].data();
+                                    subscriptionObj = {...mostRecentSub};
+                                                    let priceSnapshot = await mostRecentSub.price.get()
+                                                    if(!priceSnapshot.empty){
+                                                        // console.log("adding pricing to subscription info")
+                                                        let pricing = priceSnapshot.data()
+                                                        subscriptionObj = {
+                                                            ...mostRecentSub,
+                                                            interval:pricing.interval,
+                                                            intervalCount: pricing.interval_count,
+                                                            description: pricing.description,
+                                                            unitCost: pricing.unit_amount,
+                                                        }
+
+                                                    }else{
+                                                        console.log('PRicing Not found in dB')
+                                                    }
+
+
+                                              //  }
+
+                                            //})
+                                        
                                     }
-                                    else{
-                                        console.log("USER DOES NOT HAVE STRIPE Subscription")
-                                    }
+                                else {
+                                    console.log("USER DOES NOT HAVE STRIPE Subscription")
+                                }
                             }
-                            let userOutputObject = { doc: doc.id, subscriptions:subscriptionsArray, ...doc.data() };
+                            let userOutputObject = { doc: doc.id, subscription: subscriptionObj, ...doc.data() };
                             dispatch({ type: FETCH_USER, payload: userOutputObject })
                         } else {
                             console.log("User Doc From UID does not exist")

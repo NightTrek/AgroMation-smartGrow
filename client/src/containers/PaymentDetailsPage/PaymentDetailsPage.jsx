@@ -228,8 +228,8 @@ const PaymentDetailsPage = (props) => {
             .collection('checkout_sessions')
             .add({
                 price: GeneratePriceID(),
-                success_url: window.location.origin,
-                cancel_url: window.location.origin,
+                success_url: window.location.origin+ "/Settings",
+                cancel_url: window.location.origin+"/secure/payment",
             });
 
         docRef.onSnapshot(async (snap) => {

@@ -1,4 +1,4 @@
-import {FETCH_MANAGED_USERS, PENDING_MANAGED_USERS, ADD_MANAGED_USER} from "./types";
+import {FETCH_MANAGED_USERS, PENDING_MANAGED_USERS} from "./types";
 import {exampleManagedUsers} from "../exampleDataTypes/clientExamlpeDataTypes";
 import {db} from "../consts/firebase";
 

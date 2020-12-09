@@ -1,6 +1,6 @@
-import { app, db } from "../consts/firebase";
+import { app } from "../consts/firebase";
 import { AUTH_ERROR, AUTH_USER } from "./types";
-import { setUser, setExampleUser } from "./User";
+// import { setUser, setExampleUser } from "./User";
 
 export const signUpWithEmailPass = (formProps) => async dispatch => {
 

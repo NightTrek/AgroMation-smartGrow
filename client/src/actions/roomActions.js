@@ -53,7 +53,7 @@ export const getRooms = (User, location) => async dispatch => {
                                 RoomPerLocationArray.push({doc:docSnapshot.id, ...docSnapshot.data()})
                             }
                             else{
-                                throw "room Reference not found"
+                                throw new Error("room Reference not found")
                             }
                         
                     }

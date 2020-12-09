@@ -1,5 +1,5 @@
 import { FETCH_ZONES, PENDING_ZONES } from "./types";
-import { db } from "../consts/firebase";
+// import { db } from "../consts/firebase";
 import { exampleLightZoneArray } from "../exampleDataTypes/clientExamlpeDataTypes"
 
 export const pendingZones = () => dispatch => {

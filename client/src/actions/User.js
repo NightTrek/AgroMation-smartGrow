@@ -89,7 +89,7 @@ export const fetchUser = (UID, EMAIL) => async dispatch => {
                                             db.runTransaction((transaction) => {
                                                 return transaction.get(UserRef).then((UserDoc) => {
                                                     if (!UserDoc.exists) {
-                                                        throw "Document does not exist"
+                                                        throw new Error("Error Document does not exist")
                                                     }
                                                     let data = UserDoc.data();
                                                     let output = {

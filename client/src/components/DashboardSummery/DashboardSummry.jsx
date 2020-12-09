@@ -14,7 +14,7 @@ import ListItem from '@material-ui/core/ListItem';
 import { StandardRoundSelectForm } from "../StandardSelect/StandardSelect.js";
 import { sampleTempData, sampleHumidityData, sampleProgressData, sampleCO2Data } from "../../exampleDataTypes/clientExamlpeDataTypes";
 import './style.css';
-import VerticalDividerStyled from "../VerticalDivider/VerticalDivider"
+// import VerticalDividerStyled from "../VerticalDivider/VerticalDivider"
 import { getRooms, setRoom, setExampleRooms, pendingRooms } from "../../actions/roomActions";
 import {resetPendingZones, resetZones} from "../../actions/LightZoneActions";
 
@@ -238,37 +238,40 @@ function DashboardSummary(props) {
     }
 
     const generateTempData = () => {
-        return sampleTempData;
-        if(user.example){
+        
             return sampleTempData;
-        }
-        console.log("generating Temp data")
-        let nominal = 0;
-        let warning = 0;
-        let fault = 0;
-        for(let i = 0; i<rooms.length; i++){
-            let item = rooms[i];
-            console.log(item)
-            if(item.tempC<item.tempMax && item.tempC>item.tempMin){
-                console.log(i)
-                nominal++;
-                continue;
+        
+        
+        // if(user.example){
+        //     return sampleTempData;
+        // }
+        // console.log("generating Temp data")
+        // let nominal = 0;
+        // let warning = 0;
+        // let fault = 0;
+        // for(let i = 0; i<rooms.length; i++){
+        //     let item = rooms[i];
+        //     console.log(item)
+        //     if(item.tempC<item.tempMax && item.tempC>item.tempMin){
+        //         console.log(i)
+        //         nominal++;
+        //         continue;
                 
-            }
-            if(item.tempC>item.tempMax && item.tempC<item.tempMax+10|| item.tempC<item.tempMin && item.tempC>item.tempMin-10){
-                console.log(i)
-                warning++;
-                continue;
-            }
-            if(item.tempC>item.tempMax+10 ||item.tempC<item.tempMin-10){
-                console.log(i)
-                fault++
-                continue;
-            }
-        }
-        return [{ x: "Fault", y: fault, catName: "Fault" },
-        { x: "Warning", y: warning, catName: "Warning" },
-        { x: "Nominal", y: nominal, catName: "Nominal" }];
+        //     }
+        //     if(item.tempC>item.tempMax && item.tempC<item.tempMax+10|| item.tempC<item.tempMin && item.tempC>item.tempMin-10){
+        //         console.log(i)
+        //         warning++;
+        //         continue;
+        //     }
+        //     if(item.tempC>item.tempMax+10 ||item.tempC<item.tempMin-10){
+        //         console.log(i)
+        //         fault++
+        //         continue;
+        //     }
+        // }
+        // return [{ x: "Fault", y: fault, catName: "Fault" },
+        // { x: "Warning", y: warning, catName: "Warning" },
+        // { x: "Nominal", y: nominal, catName: "Nominal" }];
     }
 
     const handleChange = (event) => {

@@ -5,8 +5,8 @@ import { Grid, Typography, List, ListItem, Button } from '@material-ui/core'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { getRooms, setRoom } from "../../actions/roomActions";
 import { withRouter } from "react-router";
-import {DeveloperID, AccountPassword} from "../../consts/talk2m";
-import axios from "axios";
+// import {DeveloperID, AccountPassword} from "../../consts/talk2m";
+// import axios from "axios";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -53,20 +53,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const EwonName = "Agro_Office";
-const EwonUser = "Agro";
-const EwonPass = "Agro2019!"; 
+// const EwonName = "Agro_Office";
+// const EwonUser = "Agro";
+// const EwonPass = "Agro2019!"; 
 
-const parseEwonLiveData = (rawData) => {
-    const liveData = {}
-    for(let i = 0; i<rawData.length;i++){
-        if(typeof rawData[i] === 'string'){
-            liveData[rawData[i]]= rawData[i+1]
-        }
-    }
-    return liveData
+// const parseEwonLiveData = (rawData) => {
+//     const liveData = {}
+//     for(let i = 0; i<rawData.length;i++){
+//         if(typeof rawData[i] === 'string'){
+//             liveData[rawData[i]]= rawData[i+1]
+//         }
+//     }
+//     return liveData
 
-}
+// }
 
 const LiveDataWidget = (props) => {
     const theme = useTheme();
@@ -84,10 +84,9 @@ const LiveDataWidget = (props) => {
     const classes = useStyles();
     let LiveData = props.LiveData || exampleLiveData;
 
-    let { rooms, pick, user } = useSelector(state => ({
+    let { rooms, pick } = useSelector(state => ({
         rooms: state.growRooms.rooms,
         pick: state.growRooms.roomIndex,
-        user: state.users.user
 
     }), shallowEqual)
 

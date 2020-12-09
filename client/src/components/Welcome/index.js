@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 //component import
 import Dashboard from "../../containers/dashboard2/Dashboard2";
 //old auth
-import Auth from "../../containers/Authentication";
+// import Auth from "../../containers/Authentication";
 //new Auth
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import {app} from "../../consts/firebase";

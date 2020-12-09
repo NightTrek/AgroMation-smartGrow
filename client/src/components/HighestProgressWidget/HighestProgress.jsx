@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { connect, useSelector, shallowEqual } from 'react-redux';
 import { compose } from "redux";
 import { withRouter } from "react-router";
@@ -168,10 +168,9 @@ const HighestProgress = (props) => {
     const progressColorScale = [theme.palette.roomStatus.warning, theme.palette.primary.main,];
 
 
-    let { rooms, pick, user } = useSelector(state => ({
+    let { rooms, pick } = useSelector(state => ({
         rooms: state.growRooms.rooms,
         pick: state.growRooms.roomIndex,
-        user: state.users.user
 
     }), shallowEqual)
 

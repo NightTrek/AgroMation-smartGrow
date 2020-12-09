@@ -1,21 +1,17 @@
 
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-// import moment from "moment";
-import { connect, useSelector, shallowEqual } from 'react-redux';
-import { compose } from "redux";
-import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles'; //useTheme
+
+import { useTheme } from '@material-ui/core/styles'; //useTheme
 import {
-    Grid, Typography, Select, MenuItem, ListItemText, List, ListItem, ListItemIcon, Button, Modal, Backdrop, Fade,
-    Box, Slider, Input, IconButton, Snackbar, CircularProgress
+    Grid, Typography, ListItemText, List, ListItem, ListItemIcon, Button, Modal, Backdrop, Fade,
+    Box, Slider, Input, IconButton, 
 } from '@material-ui/core'
-import Alert from '@material-ui/lab/Alert';
 import ReactSpeedometer from "react-d3-speedometer"
 import ErrorIcon from '@material-ui/icons/Error';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import HelpIcon from '@material-ui/icons/Help';
 import VerticalDivider from "../VerticalDivider/VerticalDivider";
-import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect.js";
 import CancelIcon from '@material-ui/icons/Cancel';
 
 //import firebase stuff
@@ -134,6 +130,20 @@ function FieldMeter(props) {
                     }
                 };
             case "pressure":
+                return {
+                    superMin: -500,
+                    min: -25,
+                    max: 25,
+                    superMax: 500,
+                    sliderMin: 0,
+                    sliderMax: 1500,
+                    output: {
+                        pressureSetPoint: props.setPoint,
+                        pressureMin: props.min,
+                        pressureMax: props.max,
+                    }
+                };
+            default:
                 return {
                     superMin: -500,
                     min: -25,
@@ -266,7 +276,7 @@ function FieldMeter(props) {
 
     const handleSendChanges = () => {
         //verify there are changes
-        if (meterState.setPoint == props.setpoint && meterState.minMax[0] == props.min && meterState.minMax[1] == props.max) {
+        if (meterState.setPoint === props.setpoint && meterState.minMax[0] === props.min && meterState.minMax[1] === props.max) {
             props.handleAlertOpen("Did  you forget to make the changes")
             return 0;
         }
@@ -283,7 +293,7 @@ function FieldMeter(props) {
         db.runTransaction((transaction) => {
             return transaction.get(roomRef).then((roomDocSnapshot) => {
                 if (!roomDocSnapshot.exists) {
-                    throw "Document does not exist"
+                    throw new Error("Document does not exist")
                 }
                 let data = roomDocSnapshot.data();
                 //maybe check and see if the document needs to be updated

@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { compose } from "redux";
 import { connect, useSelector, shallowEqual } from "react-redux";
 
-import agroLogo from "./../../img/AgroMationLogosquare512.png"
-import { makeStyles, Container, Grid, Typography, Divider, Snackbar, Button, List, ListItem } from "@material-ui/core";
+// import agroLogo from "./../../img/AgroMationLogosquare512.png"
+import { makeStyles, Container, Grid, Typography, Snackbar, Button, List, ListItem } from "@material-ui/core";
 import Alert from '@material-ui/lab/Alert';
 import moment from "moment";
 //User imports
@@ -12,7 +12,7 @@ import { EditUserInput, EditUserButton, validateEmail, validatePhone } from "../
 import { setUser } from "../../actions/User"
 import { fetchManagedUsers } from "../../actions/ManageUsersActions";
 //firebase
-import {app, createPortalLink, db, auth, getCustomClaimRole } from "../../consts/firebase";
+import { createPortalLink, db, auth } from "../../consts/firebase"; //getCustomClaimRole
 
 
 
@@ -42,9 +42,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Settings = (props) => {
   const classes = useStyles();
-  let { user, authData, managedUsers } = useSelector(state => ({
+  let { user, managedUsers } = useSelector(state => ({
     user: state.users.user,
-    authData: state.auth.authenticated,
     managedUsers: state.managedUsers,
 
 
@@ -116,10 +115,12 @@ const Settings = (props) => {
     phone: user.phone,
   })
 
+  let fetchMUsers = props.fetchMUsers;
+
   //effect pattern to update state with new values  when they arrive
   useEffect(() => {
     if (user.accountOwner === null && managedUsers.user.length === 0) {
-      props.fetchManagedUsers();
+      fetchMUsers();
     }
     if (state.firstName === "loading" && user.firstName !== "loading") {
       setState({
@@ -132,7 +133,7 @@ const Settings = (props) => {
         invalidAlert: false,
       })
     }
-  }, [user])
+  }, [user, managedUsers.user, fetchMUsers, state.firstName])
 
 
   const handleInputChange = (event) => {
@@ -211,7 +212,7 @@ const Settings = (props) => {
     db.runTransaction((transaction) => {
       return transaction.get(UserRef).then((UserDocSnapshot) => {
         if (!UserDocSnapshot.exists) {
-          throw "Document does not exist"
+          throw new Error("Document does not exist")
         }
         let data = UserDocSnapshot.data();
         //maybe check and see if the document needs to be updated

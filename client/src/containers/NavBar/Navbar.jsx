@@ -352,7 +352,7 @@ const MiniDrawer = (props) => {
                         if (text.name !== "Users") {
                             return (
                                 <NavLink to={"/" + text.name} key={text.name} onClick={(e) => {
-                                    if (auth == undefined || auth === "") {
+                                    if (auth === undefined || auth === "") {
                                         e.preventDefault()
                                     }
                                 }}>
@@ -367,7 +367,7 @@ const MiniDrawer = (props) => {
                         } else if (user.accountType !== "Viewer" && user.accountType !== "User") {
                             return (
                                 <NavLink to={"/" + text.name} key={text.name} onClick={(e) => {
-                                    if (auth == undefined || auth === "") {
+                                    if (auth === undefined || auth === "") {
                                         e.preventDefault()
                                     }
                                 }}>
@@ -380,6 +380,7 @@ const MiniDrawer = (props) => {
                                 </NavLink>
                             );
                         }
+                        return (<div></div>);
 
                     })}
 
@@ -396,7 +397,7 @@ const MiniDrawer = (props) => {
                         </Typography>
                     </ListItem>
                     <NavLink to={"/Signout"} key={"Signout"} onClick={(e) => {
-                        if (auth == undefined || auth === "") {
+                        if (auth === undefined || auth === "") {
                             e.preventDefault()
                         }
                     }}>
@@ -409,7 +410,7 @@ const MiniDrawer = (props) => {
                     </NavLink>
                 </List>) : (<List className={classes.signOutClose}>
                     <NavLink to={"/Signout"} key={"Signout"} onClick={(e) => {
-                        if (auth == undefined || auth === "") {
+                        if (auth === undefined || auth === "") {
                             e.preventDefault()
                         }
                     }}>

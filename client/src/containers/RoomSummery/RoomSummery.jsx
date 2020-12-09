@@ -3,18 +3,16 @@ import PropTypes from 'prop-types';
 // import moment from "moment";
 import { connect, useSelector, shallowEqual } from 'react-redux';
 import { compose } from "redux";
-import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles'; //useTheme
+import { makeStyles, useTheme } from '@material-ui/core/styles'; //useTheme
 import {
     Grid, Typography, Select, MenuItem, ListItemText, List, ListItem, ListItemIcon, Button, Modal, Backdrop, Fade,
-    Box, Slider, Input, IconButton, Snackbar, CircularProgress, useMediaQuery 
+    Box, IconButton, Snackbar, CircularProgress, useMediaQuery 
 } from '@material-ui/core'
 import Alert from '@material-ui/lab/Alert';
 import ReactSpeedometer from "react-d3-speedometer"
 import ErrorIcon from '@material-ui/icons/Error';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import HelpIcon from '@material-ui/icons/Help';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect.js";
 import CancelIcon from '@material-ui/icons/Cancel';
 // import VerticalDividerStyled from "../../components/VerticalDivider/VerticalDivider";
@@ -28,7 +26,7 @@ import { getRooms, setRoom, setExampleRooms, pendingRooms, updateRooms } from ".
 import { resetPendingZones, resetZones } from "../../actions/LightZoneActions";
 
 //firebase stuff
-import { db } from "../../consts/firebase";
+// import { db } from "../../consts/firebase";
 
 function DiagnosticColorBar(props) {
     const theme = useTheme();
@@ -91,7 +89,7 @@ DiagnosticColorBar.propTypes = {
 
 
 function StageMeter(props) {
-    const state = props.state;
+    // const state = props.state;
     const classes = props.classes;
     const rooms = props.rooms;
     const pick = props.pick;
@@ -200,19 +198,6 @@ function StageMeter(props) {
     );
 };
 
-const LeftRightButton = withStyles({
-    root: {
-        width: "48px",
-        height: "128px",
-        boxShadow: 'none',
-        textTransform: 'none',
-        marginLeft: "24px",
-        marginRight: "24px",
-        fontSize: 64,
-        lineHeight: 1.5,
-
-    },
-})(Button);
 
 const useStyles = makeStyles((theme) => ({
     roomSummeryWidget: {
@@ -459,7 +444,7 @@ function RoomSummery(props) {
     }
 
     const smallMeter = useMediaQuery('(max-width:430px)');
-    const smallerMeter = useMediaQuery('(max-width:430px)');
+    // const smallerMeter = useMediaQuery('(max-width:430px)');
     let meterWidth = 256;
     if(smallMeter){
         meterWidth = 192;

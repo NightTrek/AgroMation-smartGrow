@@ -732,12 +732,12 @@ const LightingController = (props) => {
 
     ///Grid stuff
     const [gridApi, setGridApi] = useState(null);
-    const [gridColumnApi, setGridColumnApi] = useState(null);
+    // const [gridColumnApi, setGridColumnApi] = useState(null);
 
 
     function onGridReady(params) {
         setGridApi(params.api);
-        setGridColumnApi(params.columnApi);
+        // setGridColumnApi(params.columnApi);
     }
 
 
@@ -750,7 +750,7 @@ const LightingController = (props) => {
                 filter: event.target.value
             }
         });
-        var filterState = gridApi.getFilterModel();
+        // var filterState = gridApi.getFilterModel();
         // console.log('filterState: ', filterState);
         // props.setRoom(event.target.value);
         gridApi.onFilterChanged();
@@ -783,14 +783,13 @@ const LightingController = (props) => {
         // console.log(state.selectedZones);
         for (let i = 0; i < state.spectrum.length; i++) {
             if (typeof state.spectrum[i] !== "number") {
-                throw "invalid type spectrum"
-                return 0;
+                throw new Error("invalid type spectrum")
             }
             if (state.spectrum[i] < 0) {
-                throw "invalid value spectrum must be positive"
+                throw new Error("invalid value spectrum must be positive")
             }
             if (state.spectrum[i] > 100) {
-                throw "invalid value spectrum must be below 100"
+                throw new Error("invalid value spectrum must be below 100")
             }
         }
 
@@ -801,7 +800,7 @@ const LightingController = (props) => {
                 let data = await db.runTransaction((transaction) => {
                     return transaction.get(ZoneRef).then((roomDocSnapshot) => {
                         if (!roomDocSnapshot.exists) {
-                            throw "Document does not exist"
+                            throw new Error("Document does not exist")
                         }
                         let data = roomDocSnapshot.data();
                         //maybe check and see if the document needs to be updated
@@ -836,7 +835,7 @@ const LightingController = (props) => {
                         newArrayitem = updatedZones[index]
                     }
                 }
-                if (newArrayitem === {} || newArrayitem.name == undefined) {
+                if (newArrayitem === {} || newArrayitem.name === undefined) {
                     newArrayitem = lightZones[i]
                 }
                 newReduxLightZones.push(newArrayitem);
@@ -880,27 +879,26 @@ const LightingController = (props) => {
     const setPower = async () => {
 
         if (typeof state.power !== "number") {
-            throw "invalid type spectrum"
-            return 0;
+            throw new Error("invalid type spectrum")
         }
         if (state.power < 0) {
-            throw "invalid value spectrum must be positive"
+            throw new Error("invalid value spectrum must be positive")
         }
         if (state.power > 100) {
-            throw "invalid value spectrum must be below 100"
+            throw new Error("invalid value spectrum must be below 100")
         }
         try {
             let updatedZones = []
             for (let i = 0; i < state.selectedZones.length; i++) {
                 if (!state.selectedZones[i].doc) {
-                    throw `Error selected zone is missing doc ${state.selectedZones[i]}`
+                    throw new Error(`Error selected zone is missing doc ${state.selectedZones[i]}`)
                 }
                 let ZoneRef = db.collection("LightZones").doc(state.selectedZones[i].doc);
 
                 let data = await db.runTransaction((transaction) => {
                     return transaction.get(ZoneRef).then((roomDocSnapshot) => {
                         if (!roomDocSnapshot.exists) {
-                            throw "Document does not exist"
+                            throw new Error("Document does not exist")
                         }
                         let data = roomDocSnapshot.data();
                         //maybe check and see if the document needs to be updated
@@ -933,7 +931,7 @@ const LightingController = (props) => {
                         newArrayitem = updatedZones[index]
                     }
                 }
-                if (newArrayitem === {} || newArrayitem.name == undefined) {
+                if (newArrayitem === {} || newArrayitem.name === undefined) {
                     newArrayitem = lightZones[i]
                 }
                 newReduxLightZones.push(newArrayitem);
@@ -998,14 +996,14 @@ const LightingController = (props) => {
             let updatedZones = []
             for (let i = 0; i < state.selectedZones.length; i++) {
                 if (!state.selectedZones[i].doc) {
-                    throw `Error selected zone is missing doc ${state.selectedZones[i]}`
+                    throw new Error(`Error selected zone is missing doc ${state.selectedZones[i]}`)
                 }
                 let ZoneRef = db.collection("LightZones").doc(state.selectedZones[i].doc);
 
                 let data = await db.runTransaction((transaction) => {
                     return transaction.get(ZoneRef).then((roomDocSnapshot) => {
                         if (!roomDocSnapshot.exists) {
-                            throw "Document does not exist"
+                            throw new Error("Document does not exist")
                         }
                         let data = roomDocSnapshot.data();
                         //maybe check and see if the document needs to be updated
@@ -1039,7 +1037,7 @@ const LightingController = (props) => {
                         newArrayitem = updatedZones[index]
                     }
                 }
-                if (newArrayitem === {} || newArrayitem.name == undefined) {
+                if (newArrayitem === {} || newArrayitem.name === undefined) {
                     newArrayitem = lightZones[i]
                 }
                 newReduxLightZones.push(newArrayitem);

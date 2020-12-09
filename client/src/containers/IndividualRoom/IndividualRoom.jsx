@@ -118,10 +118,10 @@ const IndividualRoom = () => {
         });
     }
 
-    const options = [
-        'warning',
-        'FAULT',
-        'All'];
+    // const options = [
+    //     'warning',
+    //     'FAULT',
+    //     'All'];
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);

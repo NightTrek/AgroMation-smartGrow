@@ -1,14 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from "redux";
-import { Grid, Typography, ListItem, List, ListItemIcon, ListItemText, Menu, MenuItem,
-    useMediaQuery } from '@material-ui/core';
+import { Grid, Typography, Menu, MenuItem } from '@material-ui/core';
 import { makeStyles, } from '@material-ui/core/styles'; //useTheme
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import ErrorRoundedIcon from '@material-ui/icons/ErrorRounded';
-import BrokenImageIcon from '@material-ui/icons/BrokenImage';
-import InfoIcon from '@material-ui/icons/Info';
-import Button from '@material-ui/core/Button';
+// import ErrorRoundedIcon from '@material-ui/icons/ErrorRounded';
+// import BrokenImageIcon from '@material-ui/icons/BrokenImage';
+// import InfoIcon from '@material-ui/icons/Info';
+// import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import moment from 'moment';
 // import FixedSizeList  from 'react-window/src/FixedSizeList';
@@ -18,7 +17,6 @@ import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 import { sampleNotifications } from "../../exampleDataTypes/clientExamlpeDataTypes";
 
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
-import { useTheme } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -248,7 +246,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const SystemNotifications = () => {
     const classes = useStyles();
-    const theme = useTheme();
+    // const theme = useTheme();
     const [state, setState] = React.useState({ //setState
         allnotifications: sampleNotifications,
         notifications: sampleNotifications,
@@ -278,12 +276,12 @@ export const SystemNotifications = () => {
 
     ///Grid stuff
     const [gridApi, setGridApi] = React.useState(null);
-    const [gridColumnApi, setGridColumnApi] = React.useState(null);
+    // const [gridColumnApi, setGridColumnApi] = React.useState(null);
 
 
     function onGridReady(params) {
         setGridApi(params.api);
-        setGridColumnApi(params.columnApi);
+        // setGridColumnApi(params.columnApi);
     }
 
     const notificationType = (props) => {
@@ -315,66 +313,7 @@ export const SystemNotifications = () => {
             margin: "8px"
         }
         return (<div style={{ ...mainStyle }}>{activeTime.format('HH:mm, MM:DD:YYYY')} </div>)
-    }
-
-
-    const NotificationsListItems = (props, style) => {
-
-        const classes = useStyles();
-        const pick = state.pick
-        return (
-            state.notifications.map((item, index) => {
-                const itemTime = moment.unix(item.timeStamp);
-                if (index > 3) {
-                    return <div key={index}></div>
-                }
-                switch (item.type) {
-                    case "warning":
-                        if (pick === 0 || pick === 2) {
-                            return (
-                                <ListItem button alignItems="flex-start" style={style} className={`${classes.warningItem} ${classes.globalListItemQueries}`} key={index}>
-                                    <ListItemIcon className={classes.listItemIcon} ><ErrorRoundedIcon className={classes.listItemIcon} /></ListItemIcon>
-                                    <ListItemText className={`${classes.globalListItemText}`} >{item.room + ": "}</ListItemText>
-                                    <ListItemText className={`${classes.globalListItemText} ${classes.warningText}`}> {item.msg + " "}</ListItemText>
-                                    <ListItemText className={`${classes.globalListItemText}`}>{itemTime.format('HH:mm, MM:DD:YYYY') + " "}</ListItemText>
-                                </ListItem>
-                            )
-                        }
-                        return "";
-                    case "FAULT":
-                        if (pick === 1 || pick === 2) {
-                            return (
-                                <ListItem button alignItems="flex-start" style={style} className={`${classes.warningItem} ${classes.globalListItemQueries}`} key={index}>
-                                    <ListItemIcon className={classes.listItemIcon} ><BrokenImageIcon className={classes.listItemIcon} /></ListItemIcon>
-                                    <ListItemText className={`${classes.globalListItemText}`}>{item.room + ": "}</ListItemText>
-                                    <ListItemText className={`${classes.globalListItemText} ${classes.faultText}`}>{item.msg + " "}</ListItemText>
-                                    <ListItemText className={`${classes.globalListItemText}`}>{itemTime.format('HH:mm, MM:DD:YYYY') + " "}</ListItemText>
-                                </ListItem>
-                            )
-                        }
-                        return ""
-                    default:
-                        if (pick !== 0 && pick !== 1) {
-                            return (
-                                <ListItem button alignItems="space-evenly" style={style} className={`${classes.infoItem} ${classes.globalListItemQueries}`} key={index}>
-                                    <ListItemIcon className={classes.listItemIcon} ><InfoIcon className={classes.listItemIcon} /></ListItemIcon>
-                                    <ListItemText className={`${classes.globalListItemText}`}>{item.room + ": "}</ListItemText>
-                                    <ListItemText className={`${classes.globalListItemText} ${classes.infoText}`} >{item.room + ": " + item.msg + " "}</ListItemText>
-                                    <ListItemText className={`${classes.globalListItemText}`}>{itemTime.format('HH:mm, MM:DD:YYYY') + " "}</ListItemText>
-                                </ListItem>
-                            )
-                        }
-                        return "";
-                }
-            }))
-    }
-
-    // const Row = ({ index, style }) => (
-    //     <div style={style}><NotificationsListItems pick={state.pick} /></div>
-    // );
-
-
-   
+    }   
 
     if (gridApi) {
         if (state.pick === 2) {
@@ -391,9 +330,6 @@ export const SystemNotifications = () => {
                 }
             });
         }
-
-
-        var filterState = gridApi.getFilterModel();
         // console.log('filterState: ', filterState);
         // props.setRoom(event.target.value);
         gridApi.onFilterChanged();

@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { compose } from "redux";
 import { connect, useSelector, shallowEqual } from "react-redux";
 
-import agroLogo from "./../../img/AgroMationLogosquare512.png"
-import { useTheme, makeStyles, Container, Grid, Typography, Divider, Snackbar, Button, List, ListItem, ListItemText } from "@material-ui/core";
-import Alert from '@material-ui/lab/Alert';
+// import agroLogo from "./../../img/AgroMationLogosquare512.png"
+import { makeStyles, Container, Grid, Typography, Divider, Button, List, ListItem, ListItemText } from "@material-ui/core";
 //User imports
-import { EditUserInput, EditUserButton, validateEmail, validatePhone } from "../../containers/UsersPage/UsersPage";
 import { setUser } from "../../actions/User"
 //firebase
-import { db, auth } from "../../consts/firebase";
-import { Fullscreen } from "@material-ui/icons";
+// import { db, auth } from "../../consts/firebase";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -58,13 +55,10 @@ const useStyles = makeStyles((theme) => ({
 
 const SubscriptionChoicePage = (props) => {
     const classes = useStyles();
-    const theme = useTheme();
     let prevPageState = props.history.location.state;
 
-    let { user, authData } = useSelector(state => ({
+    let { user } = useSelector(state => ({
         user: state.users.user,
-        authData: state.auth.authenticated,
-
 
     }), shallowEqual);
 

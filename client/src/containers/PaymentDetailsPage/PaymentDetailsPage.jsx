@@ -1,24 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { compose } from "redux";
 import { connect, useSelector, shallowEqual } from "react-redux";
 
-import agroLogo from "./../../img/AgroMationLogosquare512.png"
-import { useTheme, makeStyles, Container, Grid, Typography, Divider, Snackbar, Button, List, ListItem, ListItemText, MenuItem, Select } from "@material-ui/core";
-import Alert from '@material-ui/lab/Alert';
+import { useTheme, makeStyles, Container, Grid, Typography, Divider,  Button, MenuItem, Select } from "@material-ui/core";
 import { loadStripe } from '@stripe/stripe-js';
-import moment from "moment";
-import {
-    CardElement,
-    Elements,
-    useStripe,
-    useElements,
-} from '@stripe/react-stripe-js';
 //User imports
-import { EditUserInput, EditUserButton, validateEmail, validatePhone } from "../../containers/UsersPage/UsersPage";
 import { setUser } from "../../actions/User"
 //firebase
-import { createPortalLink, db, auth, StripeTestKey } from "../../consts/firebase";
+import { createPortalLink, db, StripeTestKey } from "../../consts/firebase";
 import { StandardRoundSelectForm } from "../../components/StandardSelect/StandardSelect";
 
 import "./index.css"
@@ -88,10 +78,8 @@ const PaymentDetailsPage = (props) => {
         }
     }
 
-    let { user, authData } = useSelector(state => ({
+    let { user } = useSelector(state => ({
         user: state.users.user,
-        authData: state.auth.authenticated,
-
 
     }), shallowEqual);
 
@@ -123,7 +111,6 @@ const PaymentDetailsPage = (props) => {
     let accountType = "Free";
     let accountInterval = "month";
     let accountBillDue = "$ 50.00";
-    let accountBillDueDate = "";
 
     if (user.subscription.status && user.subscription.status === 'active') {
         activeAccount = true;
@@ -189,13 +176,13 @@ const PaymentDetailsPage = (props) => {
             return "$ 0.00 USD";
         }
         if (PlanType === 0) {
-            if (state.pick == 0) {
+            if (state.pick === 0) {
                 return DueTodayText[0];
             } else {
                 return DueTodayText[1];
             }
         } else {
-            if (state.pick == 0) {
+            if (state.pick === 0) {
                 return DueTodayText[2];
             } else {
                 return DueTodayText[3];
@@ -205,13 +192,13 @@ const PaymentDetailsPage = (props) => {
 
     const GeneratePriceID = () => {
         if (PlanType === 0) {
-            if (state.pick == 0) {
+            if (state.pick === 0) {
                 return PremiumPlanID[0];
             } else {
                 return PremiumPlanID[1];
             }
         } else {
-            if (state.pick == 0) {
+            if (state.pick === 0) {
                 return BusinessPlanID[0];
             } else {
                 return BusinessPlanID[1];

@@ -4,7 +4,7 @@ import { compose } from "redux";
 import { connect, useSelector, shallowEqual } from "react-redux";
 import {
     Container, Grid, makeStyles, useTheme, withStyles, Button, Modal, Box, Typography, List,
-    ListItem, ListItemText, ListItemIcon, Backdrop, Fade, IconButton, Input, Select, MenuItem, TextField, CircularProgress
+    ListItem, ListItemText, ListItemIcon, Backdrop, Fade, IconButton, Select, MenuItem, TextField, CircularProgress
 } from '@material-ui/core';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -347,7 +347,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const validateEmail = (email) => {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const re = /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
 
@@ -385,12 +385,11 @@ const UserWidget = (props) => {
 
     ///Grid stuff
     const [gridApi, setGridApi] = React.useState(null);
-    const [gridColumnApi, setGridColumnApi] = React.useState(null);
 
 
     function onGridReady(params) {
         setGridApi(params.api);
-        setGridColumnApi(params.columnApi);
+        
     }
 
 
@@ -460,7 +459,6 @@ const UserWidget = (props) => {
 
 
     const handleChange = (event) => {
-        const name = event.target.name;
         // console.log(name);
         setPick(event.target.value);
         // props.setRoom(event.target.value);
@@ -494,7 +492,7 @@ const UserWidget = (props) => {
         let count = 0;
         for (let key in output) {
             //check for changes 
-            if (output[key] == props.mUser[key]) {
+            if (output[key] === props.mUser[key]) {
                 count++
             }
             //if the value is an Array check if the two arrays have the same name for each variables 
@@ -558,7 +556,7 @@ const UserWidget = (props) => {
         db.runTransaction((transaction) => {
             return transaction.get(UserRef).then((UserDoc) => {
                 if (!UserDoc.exists) {
-                    throw "Document does not exist"
+                    throw new Error("Document does not exist")
                 }
                 let data = UserDoc.data();
                 // console.log(data);
@@ -568,9 +566,10 @@ const UserWidget = (props) => {
                         if (key === element || key === "UID") {
                             return true
                         }
+                        return false;
                     });
                     if (!item) {
-                        throw "Keys missing in Output"
+                        throw new Error("Keys missing in Output")
                     }
                 }
                 transaction.update(UserRef, output);
@@ -747,6 +746,7 @@ const UsersPage = (props) => {
 
     }), shallowEqual)
 
+ 
     // console.log(user);
     const testManagedUsers = (item) => {
         // console.log(item)
@@ -797,9 +797,14 @@ const UsersPage = (props) => {
                     address: "loading address"
                 },
 
-            ]
+            ],
+            subscription:{}
         };
     }
+
+
+    
+
     // console.log(managedUsers);
     // console.log(testManagedUsers(managedUsers))
     if (testManagedUsers(managedUsers)) {
@@ -816,6 +821,25 @@ const UsersPage = (props) => {
                 example: true,
             },
         ]
+    }
+
+    let accountUsedSeats = "1/1";
+    let maxManagedUsers = 0;
+    if (user.subscription.status && managedUsers) {
+      
+      switch (user.subscription.role) {
+        case "premium":
+          accountUsedSeats = managedUsers.length + " / 5";
+          maxManagedUsers = 5;
+          break;
+        case "business":
+          accountUsedSeats = managedUsers.length + " / 10";
+          maxManagedUsers = 10;
+          break;
+        default:
+          console.log("free account handle managed users")
+          break;
+      }
     }
 
     const [state, setState] = React.useState({
@@ -900,11 +924,11 @@ const UsersPage = (props) => {
 
     ///Grid stuff
     const [gridApi, setGridApi] = React.useState(null);
-    const [gridColumnApi, setGridColumnApi] = React.useState(null);
+    // const [gridColumnApi, setGridColumnApi] = React.useState(null);
 
     function onGridReady(params) {
         setGridApi(params.api);
-        setGridColumnApi(params.columnApi);
+        // setGridColumnApi(params.columnApi);
     }
 
     //alerts 
@@ -916,6 +940,14 @@ const UsersPage = (props) => {
     };
 
     const submitNewUser = async () => {
+        if (managedUsers.length>=maxManagedUsers){
+            setState({
+                ...state,
+                errorMsg: "Your Subscription only allows "+maxManagedUsers+" Users",
+                invalidAlert: true,
+            })
+            return 0;
+        }
         if (state.firstName.length === 0 || state.firstName.length < 3) {
             setState({
                 ...state,
@@ -1005,10 +1037,11 @@ const UsersPage = (props) => {
         <Container className={"containerMain"}>
             <Grid container item direction={"column"} spacing={5} className={classes.usersPageWidget} alignItems={"center"}>
                 <Grid item container direction={'row'} style={{ paddingRight: "24px" }}>
-                    <Grid item xs>
+                    <Grid item xs={12} sm={8} md={10} lg={11}>
                         <Typography variant={"h4"}>Manage Users</Typography>
                     </Grid>
-                    <Grid item xs>
+                    <Grid item xs={12} sm={4} md={2} lg={1}>
+                        <Typography variant={'h6'}>{accountUsedSeats}</Typography>
                     </Grid>
                 </Grid>
                 <Grid item container direction={"row"} spacing={5} className={classes.UserWidgetContainer} justify={"flex-start"}>

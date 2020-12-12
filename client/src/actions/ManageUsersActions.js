@@ -47,6 +47,38 @@ export const fetchManagedUsers = (UID) => async  dispatch => {
 
 }
 
+
+export const fetchAdminUsers = () => async dispatch => {
+    try{
+
+        let querySnapshot = await db.collection('Users').where("accountType", "!=", "super").get()
+        if(!querySnapshot.empty){
+            let managedUsers = [];
+            querySnapshot.forEach((doc, index) => {
+                if (doc.exists) {
+                    managedUsers.push({
+                        // ref:doc.ref,
+                        doc:doc.id,
+                        ...doc.data()
+                    })
+                } else {
+                    console.log("managed User does not exist");
+
+                }
+            });
+            dispatch({type:FETCH_MANAGED_USERS, payload:managedUsers});
+        }
+        else{
+            console.log("Example managed users dispatched")
+            dispatch({ type: FETCH_MANAGED_USERS, payload: exampleManagedUsers });
+        }  
+
+    }catch(err){
+        console.log(err);
+        dispatch({ type: FETCH_MANAGED_USERS, payload: exampleManagedUsers });
+    }
+}
+
 export const setManagedUsers = (managedUsers) => dispatch => {
     dispatch({type: FETCH_MANAGED_USERS, payload: managedUsers})
 };

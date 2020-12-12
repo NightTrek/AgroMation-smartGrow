@@ -22,7 +22,7 @@ import UsersPage from "./containers/UsersPage/UsersPage";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import SubscriptionChoicePage from "./containers/SubscriptionChoicePage/SubsciptionChoicePage";
 import PaymentDetailsPage from "./containers/PaymentDetailsPage/PaymentDetailsPage";
-
+import AdminPage from './containers/AdminPage/AdminPage';
 
 import './style.css';
 
@@ -59,14 +59,15 @@ ReactDOM.render(
           <Switch>
             <Route exact path="/" component={Welcome} />
             <Route exact path="/signout" component={Signout} />
-            <PrivateRoute exact path="/Dashboard" component={Dashboard2} />
-            <PrivateRoute exact path="/Rooms" component={IndividualRoom} />
-            <PrivateRoute exact path="/Settings" component={Settings} />
-            <PrivateRoute exact path="/Subscribe" component={SubscriptionChoicePage} />
-            <PrivateRoute exact path="/secure/payment" component={PaymentDetailsPage} />
+            <PrivateRoute exact path="/Dashboard" component={Dashboard2} premium business/>
+            <PrivateRoute exact path="/Rooms" component={IndividualRoom} premium business/>
+            <Route exact path="/Settings" component={Settings} />
+            <Route exact path="/Subscribe" component={SubscriptionChoicePage} />
+            <Route exact path="/secure/payment" component={PaymentDetailsPage} />
             {/* <Route exact path="/signup" component={Signup} />
             <Route exact path="/signin" component={Signin} /> */}
-            <PrivateRoute exact path="/Users" component={UsersPage} />
+            <PrivateRoute exact path="/Users" component={UsersPage} premium business/>
+            <PrivateRoute exact path="/Agro/Admin" component={AdminPage} Admin />
           </Switch>
         </Navbar>
       </Wrapper>

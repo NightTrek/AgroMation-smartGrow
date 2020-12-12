@@ -11,6 +11,7 @@ import moment from "moment";
 import { EditUserInput, EditUserButton, validateEmail, validatePhone } from "../../containers/UsersPage/UsersPage";
 import { setUser } from "../../actions/User"
 import { fetchManagedUsers } from "../../actions/ManageUsersActions";
+import {UpdateClaimsInAuthState} from "../../actions/auth";
 //firebase
 import { createPortalLink, db, auth } from "../../consts/firebase"; //getCustomClaimRole
 
@@ -39,12 +40,19 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-
+/// card number that always works  4242424242424242
+/// card number that fails for  "insufficient_funds"   || 4000000000009995
+///TODO Handle first time customers 
+//TODO test paying for the first time.
+//TODO test upgrading to annual.
+//TODO test upgrading business.
+//TODO handle payment ERRORS
 const Settings = (props) => {
   const classes = useStyles();
-  let { user, managedUsers } = useSelector(state => ({
+  let { user, managedUsers, Auth } = useSelector(state => ({
     user: state.users.user,
     managedUsers: state.managedUsers,
+    Auth: state.auth.authenticated
 
 
   }), shallowEqual);
@@ -85,6 +93,7 @@ const Settings = (props) => {
   let accountBillDue = "$ 50.00";
   let accountBillDueDate = "";
   let accountUsedSeats = "1/1";
+  let accountStatus = "Trailing";
 
   if (user.accountType === "Owner" && user.subscription.status) {
     accountType = user.subscription.role[0].toUpperCase() + user.subscription.role.substring(1);
@@ -92,6 +101,7 @@ const Settings = (props) => {
     accountBillDue = "$ " + user.subscription.unitCost / 100;
     let dueDateObj = moment.unix(user.subscription.current_period_end.seconds);
     accountBillDueDate = dueDateObj.format('MMMM, Do, YYYY');
+    accountStatus = user.subscription.status[0].toUpperCase() + user.subscription.status.substring(1);
     switch (user.subscription.role) {
       case "premium":
         accountUsedSeats = managedUsers.user.length + " / 5";
@@ -115,12 +125,11 @@ const Settings = (props) => {
     phone: user.phone,
   })
 
-  let fetchMUsers = props.fetchMUsers;
 
   //effect pattern to update state with new values  when they arrive
   useEffect(() => {
     if (user.accountOwner === null && managedUsers.user.length === 0) {
-      fetchMUsers();
+      props.fetchManagedUsers(user.UID);
     }
     if (state.firstName === "loading" && user.firstName !== "loading") {
       setState({
@@ -133,7 +142,12 @@ const Settings = (props) => {
         invalidAlert: false,
       })
     }
-  }, [user, managedUsers.user, fetchMUsers, state.firstName])
+    if(user.subscription.status === "trailing" || user.subscription.status === "premium" || user.subscription.status === "business"){
+      if(Auth.stripeRole === null){
+        props.UpdateClaimsInAuthState(Auth);
+      }
+    }
+  }, [user, managedUsers.user, state.firstName, Auth, props])
 
 
   const handleInputChange = (event) => {
@@ -248,6 +262,7 @@ const Settings = (props) => {
   }
 
   const upgradePlan = () => {
+    console.log(user.subscription.status);
     if (user.subscription.status !== "active") {
       props.history.push({
         pathname: "/Subscribe",
@@ -265,7 +280,7 @@ const Settings = (props) => {
 
   return (
     <Container className={"containerMain"}>
-      <Grid item container direction={"row"} className={classes.settingsWidget} spacing={1}>
+      <Grid item container direction={"row"} className={classes.settingsWidget} spacing={2}>
         <Grid item xs={12} >
           <Typography variant={"h5"}>Settings</Typography>
         </Grid>
@@ -314,6 +329,11 @@ const Settings = (props) => {
               <ListItem>
                 <Typography variant={'body2'}>
                   {accountInterval}
+                </Typography>
+              </ListItem>
+              <ListItem>
+                <Typography variant={'h6'}>
+                  {accountStatus}
                 </Typography>
               </ListItem>
             </List>
@@ -379,7 +399,7 @@ function mapStateToProps(state) {
 }
 
 
-const formedComponent = compose(connect(mapStateToProps, { setUser: setUser, fetchManagedUsers: fetchManagedUsers }))(Settings);
+const formedComponent = compose(connect(mapStateToProps, { setUser: setUser, fetchManagedUsers: fetchManagedUsers, UpdateClaimsInAuthState:UpdateClaimsInAuthState }))(Settings);
 
 
 export default formedComponent;

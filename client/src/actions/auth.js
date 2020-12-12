@@ -1,4 +1,4 @@
-import { app } from "../consts/firebase";
+import { app, getCustomClaimRole } from "../consts/firebase";
 import { AUTH_ERROR, AUTH_USER } from "./types";
 // import { setUser, setExampleUser } from "./User";
 
@@ -23,11 +23,24 @@ export const attemptSigninEmailpass = (formProps, callback) => async dispatch =>
 }
 
 export const startListeningToAuth = () => async dispatch => {
-  app.auth().onAuthStateChanged(function (user) {
+  app.auth().onAuthStateChanged(async function (user) {
     if (user) {
-      
-      localStorage.setItem("token", JSON.stringify(user));
-      dispatch({ type: AUTH_USER, payload: user })
+      try {
+        let claim = await getCustomClaimRole();
+        dispatch({ type: AUTH_USER, payload: {
+          ...claim,
+          email:user.email,
+          emailVerified:user.emailVerified,
+          photoURL:user.photoURL,
+          uid:user.uid,
+          providerData:user.providerData,
+        } })
+      } catch (err) {
+        console.log(err);
+        // Handle Errors here.
+        dispatch({ type: AUTH_ERROR, payload: `AUTH error |${err}` })
+      }
+
       // User is signed in.
       // var displayName = user.displayName;
       // var email = user.email;
@@ -42,12 +55,26 @@ export const startListeningToAuth = () => async dispatch => {
     } else {
       // User is signed out.
       // ...
-      localStorage.setItem("token", "");
       dispatch({ type: AUTH_USER, payload: `` })
     }
   });
 };
 
+export const UpdateClaimsInAuthState = (AuthState) => async dispatch => {
+  
+      try {
+        let claim = await getCustomClaimRole();
+        dispatch({ type: AUTH_USER, payload: {
+          stripeRole:claim.stripeRole,
+          ...AuthState,
+        }
+       })
+      } catch (err) {
+        console.log(err);
+        // Handle Errors here.
+        dispatch({ type: AUTH_ERROR, payload: `AUTH error |${err}` })
+      }
+};
 
 export const firebaseSignOut = () => async dispatch => {
   app.auth().signOut().then(function () {

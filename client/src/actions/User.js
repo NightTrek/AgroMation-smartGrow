@@ -22,7 +22,7 @@ export const fetchUser = (UID, EMAIL) => async dispatch => {
                 if (!querySnapshot.empty) {
                     querySnapshot.forEach(async (doc) => {
                         if (doc.exists) {
-                            console.log(doc);
+                            // console.log(doc);
                             // console.log("user dispatched")
                             // console.log('checking if user has owner')
                             let subscriptionObj = {};

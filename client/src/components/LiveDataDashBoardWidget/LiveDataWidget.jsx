@@ -125,10 +125,10 @@ const LiveDataWidget = (props) => {
     }
 
     const handleShowRoom = () => {
-        console.log(props)
+        // console.log(props)
         props.history.push("/rooms");
     }
-    console.log(LiveData);
+    // console.log(LiveData);
 
     return (
         <Grid item container className={classes.LiveDataWidget} direction={"column"}>

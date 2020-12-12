@@ -22,6 +22,7 @@ import { db, auth } from "../../consts/firebase";
 
 
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
+import { max } from 'date-fns';
 
 // import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
 
@@ -855,8 +856,24 @@ const UsersPage = (props) => {
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
-
-        setOpen(true);
+        let maxSeats = 0;
+        switch (user.subscription.role) {
+            case "premium":
+                maxSeats = 5;
+              break;
+            case "business":
+                maxSeats = 10;
+              break;
+            default:
+              console.log("free account handle managed users")
+              break;
+          }
+          console.log(managedUsers.length)
+          console.log(maxSeats);
+          if(managedUsers.length<maxSeats){
+            setOpen(true);
+          }
+       
     };
 
     const handleInvalidAlertOpen = (msg, type) => {

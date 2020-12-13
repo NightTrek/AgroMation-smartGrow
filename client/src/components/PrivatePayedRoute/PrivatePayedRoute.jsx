@@ -4,13 +4,16 @@ import {  useSelector, shallowEqual } from "react-redux";
 
 
 
-function PrivateRoute({ component: Component, ...rest }) {
+function PrivatePayedRoute({ component: Component, ...rest }) {
     let { Auth } = useSelector(state => ({
         Auth: state.auth.authenticated,
     }), shallowEqual)
     let isAuthenticated = false;
+    console.log(rest);
     if(Auth !== undefined && Auth !== "" ){
+      if(Auth.stripeRole==="premium" || Auth.stripeRole==="business"){
         isAuthenticated=true
+      }   
     }
     
   return (
@@ -27,4 +30,4 @@ function PrivateRoute({ component: Component, ...rest }) {
   );
 }
 
-export default PrivateRoute;
+export default PrivatePayedRoute;

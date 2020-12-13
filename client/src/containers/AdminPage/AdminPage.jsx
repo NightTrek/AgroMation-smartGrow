@@ -15,11 +15,12 @@ import {
 } from "@material-ui/core";
 import Alert from '@material-ui/lab/Alert';
 import moment from "moment";
+import axios from "axios";
 //User imports
 import { setUser } from "../../actions/User"
 import { fetchAdminUsers, pendingManagedUsers } from "../../actions/ManageUsersActions";
 //firebase
-import { db, auth } from "../../consts/firebase"; //getCustomClaimRole
+import { db, auth, getIdToken } from "../../consts/firebase"; //getCustomClaimRole
 
 
 const ManageAllUsersTable = (props) => {
@@ -176,7 +177,7 @@ const AdminPage = (props) => {
     let { user, managedUsers, pending } = useSelector(state => ({
         user: state.users.user,
         managedUsers: state.managedUsers.user,
-        pending: state.managedUsers.pending
+        pending: state.managedUsers.pending,
 
     }), shallowEqual);
 
@@ -202,7 +203,7 @@ const AdminPage = (props) => {
 
     const [state, setState] = useState({
         Tabs: ["Users", "Add User", "Alarms", "Logs"],
-        pick: 0,
+        pick: 1,
     })
 
 
@@ -280,6 +281,22 @@ const AdminPage = (props) => {
             }
     }
 
+    const testAPIButton = async () => {
+
+        getIdToken().then(function(idToken) {
+            // Send token to your backend via HTTPS
+            axios.post('http://localhost:5001/agromation-grow-room-control/us-central1/widgets/', {UID:"this is the UID", idToken:idToken})
+            .then((res) => {
+                console.log(res)
+            }).catch((err) => {
+                console.log(err)
+            })
+          }).catch(function(error) {
+            // Handle error
+            console.log(error);
+          });
+    }
+
 
     return (
         <Container className={"containerMain"}>
@@ -309,7 +326,7 @@ const AdminPage = (props) => {
                             <ManageAllUsersTable managedUsers={managedUsers} onGridReady={onGridReady} classes={classes} />
                         </TabPanel>
                         <TabPanel value={state.pick} index={1} id={`scrollable-auto-tabpanel-${1}`}>
-                            add new account flow
+                            <Button variant={'outlined'} color={'primary'} onClick={testAPIButton}>Test API</Button>
                         </TabPanel>
                         <TabPanel value={state.pick} index={2} id={`scrollable-auto-tabpanel-${2}`}>
                             Alarms are currently in development. You will be able to set the alert levels for each datapoint monitored.

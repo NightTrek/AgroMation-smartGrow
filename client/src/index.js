@@ -20,6 +20,7 @@ import Welcome from "./components/Welcome";
 import IndividualRoom from "./containers/IndividualRoom/IndividualRoom";
 import UsersPage from "./containers/UsersPage/UsersPage";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
+import PrivatePayedRoute from "./components/PrivatePayedRoute/PrivatePayedRoute";
 import SubscriptionChoicePage from "./containers/SubscriptionChoicePage/SubsciptionChoicePage";
 import PaymentDetailsPage from "./containers/PaymentDetailsPage/PaymentDetailsPage";
 import AdminPage from './containers/AdminPage/AdminPage';
@@ -48,8 +49,14 @@ const store = createStore(
   composeEnhancers(applyMiddleware(reduxThunk))
 );
 
-
-
+//Make the Navbar display different links depending on your auth Claim
+//HandleRevokingmangedAccountsBasedOn the primary accounts subscription
+//handleGivingManagedAccountsTheStripeRole Auth Claim.
+//make the SubscribePage Work without being logged in by directing the User To login. to purchase an account.
+// Terms of use Page no content
+// Privacy Policy Page no content
+//Admin Page 
+//Add a report a bug system in the settings page
 
 ReactDOM.render(
   <Provider store={store}>
@@ -57,17 +64,17 @@ ReactDOM.render(
       <Wrapper>
         <Navbar>
           <Switch>
-            <Route exact path="/" component={Welcome} />
+            <Route exact path="/" component={Welcome} />""
             <Route exact path="/signout" component={Signout} />
-            <PrivateRoute exact path="/Dashboard" component={Dashboard2} premium business/>
-            <PrivateRoute exact path="/Rooms" component={IndividualRoom} premium business/>
-            <Route exact path="/Settings" component={Settings} />
+            <PrivatePayedRoute exact path="/Dashboard" component={Dashboard2} premium business/>
+            <PrivatePayedRoute exact path="/Rooms" component={IndividualRoom} premium business/>
+            <PrivateRoute exact path="/Settings" component={Settings} />
             <Route exact path="/Subscribe" component={SubscriptionChoicePage} />
-            <Route exact path="/secure/payment" component={PaymentDetailsPage} />
+            <PrivateRoute exact path="/secure/payment" component={PaymentDetailsPage} />
             {/* <Route exact path="/signup" component={Signup} />
             <Route exact path="/signin" component={Signin} /> */}
-            <PrivateRoute exact path="/Users" component={UsersPage} premium business/>
-            <PrivateRoute exact path="/Agro/Admin" component={AdminPage} Admin />
+            <PrivatePayedRoute exact path="/Users" component={UsersPage} premium business/>
+            <Route exact path="/Agro/Admin" component={AdminPage} Admin />
           </Switch>
         </Navbar>
       </Wrapper>

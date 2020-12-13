@@ -27,6 +27,7 @@ export const startListeningToAuth = () => async dispatch => {
     if (user) {
       try {
         let claim = await getCustomClaimRole();
+        console.log(user);
         dispatch({ type: AUTH_USER, payload: {
           ...claim,
           email:user.email,

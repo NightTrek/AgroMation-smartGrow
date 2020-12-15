@@ -41,11 +41,11 @@ export const getRooms = (User, location) => async dispatch => {
         }
         else {
             console.log("Using location array to get rooms");
-                console.log(User.location)
-                console.log(location)
+                // console.log(User.location)
+                // console.log(location)
             let querySnapshot = await User.location[location].locationID.get()//.then( async() => {
                 if(querySnapshot.exists){
-                    console.log(querySnapshot.data())
+                    // console.log(querySnapshot.data())
                     let RoomPerLocationArray = [];
                     for(let i = 0; i < querySnapshot.data().rooms.length; i++){
                         let docSnapshot = await querySnapshot.data().rooms[i].get()
@@ -57,7 +57,7 @@ export const getRooms = (User, location) => async dispatch => {
                             }
                         
                     }
-                    console.log(RoomPerLocationArray);
+                    // console.log(RoomPerLocationArray);
                     dispatch({type: GET_ROOMS, payload: RoomPerLocationArray})
                 }
             // }).catch((error) => {

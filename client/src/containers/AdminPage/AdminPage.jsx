@@ -21,7 +21,7 @@ import { setUser } from "../../actions/User"
 import { fetchAdminUsers, pendingManagedUsers } from "../../actions/ManageUsersActions";
 //firebase
 import { db, auth, getIdToken, func } from "../../consts/firebase"; //getCustomClaimRole
-import {SetAccountOwner, getAuthContext} from "../../CloudFunctions/CloudFunctions";
+import { SetAccountOwner, getAuthContext } from "../../CloudFunctions/CloudFunctions";
 
 const ManageAllUsersTable = (props) => {
 
@@ -56,7 +56,7 @@ const ManageAllUsersTable = (props) => {
             <Grid item xs={6} sm={8} md={10} lg={11}>
 
             </Grid>
-            <Grid item xs={12} sm={4} md={2} lg={1} style={{marginTop:'24px'}}>
+            <Grid item xs={12} sm={4} md={2} lg={1} style={{ marginTop: '24px' }}>
                 <Button variant={'outlined'} color={'primary'}>
                     Open account
                 </Button>
@@ -202,8 +202,8 @@ const AdminPage = (props) => {
     // console.log(getCustomClaimRole());
 
     const [state, setState] = useState({
-        Tabs: ["Users", "Add User", "Alarms", "Logs"],
-        pick: 1,
+        Tabs: ["Users", "Add User", "Add new Device", "Controls"],
+        pick: 3,
     })
 
 
@@ -272,21 +272,21 @@ const AdminPage = (props) => {
 
     const OpenAccountData = () => {
         let selectedRows = gridApi.getSelectedRows()
-            if (selectedRows !== undefined && selectedRows.length > 0) {
-                // Do something 
-            }
-            else {
-                // TODO nothing selected warning
-                handleAlertOpen("Please select one or more zones to edit");
-            }
+        if (selectedRows !== undefined && selectedRows.length > 0) {
+            // Do something 
+        }
+        else {
+            // TODO nothing selected warning
+            handleAlertOpen("Please select one or more zones to edit");
+        }
     }
 
     const testAPIButton = async () => {
-        try{
+        try {
             // let UserResponse = await SetAccountOwner({UID:"abcdefghijklmnop1234"}) 
             let UserResponse = await getAuthContext()
             console.log(UserResponse)
-        }catch(err){
+        } catch (err) {
             console.log(err)
         }
         // getIdToken().then(function(idToken) {
@@ -332,13 +332,17 @@ const AdminPage = (props) => {
                             <ManageAllUsersTable managedUsers={managedUsers} onGridReady={onGridReady} classes={classes} />
                         </TabPanel>
                         <TabPanel value={state.pick} index={1} id={`scrollable-auto-tabpanel-${1}`}>
-                            <Button variant={'outlined'} color={'primary'} onClick={testAPIButton}>Test API</Button>
+
                         </TabPanel>
                         <TabPanel value={state.pick} index={2} id={`scrollable-auto-tabpanel-${2}`}>
                             Alarms are currently in development. You will be able to set the alert levels for each datapoint monitored.
                         </TabPanel>
                         <TabPanel value={state.pick} index={3} id={`scrollable-auto-tabpanel-${3}`}>
-                            Logs is currently in development. You will be able to view a list of alerts and alarms for this room.
+                            <Grid item container direction={'row'} spacing={1} style={{paddingTop:"24px"}}>
+                                <Grid item xs={6} sm={4}>
+                                    <Button variant={'outlined'} color={'primary'} onClick={testAPIButton}>Get Auth Claims</Button>
+                                </Grid>
+                            </Grid>
                         </TabPanel>
                     </Grid>
                 </Grid>

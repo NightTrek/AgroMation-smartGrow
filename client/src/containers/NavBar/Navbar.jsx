@@ -380,7 +380,7 @@ const MiniDrawer = (props) => {
                                 </NavLink>
                             );
                         }
-                        return (<div></div>);
+                        return (<div key={text.name}></div>);
 
                     })}
 

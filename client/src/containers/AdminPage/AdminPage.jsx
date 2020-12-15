@@ -20,8 +20,8 @@ import axios from "axios";
 import { setUser } from "../../actions/User"
 import { fetchAdminUsers, pendingManagedUsers } from "../../actions/ManageUsersActions";
 //firebase
-import { db, auth, getIdToken } from "../../consts/firebase"; //getCustomClaimRole
-
+import { db, auth, getIdToken, func } from "../../consts/firebase"; //getCustomClaimRole
+import {SetAccountOwner, getAuthContext} from "../../CloudFunctions/CloudFunctions";
 
 const ManageAllUsersTable = (props) => {
 
@@ -282,19 +282,25 @@ const AdminPage = (props) => {
     }
 
     const testAPIButton = async () => {
-
-        getIdToken().then(function(idToken) {
-            // Send token to your backend via HTTPS
-            axios.post('http://localhost:5001/agromation-grow-room-control/us-central1/widgets/', {UID:"this is the UID", idToken:idToken})
-            .then((res) => {
-                console.log(res)
-            }).catch((err) => {
-                console.log(err)
-            })
-          }).catch(function(error) {
-            // Handle error
-            console.log(error);
-          });
+        try{
+            // let UserResponse = await SetAccountOwner({UID:"abcdefghijklmnop1234"}) 
+            let UserResponse = await getAuthContext()
+            console.log(UserResponse)
+        }catch(err){
+            console.log(err)
+        }
+        // getIdToken().then(function(idToken) {
+        //     // Send token to your backend via HTTPS
+        //     axios.post('http://localhost:5001/agromation-grow-room-control/us-central1/widgets/', {UID:"this is the UID", idToken:idToken})
+        //     .then((res) => {
+        //         console.log(res)
+        //     }).catch((err) => {
+        //         console.log(err)
+        //     })
+        //   }).catch(function(error) {
+        //     // Handle error
+        //     console.log(error);
+        //   });
     }
 
 

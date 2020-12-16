@@ -28,11 +28,9 @@ const theme = createMuiTheme({
     },
     text:{
       main:"white",
+      secondary:"#687a92;",
       deactive:"#656565"
       
-    },
-    error:{
-      main:"#687a92;"
     }
   },
 });

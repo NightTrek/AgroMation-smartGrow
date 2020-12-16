@@ -66,16 +66,16 @@ ReactDOM.render(
           <Switch>
             <Route exact path="/" component={Welcome} />
             <Route exact path="/signout" component={Signout} />
-            <PrivatePayedRoute exact path="/Dashboard" component={Dashboard2} premium business/>
-            <PrivatePayedRoute exact path="/Rooms" component={IndividualRoom} premium business/>
+            <PrivatePayedRoute exact path="/Dashboard" component={Dashboard2}/>
+            <PrivatePayedRoute exact path="/Rooms" component={IndividualRoom}/>
             <PrivateRoute exact path="/Settings" component={Settings} />
             <Route exact path="/Subscribe" component={SubscriptionChoicePage} />
             <PrivateRoute exact path="/secure/payment" component={PaymentDetailsPage} />
             {/* <Route exact path="/signup" component={Signup} />
             <Route exact path="/signin" component={Signin} /> */}
-            <PrivatePayedRoute exact path="/Users" component={UsersPage} premium business/>
+            <PrivatePayedRoute exact path="/Users" component={UsersPage}/>
             <Route exact path="/Agro/Admin" component={AdminPage} Admin />
-            <Route component={Welcome} />
+            {/* <Route component={Welcome} /> */}
           </Switch>
         </Navbar>
       </Wrapper>

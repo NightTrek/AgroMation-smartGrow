@@ -149,10 +149,10 @@ const SubscriptionChoicePage = (props) => {
                 {/* This is the Annual or monthly button container */}
                 <Grid item container direction={'row'} justify={'center'}>
                     <Grid item container xs={6} className={state.monthly ? (`${classes.monthlyButton} + ${classes.monthlyOrAnnualButtonSelected}`) : (classes.monthlyButton)} onClick={handleMonthlySwitch} justify={'center'} alignItems="center">
-                        <Typography variant={'body2'} color={state.monthly ? ("primary") : ("error")}>Monthly</Typography>
+                        <Typography variant={'body2'} color={state.monthly ? ("primary") : ('textSecondary')}>Monthly</Typography>
                     </Grid>
                     <Grid item container xs={6} className={state.monthly ? (classes.annualButton) : (`${classes.annualButton} + ${classes.monthlyOrAnnualButtonSelected}`)} onClick={handleAnnualSwitch} justify={'center'} alignItems="center">
-                        <Typography variant={'body2'} color={state.monthly ? ("error") : ("primary")}>Annual</Typography>
+                        <Typography variant={'body2'} color={state.monthly ? ("textSecondary") : ("primary")}>Annual</Typography>
                     </Grid>
                 </Grid>
                 {/* Table with different subscriptions  */}

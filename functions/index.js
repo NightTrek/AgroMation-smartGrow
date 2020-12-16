@@ -11,14 +11,13 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-//Takes a uid and sets that UID with the account type User
-exports.SetAccountUser = functions.https.onCall(async (data, context) => {
-    if (context.auth.token.accountType === "admin" || context.auth.token.accountType === "owner") {
+exports.SetAccountViewer = functions.https.onCall(async (data, context) => {
+    if (context.auth.token.accountType === "admin" || context.auth.token.accountType === "owner" || context.auth.token.accountType === "super") {
         try {
-            let res = await admin.auth().setCustomUserClaims(data.uid, { accountType: "user", stripeRole: context.auth.token.stripeRole })
+            let res = await admin.auth().setCustomUserClaims(data.uid, { accountType: "viewer", stripeRole: context.auth.token.stripeRole })
             return ({
                 status: "success",
-                auth: context.auth
+                auth: context.auth.uid
             });
 
         } catch (err) {
@@ -39,14 +38,14 @@ exports.SetAccountUser = functions.https.onCall(async (data, context) => {
 
 });
 
-//Takes a uid and sets that UID with the account type Owner
-exports.SetAccountOwner = functions.https.onCall(async (data, context) => {
-    if (context.auth.token.accountType === "admin") {
+//Takes a uid and sets that UID with the account type User
+exports.SetAccountUser = functions.https.onCall(async (data, context) => {
+    if (context.auth.token.accountType === "admin" || context.auth.token.accountType === "owner" || context.auth.token.accountType === "super") {
         try {
-            let res = await admin.auth().setCustomUserClaims(data.uid, { accountType: "owner", stripeRole: context.auth.token.stripeRole })
+            let res = await admin.auth().setCustomUserClaims(data.uid, { accountType: "user", stripeRole: context.auth.token.stripeRole })
             return ({
                 status: "success",
-                auth: context.auth
+                auth: context.auth.uid
             });
 
         } catch (err) {
@@ -70,9 +69,9 @@ exports.SetAccountOwner = functions.https.onCall(async (data, context) => {
 //Takes a uid and sets that UID with the account type admin
 exports.SetAccountAdmin = functions.https.onCall(async (data, context) => {
     functions.logger.log("giving " + data.uid + " the Admin account type", context.auth.uid);
-    if (context.auth.token.accountType === "admin") {
+    if (context.auth.token.accountType === "admin" || context.auth.token.accountType === "owner" || context.auth.token.accountType === "super") {
         try {
-            let res = await admin.auth().setCustomUserClaims(data.uid, { accountType: "admin", stripeRole: 'admin' })
+            let res = await admin.auth().setCustomUserClaims(data.uid, { accountType: "admin", stripeRole: context.auth.token.stripeRole })
             return ({
                 status: "success",
                 auth: context.auth
@@ -96,16 +95,14 @@ exports.SetAccountAdmin = functions.https.onCall(async (data, context) => {
 
 });
 
-
-//takes the email and created an account
-exports.CreateMangedAccount = functions.https.onCall(async (data, context) => {
-    if (context.auth.token.accountType === "admin" || context.auth.token.accountType === "owner") {
+//Takes a uid and sets that UID with the account type Owner
+exports.SetAccountOwner = functions.https.onCall(async (data, context) => {
+    if (context.auth.token.accountType === "super") {
         try {
-            let res = await admin.auth().createUser({ email: data.email })
+            let res = await admin.auth().setCustomUserClaims(data.uid, { accountType: "owner", stripeRole: context.auth.token.stripeRole })
             return ({
                 status: "success",
-                auth: context.auth,
-                authRes: res,
+                auth: context.auth.uid
             });
 
         } catch (err) {
@@ -115,6 +112,94 @@ exports.CreateMangedAccount = functions.https.onCall(async (data, context) => {
                 TargetUID: data.uid
             })
         }
+    }
+    else {
+        return ({
+            error: "Invalid Access",
+            type: context.auth.token.accountType
+        })
+    }
+    // Allow access to requested admin resource.
+
+});
+
+//Takes a uid and sets that UID with the account type super
+exports.SetAccountSuper = functions.https.onCall(async (data, context) => {
+    functions.logger.warn("giving " + data.uid + " the super account type", context.auth.uid);
+    if (context.auth.token.accountType === "super") {
+        try {
+            let res = await admin.auth().setCustomUserClaims(data.uid, { accountType: "super", stripeRole: 'super' })
+            return ({
+                status: "success",
+                auth: context.auth
+            });
+
+        } catch (err) {
+            return ({
+                error: err,
+                UID: context.auth.uid,
+                TargetUID: data.uid
+            })
+        }
+    }
+    else {
+        return ({
+            error: "Invalid Admin Access",
+            type: context.auth.token.accountType
+        })
+    }
+
+
+});
+
+//takes the email and created an account
+exports.CreateOrFetchMangedAccount = functions.https.onCall(async (data, context) => {
+    if (context.auth.token.accountType === "admin" || context.auth.token.accountType === "owner" || context.auth.token.accountType === "super") {
+        //first make sure the email being created exists and it has a base auth claim
+        if (data.email && data.accountType) {
+            //then we are going to see if the user exists and if so return the UID to the client
+            try {
+                //looks for auth user by email
+                let authUser = await admin.auth().getUserByEmail(data.email)
+                //if the auth user exists return their UID
+                if (authUser.uid) {
+                    return ({
+                        status: "success",
+                        auth: context.auth,
+                        authRes: authUser,
+                    });
+                } else {
+                    //If the auth user does not exist with that email create them 
+                    try {
+                        let res = await admin.auth().createUser({ email: data.email })
+                        //return the new auth user
+                        return ({
+                            status: "success",
+                            auth: context.auth,
+                            authRes: res,
+                        });
+                    } catch (err) {
+                        return ({
+                            error: err,
+                            msg: "Error making new auth account",
+                            UID: context.auth.uid,
+                            TargetUID: data.uid
+                        })
+                    }
+
+
+                }
+
+            } catch (err) {
+                return ({
+                    error: err,
+                    msg: "Error looking for account by email",
+                    UID: context.auth.uid,
+                    TargetUID: data.uid
+                })
+            }
+        }
+
     }
     else {
         return ({
@@ -273,7 +358,66 @@ exports.onStripeSubChange = functions.firestore.document(`StripeCustomers/{Strip
         }
     });
 
+//Takes a uid and accountType and updates the managed user with the correct auth claim.
+exports.SetManagedAccountClaims = functions.https.onCall(async (data, context) => {
+    //first verify the caller is authorized 
+    if (context.auth.token.accountType === "admin" || context.auth.token.accountType === "owner") {
+        let { uid, accountType } = data;
+        //check and make sure the user has a stripe auth claim
+        if (context.auth.token.stripeRole === 'premium' || context.auth.token.stripeRole === 'business') {
+            //verify that the uid and accountType claim is supplied
+            if (uid && accountType) {
+                //make sure the account type is one of the two valid types
+                if (accountType === 'admin' || accountType === "user" || accountType === "viewer") {
+                    //try and update the users auth claim
+                    try {
+                        let res = await admin.auth().setCustomUserClaims(uid, { accountType: accountType, stripeRole: context.auth.token.stripeRole })
+                        return ({
+                            status: "success",
+                            auth: context.auth.uid,
+                            TargetUID: data.uid,
+                        });
 
+                    } catch (err) {
+                        return ({
+                            error: err,
+                            UID: context.auth.uid,
+                            TargetUID: data.uid,
+                            accountType:accountType
+                        })
+                    }
+                } else {
+                    return ({
+                        error: "Invalid account type ",
+                        type: accountType
+                    })
+                }
+
+            } else {
+                return ({
+                    error: "Either the UID or accountType is missing",
+                    type: data
+                })
+            }
+
+        }
+        else {
+            return ({
+                error: "Invalid Access no Stripe auth claim present",
+                type: context.auth.token.stripeRole
+            })
+        }
+
+    }
+    else {
+        return ({
+            error: "Invalid Admin Access",
+            type: context.auth.token.accountType
+        })
+    }
+
+
+});
 
 //This function takes the deviceID and interval and number of records and returns the live data for that controller.
 exports.FetchLiveDeviceData = functions.https.onCall(async (data, context) => {

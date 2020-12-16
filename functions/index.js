@@ -156,7 +156,7 @@ exports.SetAccountSuper = functions.https.onCall(async (data, context) => {
 exports.CreateOrFetchMangedAccount = functions.https.onCall(async (data, context) => {
     if (context.auth.token.accountType === "admin" || context.auth.token.accountType === "owner" || context.auth.token.accountType === "super") {
         //first make sure the email being created exists and it has a base auth claim
-        if (data.email && data.accountType) {
+        if (data.email) {
             //then we are going to see if the user exists and if so return the UID to the client
             try {
                 //looks for auth user by email
@@ -198,6 +198,12 @@ exports.CreateOrFetchMangedAccount = functions.https.onCall(async (data, context
                     TargetUID: data.uid
                 })
             }
+        }
+        else{
+            return ({
+                error: "missing email or accountType",
+                type: context.auth.token.uid
+            })
         }
 
     }
@@ -360,9 +366,9 @@ exports.onStripeSubChange = functions.firestore.document(`StripeCustomers/{Strip
 
 //Takes a uid and accountType and updates the managed user with the correct auth claim.
 exports.SetManagedAccountClaims = functions.https.onCall(async (data, context) => {
+    let { uid, accountType, stripeRole } = data;
     //first verify the caller is authorized 
     if (context.auth.token.accountType === "admin" || context.auth.token.accountType === "owner") {
-        let { uid, accountType } = data;
         //check and make sure the user has a stripe auth claim
         if (context.auth.token.stripeRole === 'premium' || context.auth.token.stripeRole === 'business') {
             //verify that the uid and accountType claim is supplied
@@ -408,6 +414,40 @@ exports.SetManagedAccountClaims = functions.https.onCall(async (data, context) =
             })
         }
 
+    }else if (context.auth.token.accountType === "super"){
+        if (uid && accountType && stripeRole) {
+            //make sure the account type is one of the four valid types
+            if (accountType === 'owner' || accountType === 'admin' || accountType === "user" || accountType === "viewer") {
+                //try and update the users auth claim
+                try {
+                    let res = await admin.auth().setCustomUserClaims(uid, { accountType: accountType, stripeRole: context.auth.token.stripeRole })
+                    return ({
+                        status: "success",
+                        auth: context.auth.uid,
+                        TargetUID: data.uid,
+                    });
+
+                } catch (err) {
+                    return ({
+                        error: err,
+                        UID: context.auth.uid,
+                        TargetUID: data.uid,
+                        accountType:accountType
+                    })
+                }
+            } else {
+                return ({
+                    error: "Invalid account type ",
+                    type: accountType
+                })
+            }
+
+        } else {
+            return ({
+                error: "Either the UID or accountType is missing or stripeRole ",
+                type: data
+            })
+        }
     }
     else {
         return ({

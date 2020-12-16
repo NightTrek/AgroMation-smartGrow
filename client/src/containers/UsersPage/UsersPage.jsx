@@ -19,6 +19,7 @@ import { StandardRoundSelectForm } from "../../components/StandardSelect/Standar
 import { fetchManagedUsers, pendingManagedUsers, resetPendingManagedUsers, setManagedUsers } from "../../actions/ManageUsersActions"
 
 import { db, auth } from "../../consts/firebase";
+import { CreateOrFetchMangedAccount, SetManagedAccountClaims } from "../../CloudFunctions/CloudFunctions";
 
 
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
@@ -382,7 +383,7 @@ const UserWidget = (props) => {
     }
 
 
-    
+
 
     ///Grid stuff
     const [gridApi, setGridApi] = React.useState(null);
@@ -390,7 +391,7 @@ const UserWidget = (props) => {
 
     function onGridReady(params) {
         setGridApi(params.api);
-        
+
     }
 
 
@@ -400,26 +401,26 @@ const UserWidget = (props) => {
         lastName: props.mUser.lastName,
         email: props.mUser.email,
         phone: props.mUser.phone,
-        open:false,
+        open: false,
     });
 
     const handleOpen = () => {
 
         setState({
             ...state,
-            open:true
+            open: true
         });
     };
 
     const handleClose = () => {
         setState({
             ...state,
-            open:false,
-            
+            open: false,
+
         })
     };
     //Select any locations the account already has access too
-    if ( gridApi && zones[0] !== "loading rooms") {
+    if (gridApi && zones[0] !== "loading rooms") {
         console.log("setting selected locations")
         gridApi.forEachNode((node, index) => {
             zones.forEach((item, index) => {
@@ -503,7 +504,7 @@ const UserWidget = (props) => {
                 console.log(props.mUser[key]);
                 let arrayCount = 0;
                 let i;
-                if(output[key].length === props.mUser[key].length){
+                if (output[key].length === props.mUser[key].length) {
                     for (i = 0; i < props.mUser[key].length; i++) {
                         //for each item of the array where both name values are equal count
                         if (output[key][i] && output[key][i].name === props.mUser[key][i].name) {
@@ -513,12 +514,12 @@ const UserWidget = (props) => {
                     //if the arrayCount and the index are equal then the two arrays are the same
                     if (arrayCount === i) {
                         count++
-    
+
                     }
-                }else{
+                } else {
 
                 }
-                
+
             }
             if (!output[key] || output[key].length === 0) {
                 props.handleInvalidAlertOpen(`${key} seems to be missing`)
@@ -603,10 +604,15 @@ const UserWidget = (props) => {
         });
     }
 
+    const deleteManagedUser = () => {
+
+    }
+
 
     const Row = ({ index, style }) => (
         <div style={style} className={classes.locatonListItem}><ListItemIcon style={{ minWidth: "24px" }}><CheckCircleRoundedIcon style={{ color: theme.palette.primary.main, fontSize: "18px" }} /></ListItemIcon>{zones[index].name}</div>
     );
+
     return (
         <Grid item container direction={"row"} className={classes.userInfoContainer} xs>
             <Grid item container xs={12} sm className={classes.Profile} direction={"column"} alignItems={"center"}>
@@ -747,7 +753,7 @@ const UsersPage = (props) => {
 
     }), shallowEqual)
 
- 
+
     // console.log(user);
     const testManagedUsers = (item) => {
         // console.log(item)
@@ -773,12 +779,12 @@ const UsersPage = (props) => {
         } else if (!pending && testManagedUsers(managedUsers) && auth.uid !== undefined && user.UID !== undefined) {
             console.log("getting managed user");
             props.pendingManagedUsers()
-            if(user.accountOwner){
+            if (user.accountOwner) {
                 props.fetchManagedUsers(user.accountOwner)
-            }else{
+            } else {
                 props.fetchManagedUsers(auth.uid)
             }
-            
+
 
         }
     })
@@ -799,12 +805,12 @@ const UsersPage = (props) => {
                 },
 
             ],
-            subscription:{}
+            subscription: {}
         };
     }
 
 
-    
+
 
     // console.log(managedUsers);
     // console.log(testManagedUsers(managedUsers))
@@ -827,20 +833,20 @@ const UsersPage = (props) => {
     let accountUsedSeats = "1/1";
     let maxManagedUsers = 0;
     if (user.subscription.status && managedUsers) {
-      
-      switch (user.subscription.role) {
-        case "premium":
-          accountUsedSeats = managedUsers.length + " / 5";
-          maxManagedUsers = 5;
-          break;
-        case "business":
-          accountUsedSeats = managedUsers.length + " / 10";
-          maxManagedUsers = 10;
-          break;
-        default:
-          console.log("free account handle managed users")
-          break;
-      }
+
+        switch (user.subscription.role) {
+            case "premium":
+                accountUsedSeats = managedUsers.length + " / 5";
+                maxManagedUsers = 5;
+                break;
+            case "business":
+                accountUsedSeats = managedUsers.length + " / 10";
+                maxManagedUsers = 10;
+                break;
+            default:
+                console.log("free account handle managed users")
+                break;
+        }
     }
 
     const [state, setState] = React.useState({
@@ -860,20 +866,20 @@ const UsersPage = (props) => {
         switch (user.subscription.role) {
             case "premium":
                 maxSeats = 5;
-              break;
+                break;
             case "business":
                 maxSeats = 10;
-              break;
+                break;
             default:
-              console.log("free account handle managed users")
-              break;
-          }
-          console.log(managedUsers.length)
-          console.log(maxSeats);
-          if(managedUsers.length<maxSeats){
+                console.log("free account handle managed users")
+                break;
+        }
+        console.log(managedUsers.length)
+        console.log(maxSeats);
+        if (managedUsers.length < maxSeats) {
             setOpen(true);
-          }
-       
+        }
+
     };
 
     const handleInvalidAlertOpen = (msg, type) => {
@@ -957,10 +963,10 @@ const UsersPage = (props) => {
     };
 
     const submitNewUser = async () => {
-        if (managedUsers.length>=maxManagedUsers){
+        if (managedUsers.length >= maxManagedUsers) {
             setState({
                 ...state,
-                errorMsg: "Your Subscription only allows "+maxManagedUsers+" Users",
+                errorMsg: "Your Subscription only allows " + maxManagedUsers + " Users",
                 invalidAlert: true,
             })
             return 0;
@@ -1023,21 +1029,49 @@ const UsersPage = (props) => {
 
         db.collection("Users").where("email", "==", lowerCaseEmail).get().then((UsersSnapshot) => {
             if (UsersSnapshot.empty) {
-                db.collection('Users').add(output).then((response) => {
-                    console.log(response)
-                    if (response.id !== undefined) {
+                //Here we are going to either create the auth account or get the UID  for the auth account. We are also going to set the Auth claims for said account 
+                CreateOrFetchMangedAccount({ email: lowerCaseEmail }).then(async (auth) => {
+                    console.log(auth)
+                    if(auth.uid){
+                        output.UID = auth.uid
+                        //here we set the new users auth claim a
+                        try{
+                            await SetManagedAccountClaims({uid:auth.uid, accountType:output.accountType.toLowerCase()})
+                        }catch(err){
+                            console.log(err)
+                        }
+                        db.collection('Users').add(output).then((response) => {
+                            console.log(response)
+                            if (response.id !== undefined) {
+    
+                                let newReduxManagedLocationsArray = managedUsers
+                                newReduxManagedLocationsArray.push({ doc: response.id, ...output })
+                                props.setManagedUsers(newReduxManagedLocationsArray);
+                                auth.sendPasswordResetEmail(output.email).then(function () {
+                                    // Email sent.
+                                    handleInvalidAlertOpen("Success added User they can now login and access your data", 'success')
+                                }).catch(function (error) {
+                                    // An error happened.
+                                    
+                                    handleInvalidAlertOpen("Error sending password to new user");
+                                });
+                                setOpen(false);
+                            } else {
+                                handleInvalidAlertOpen("failed to add User Server error please wait and try again.")
+                            }
+                        }).catch((error) => {
+                            console.log(error)
+                            handleInvalidAlertOpen(`ERROR failed to upload new User please wait and try again`)
+                        })
+
                         
-                        let newReduxManagedLocationsArray = managedUsers
-                        newReduxManagedLocationsArray.push({doc:response.id, ...output})
-                        props.setManagedUsers(newReduxManagedLocationsArray);
-                        handleInvalidAlertOpen("Success added User they can now login and access your data", 'success')
-                        setOpen(false);
-                    } else {
-                        handleInvalidAlertOpen("failed to add User Server error please wait and try again.")
+                    }else{
+                        throw new  Error("auth error")
                     }
-                }).catch((error) => {
-                    console.log(error)
-                    handleInvalidAlertOpen(`ERROR failed to upload new User please wait and try again`)
+
+                }).catch((err) => {
+                    console.log(err)
+                    handleInvalidAlertOpen("failed to add User Server error please wait and try again.")
                 })
             } else {
                 handleInvalidAlertOpen(`ERROR email already in use`)
@@ -1067,7 +1101,7 @@ const UsersPage = (props) => {
                             return (
                                 <UserWidget key={index} UserIndex={index} mUserDocRef={item.doc} ownerID={user.UID} handleInvalidAlertOpen={handleInvalidAlertOpen} mUser={item}
                                     userName={item.firstName + " " + item.lastName} firstName={item.firstName} lastName={item.lastName} email={item.email} type={item.accountType} phone={item.phone}
-                                    location={locations} managedUsers={managedUsers} zones={managedUsers[index].location} setManagedUsers={props.setManagedUsers}/>
+                                    location={locations} managedUsers={managedUsers} zones={managedUsers[index].location} setManagedUsers={props.setManagedUsers} />
                             );
                         } else {
                             return (
@@ -1137,7 +1171,7 @@ const UsersPage = (props) => {
                                             </Select>
                                         </StandardRoundSelectForm>
                                     </Grid>
-                                    <Grid item container xs={12} style={{paddingTop:"8px"}}>
+                                    <Grid item container xs={12} style={{ paddingTop: "8px" }}>
                                         <Typography variant={"body1"}>Choose locations</Typography>
                                         <div style={{ minHeight: '300px', minWidth: '200px', width: "98%" }} className="ag-theme-alpine-dark" >
                                             <AgGridReact
@@ -1160,7 +1194,7 @@ const UsersPage = (props) => {
                                             </AgGridReact>
                                         </div>
                                     </Grid>
-                                    <Grid item xs={12} sm={3} md={2} style={{paddingTop:"8px"}}>
+                                    <Grid item xs={12} sm={3} md={2} style={{ paddingTop: "8px" }}>
                                         <Button variant={"outlined"} color={"primary"} onClick={submitNewUser}>
                                             SAVE USER DETAILS
                                         </Button>
@@ -1189,6 +1223,6 @@ const mapStateToProps = (state) => {
 }
 
 const formedComponent = compose(
-    connect(mapStateToProps, { fetchManagedUsers: fetchManagedUsers, pendingManagedUsers: pendingManagedUsers, resetPendingManagedUsers: resetPendingManagedUsers, setManagedUsers:setManagedUsers }))(UsersPage);
+    connect(mapStateToProps, { fetchManagedUsers: fetchManagedUsers, pendingManagedUsers: pendingManagedUsers, resetPendingManagedUsers: resetPendingManagedUsers, setManagedUsers: setManagedUsers }))(UsersPage);
 
 export default formedComponent;

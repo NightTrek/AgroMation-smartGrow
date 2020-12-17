@@ -29,6 +29,10 @@ exports.SetAccountViewer = functions.https.onCall(async (data, context) => {
         }
     }
     else {
+        functions.logger.warn("Invalid access:", {
+            uid: context.auth.token.uid,
+            type: context.auth.token.accountType
+        });
         return ({
             error: "Invalid Access",
             type: context.auth.token.accountType
@@ -57,6 +61,10 @@ exports.SetAccountUser = functions.https.onCall(async (data, context) => {
         }
     }
     else {
+        functions.logger.warn("Invalid access:", {
+            uid: context.auth.token.uid,
+            type: context.auth.token.accountType
+        });
         return ({
             error: "Invalid Access",
             type: context.auth.token.accountType
@@ -86,6 +94,10 @@ exports.SetAccountAdmin = functions.https.onCall(async (data, context) => {
         }
     }
     else {
+        functions.logger.warn("Invalid access:", {
+            uid: context.auth.token.uid,
+            type: context.auth.token.accountType
+        });
         return ({
             error: "Invalid Admin Access",
             type: context.auth.token.accountType
@@ -114,6 +126,10 @@ exports.SetAccountOwner = functions.https.onCall(async (data, context) => {
         }
     }
     else {
+        functions.logger.warn("Invalid access:", {
+            uid: context.auth.token.uid,
+            type: context.auth.token.accountType
+        });
         return ({
             error: "Invalid Access",
             type: context.auth.token.accountType
@@ -143,6 +159,10 @@ exports.SetAccountSuper = functions.https.onCall(async (data, context) => {
         }
     }
     else {
+        functions.logger.warn("Invalid access:", {
+            uid: context.auth.token.uid,
+            type: context.auth.token.accountType
+        });
         return ({
             error: "Invalid Admin Access",
             type: context.auth.token.accountType
@@ -152,8 +172,8 @@ exports.SetAccountSuper = functions.https.onCall(async (data, context) => {
 
 });
 
-//takes the email and created an account
-exports.CreateOrFetchMangedAccount = functions.https.onCall(async (data, context) => {
+//takes an email and returns the uid of the auth account if it exists
+exports.FetchUidByEmail = functions.https.onCall(async (data, context) => {
     if (context.auth.token.accountType === "admin" || context.auth.token.accountType === "owner" || context.auth.token.accountType === "super") {
         //first make sure the email being created exists and it has a base auth claim
         if (data.email) {
@@ -164,30 +184,16 @@ exports.CreateOrFetchMangedAccount = functions.https.onCall(async (data, context
                 //if the auth user exists return their UID
                 if (authUser.uid) {
                     return ({
-                        status: "success",
+                        status: "success getting user",
                         auth: context.auth,
-                        authRes: authUser,
+                        uid: authUser.uid,
                     });
                 } else {
-                    //If the auth user does not exist with that email create them 
-                    try {
-                        let res = await admin.auth().createUser({ email: data.email })
-                        //return the new auth user
-                        return ({
-                            status: "success",
-                            auth: context.auth,
-                            authRes: res,
-                        });
-                    } catch (err) {
-                        return ({
-                            error: err,
-                            msg: "Error making new auth account",
-                            UID: context.auth.uid,
-                            TargetUID: data.uid
-                        })
-                    }
-
-
+                    return ({
+                        error: "UID not present",
+                        msg: "Error looking for account by email",
+                        UID: context.auth.uid,
+                    })
                 }
 
             } catch (err) {
@@ -195,19 +201,67 @@ exports.CreateOrFetchMangedAccount = functions.https.onCall(async (data, context
                     error: err,
                     msg: "Error looking for account by email",
                     UID: context.auth.uid,
-                    TargetUID: data.uid
                 })
             }
         }
         else{
             return ({
                 error: "missing email or accountType",
-                type: context.auth.token.uid
+                type: context.auth.token.uid,
+                input:data,
             })
         }
 
     }
     else {
+        functions.logger.error("Invalid access:", {
+            uid: context.auth.token.uid,
+            type: context.auth.token.accountType
+        });
+        return ({
+            error: "Invalid Access",
+            type: context.auth.token.accountType
+        })
+    }
+    // Allow access to requested admin resource.
+
+});
+
+//takes the email and creates an account and returns a uid
+exports.CreateMangedAccount = functions.https.onCall(async (data, context) => {
+    if (context.auth.token.accountType === "admin" || context.auth.token.accountType === "owner" || context.auth.token.accountType === "super") {
+        //first make sure the email being created exists and it has a base auth claim
+        if (data.email) {
+             try {
+                let res = await admin.auth().createUser({ email: data.email })
+                //return the new auth user
+                return ({
+                    status: "success creating user",
+                    auth: context.auth,
+                    uid: res.uid,
+                });
+            } catch (err) {
+                return ({
+                    error: err,
+                    msg: "Error making new auth account",
+                    UID: context.auth.uid,
+                })
+            }
+        }
+        else{
+            return ({
+                error: "missing email or accountType",
+                type: context.auth.token.uid,
+                input:data,
+            })
+        }
+
+    }
+    else {
+        functions.logger.error("Invalid access:", {
+            uid: context.auth.token.uid,
+            type: context.auth.token.accountType
+        });
         return ({
             error: "Invalid Access",
             type: context.auth.token.accountType

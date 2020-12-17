@@ -90,3 +90,103 @@ export const AuthProvider = ({ children }) => {
 </Grid>
 
 </Grid>
+
+
+
+db.collection("Users").where("email", "==", lowerCaseEmail).get().then((UsersSnapshot) => {
+  if (UsersSnapshot.empty) {
+      console.log(output);
+      //Here we are going to either create the auth account or get the UID  for the auth account. We are also going to set the Auth claims for said account 
+
+      FetchUidByEmail({ email: output.email }).then(async (auth) => {
+          console.log(auth)
+          if (auth.uid) {
+              output.UID = auth.uid
+              //here we set the new users auth claim a
+              try {
+                  await SetManagedAccountClaims({ uid: auth.uid, accountType: output.accountType.toLowerCase() })
+              } catch (err) {
+                  console.log("error setting accounts auth claims")
+                  console.log(err)
+              }
+              db.collection('Users').add(output).then((response) => {
+                  console.log(response)
+                  if (response.id !== undefined) {
+
+                      let newReduxManagedLocationsArray = managedUsers
+                      newReduxManagedLocationsArray.push({ doc: response.id, ...output })
+                      props.setManagedUsers(newReduxManagedLocationsArray);
+                      auth.sendPasswordResetEmail(output.email).then(function () {
+                          // Email sent.
+                          handleInvalidAlertOpen("Success added User they can now login and access your data", 'success')
+                      }).catch(function (error) {
+                          // An error happened.
+
+                          handleInvalidAlertOpen("Error sending password to new user");
+                      });
+                      setOpen(false);
+                  } else {
+                      handleInvalidAlertOpen("failed to add User Server error please wait and try again.")
+                  }
+              }).catch((error) => {
+                  console.log(error)
+                  handleInvalidAlertOpen(`ERROR failed to upload new User please wait and try again`)
+              })
+
+
+          } else {
+              //Here we create the account since one does not exist
+              CreateMangedAccount({ email: output.email }).then(async (auth) => {
+                  if (auth.uid) {
+                      output.UID = auth.uid
+                      //here we set the new users auth claim a
+                      try {
+                          await SetManagedAccountClaims({ uid: auth.uid, accountType: output.accountType.toLowerCase() })
+                      } catch (err) {
+                          console.log(err)
+                      }
+                      db.collection('Users').add(output).then((response) => {
+                          console.log(response)
+                          if (response.id !== undefined) {
+
+                              let newReduxManagedLocationsArray = managedUsers
+                              newReduxManagedLocationsArray.push({ doc: response.id, ...output })
+                              props.setManagedUsers(newReduxManagedLocationsArray);
+                              auth.sendPasswordResetEmail(output.email).then(function () {
+                                  // Email sent.
+                                  handleInvalidAlertOpen("Success added User they can now login and access your data", 'success')
+                              }).catch(function (error) {
+                                  // An error happened.
+
+                                  handleInvalidAlertOpen("Error sending password to new user");
+                              });
+                              setOpen(false);
+                          } else {
+                              handleInvalidAlertOpen("failed to add User Server error please wait and try again.")
+                          }
+                      }).catch((error) => {
+                          console.log(error)
+                          handleInvalidAlertOpen(`ERROR failed to upload new User please wait and try again`)
+                      })
+
+
+                  } else {
+                      throw new Error("auth error")
+                  }
+
+              }).catch((err) => {
+                  console.log(err)
+                  handleInvalidAlertOpen("failed to add User Server error please wait and try again.")
+              });
+          }
+
+      }).catch((err) => {
+          console.log(err)
+          handleInvalidAlertOpen(`ERROR failed to fetch users id`)
+      })
+  } else {
+      handleInvalidAlertOpen(`ERROR email already in use`)
+  }
+}).catch((error) => {
+  handleInvalidAlertOpen(`ERROR failed to upload new User please wait and try again`)
+})

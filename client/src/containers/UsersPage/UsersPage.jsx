@@ -19,7 +19,8 @@ import { StandardRoundSelectForm } from "../../components/StandardSelect/Standar
 import { fetchManagedUsers, pendingManagedUsers, resetPendingManagedUsers, setManagedUsers } from "../../actions/ManageUsersActions"
 
 import { db, auth } from "../../consts/firebase";
-import { CreateOrFetchMangedAccount, SetManagedAccountClaims } from "../../CloudFunctions/CloudFunctions";
+import { FetchUidByEmail, CreateMangedAccount, SetManagedAccountClaims } from "../../CloudFunctions/CloudFunctions";
+
 
 
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
@@ -360,6 +361,8 @@ export const validatePhone = (phone) => {
 
 
 
+const fireAuth = auth;
+
 
 const UserWidget = (props) => {
     const classes = useStyles();
@@ -421,11 +424,11 @@ const UserWidget = (props) => {
     };
     //Select any locations the account already has access too
     if (gridApi && zones[0] !== "loading rooms") {
-        console.log("setting selected locations")
+        // console.log("setting selected locations")
         gridApi.forEachNode((node, index) => {
             zones.forEach((item, index) => {
                 if (node.data.name === item.name && node.data.address === item.address) {
-                    console.log("selecting Zone")
+                    // console.log("selecting Zone")
                     node.setSelected(true);
                 }
             })
@@ -500,8 +503,8 @@ const UserWidget = (props) => {
             //if the value is an Array check if the two arrays have the same name for each variables 
 
             if (Array.isArray(output[key])) {
-                console.log(output[key])
-                console.log(props.mUser[key]);
+                // console.log(output[key])
+                // console.log(props.mUser[key]);
                 let arrayCount = 0;
                 let i;
                 if (output[key].length === props.mUser[key].length) {
@@ -743,7 +746,7 @@ const UsersPage = (props) => {
     const classes = useStyles();
     const theme = useTheme();
     let accountType = ["Admin", "User", "Viewer"];
-
+    
     let { user, locations, auth, pending, managedUsers } = useSelector(state => ({
         user: state.users.user,
         pending: state.managedUsers.pending,
@@ -791,7 +794,7 @@ const UsersPage = (props) => {
 
     //check if data has loaded and if not display loading text
     if (user.firstName === undefined || user.location.length === undefined) {
-        console.log("setting loading data")
+        // console.log("setting loading data")
         user = {
             name: "loading",
             location: [
@@ -808,9 +811,6 @@ const UsersPage = (props) => {
             subscription: {}
         };
     }
-
-
-
 
     // console.log(managedUsers);
     // console.log(testManagedUsers(managedUsers))
@@ -874,17 +874,19 @@ const UsersPage = (props) => {
                 console.log("free account handle managed users")
                 break;
         }
-        console.log(managedUsers.length)
-        console.log(maxSeats);
+        // console.log(managedUsers.length)
+        // console.log(maxSeats);
         if (managedUsers.length < maxSeats) {
             setOpen(true);
+        }else{
+            handleInvalidAlertOpen("cannot add more users without upgrading your plan.");
         }
 
     };
 
     const handleInvalidAlertOpen = (msg, type) => {
         if (type === "success") {
-            console.log("successAlert")
+            // console.log("successAlert")
             setState({
                 ...state,
                 errorMsg: msg,
@@ -892,7 +894,7 @@ const UsersPage = (props) => {
                 alertType: "success"
             });
         } else {
-            console.log("error alert")
+            // console.log("error alert")
             setState({
                 ...state,
                 errorMsg: msg,
@@ -924,7 +926,7 @@ const UsersPage = (props) => {
             //     errorMsg: ,
             //     invalidAlert: true
             // })
-            handleInvalidAlertOpen("Warning changes have been saved")
+            handleInvalidAlertOpen("Warning changes have not been saved")
 
         }
         setOpen(false);
@@ -961,6 +963,7 @@ const UsersPage = (props) => {
             invalidAlert: false
         });
     };
+
 
     const submitNewUser = async () => {
         if (managedUsers.length >= maxManagedUsers) {
@@ -1027,58 +1030,119 @@ const UsersPage = (props) => {
         };
         let lowerCaseEmail = state.email.toLowerCase()
 
-        db.collection("Users").where("email", "==", lowerCaseEmail).get().then((UsersSnapshot) => {
+        
+        try {
+            let UsersSnapshot = await db.collection("Users").where("email", "==", lowerCaseEmail).get();
             if (UsersSnapshot.empty) {
-                //Here we are going to either create the auth account or get the UID  for the auth account. We are also going to set the Auth claims for said account 
-                CreateOrFetchMangedAccount({ email: lowerCaseEmail }).then(async (auth) => {
-                    console.log(auth)
-                    if(auth.uid){
-                        output.UID = auth.uid
-                        //here we set the new users auth claim a
-                        try{
-                            await SetManagedAccountClaims({uid:auth.uid, accountType:output.accountType.toLowerCase()})
-                        }catch(err){
-                            console.log(err)
-                        }
-                        db.collection('Users').add(output).then((response) => {
-                            console.log(response)
-                            if (response.id !== undefined) {
-    
-                                let newReduxManagedLocationsArray = managedUsers
-                                newReduxManagedLocationsArray.push({ doc: response.id, ...output })
-                                props.setManagedUsers(newReduxManagedLocationsArray);
-                                auth.sendPasswordResetEmail(output.email).then(function () {
-                                    // Email sent.
-                                    handleInvalidAlertOpen("Success added User they can now login and access your data", 'success')
-                                }).catch(function (error) {
-                                    // An error happened.
-                                    
-                                    handleInvalidAlertOpen("Error sending password to new user");
-                                });
-                                setOpen(false);
-                            } else {
-                                handleInvalidAlertOpen("failed to add User Server error please wait and try again.")
-                            }
-                        }).catch((error) => {
-                            console.log(error)
-                            handleInvalidAlertOpen(`ERROR failed to upload new User please wait and try again`)
-                        })
-
+                //since user is new check if they have an auth account
+                try {
+                    let oldAuthUser = await FetchUidByEmail({ email: output.email });
+                    if (oldAuthUser.data.uid) {
                         
-                    }else{
-                        throw new  Error("auth error")
+                        //found old auth User add uid to output object and upload into firestore.
+                        //update the found UID with the auth claims
+                        output.UID = oldAuthUser.data.uid;
+                        try {
+                            //update auth claims
+                            await SetManagedAccountClaims({ uid: oldAuthUser.data.uid, accountType: output.accountType.toLowerCase() })
+                            try {
+                                // add user to firestore
+                                let dbRes = await db.collection('Users').add(output);
+                                //check for the id to ensure success 
+                                if (dbRes.id !== undefined) {
+                                    //handle account upload success
+                                    let newReduxManagedLocationsArray = managedUsers
+                                    newReduxManagedLocationsArray.push({ doc: dbRes.id, ...output })
+                                    props.setManagedUsers(newReduxManagedLocationsArray);
+                                    handleInvalidAlertOpen("Success added User they can now login and access your data", 'success')
+                                    setOpen(false);
+                                }
+                            } catch (err) {
+                                console.log("error uploading user info with old UID");
+                                console.log(err);
+                                handleInvalidAlertOpen("Error failed add new account. contact your administrator if this error persists");
+                            }
+
+
+                        } catch (err) {
+                            console.log("error setting accounts auth claims")
+                            console.log(err)
+                            handleInvalidAlertOpen("Error failed to update account with access permissions. contact your administrator if this error persists");
+                        }
+
+                        //then upload into db
+                        //Here we create a new auth user instead of adding the existing uid
+                    } else {
+                        // console.log('Create new user')
+                        //no UID present need to create a new auth account and add that uid to output object first
+                        try {
+                            let newAuthUser = await CreateMangedAccount({ email: output.email });
+                            if (newAuthUser.data.uid) {
+                                //we have the new uid now we can add claims and upload to db
+                                output.UID = newAuthUser.data.uid;
+                                try {
+                                    await SetManagedAccountClaims({ uid: newAuthUser.data.uid, accountType: output.accountType.toLowerCase() })
+                                    try {
+                                        let dbRes = await db.collection('Users').add(output);
+                                        //check for the id to ensure success 
+                                        // console.log(dbRes);
+                                        if (dbRes.id !== undefined) {
+                                            //handle account upload success
+                                            //add new account to redux store so its displayed on the page.
+                                            let newReduxManagedLocationsArray = managedUsers
+                                            newReduxManagedLocationsArray.push({ doc: dbRes.id, ...output })
+                                            props.setManagedUsers(newReduxManagedLocationsArray);
+                                            try {
+                                                let reset = await fireAuth.sendPasswordResetEmail(output.email)
+                                                handleInvalidAlertOpen("Success added User they can now login and access your data", 'success')
+                                                setOpen(false);
+                                            } catch (err) {
+                                                console.log(err)
+                                                handleInvalidAlertOpen("Error failed to send password reset email to new user. You can manually send a password reset in the edit account page.");
+                                                setOpen(false);
+                                            }
+
+                                        }
+                                    } catch (err) {
+                                        console.log("error uploading user info with new UID");
+                                        console.log(err);
+                                        handleInvalidAlertOpen("Error failed to upload account info. contact your administrator if this error persists");
+                                    }
+
+
+                                } catch (err) {
+                                    console.log("error setting accounts auth claims")
+                                    console.log(err)
+                                    handleInvalidAlertOpen("Error failed to update account with access permissions. contact your administrator if this error persists");
+                                    
+                                }
+                            }else{
+                                console.log('error auth user already exists')
+                                console.log(newAuthUser);
+                            }
+
+                        } catch (err) {
+                            console.log(err)
+                            handleInvalidAlertOpen("Error failed to create new account. contact your administrator if this error persists");
+                        }///testing
                     }
 
-                }).catch((err) => {
+                } catch (err) {
                     console.log(err)
-                    handleInvalidAlertOpen("failed to add User Server error please wait and try again.")
-                })
+                    handleInvalidAlertOpen("Error fetching auth user from server. contact your administrator if this error persists");
+                }
+
             } else {
-                handleInvalidAlertOpen(`ERROR email already in use`)
+                //here we handle finding User that is already in the database but not associated with this account owner
+                // throw error email is already in use 
+                handleInvalidAlertOpen("Error Email is already in use contact an administrator for assistance");
             }
-        }).catch((error) => {
-            handleInvalidAlertOpen(`ERROR failed to upload new User please wait and try again`)
-        })
+        } catch (err) {
+            console.log(err);
+            handleInvalidAlertOpen("Error Connecting to the server try again in a few minutes or contact an administrator");
+        }
+
+
 
 
 

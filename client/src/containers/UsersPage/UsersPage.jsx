@@ -4,7 +4,8 @@ import { compose } from "redux";
 import { connect, useSelector, shallowEqual } from "react-redux";
 import {
     Container, Grid, makeStyles, useTheme, withStyles, Button, Modal, Box, Typography, List,
-    ListItem, ListItemText, ListItemIcon, Backdrop, Fade, IconButton, Select, MenuItem, TextField, CircularProgress
+    ListItem, ListItemText, ListItemIcon, Backdrop, Fade, IconButton, Select, MenuItem, TextField, CircularProgress,
+    Switch 
 } from '@material-ui/core';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -386,7 +387,7 @@ const UserWidget = (props) => {
     }
 
 
-
+    
 
     ///Grid stuff
     const [gridApi, setGridApi] = React.useState(null);
@@ -476,7 +477,7 @@ const UserWidget = (props) => {
         })
     }
 
-    const updateManagedUser = () => {
+    const updateManagedUser = async () => {
         //get the selected locations
         let selectedRows = gridApi.getSelectedRows()
         //make sure there are locations. dont let no locations be set
@@ -555,6 +556,14 @@ const UserWidget = (props) => {
             props.handleInvalidAlertOpen("Unable to add new user Loading data still")
             return 0
         }
+        if(props.mUser.accountType !== output.accountType){
+            console.log('account privilege changed')
+            try{
+                let res = await SetManagedAccountClaims({uid:props.mUser.UID, accountType:output.accountType.toLowerCase()})
+            }catch(err){
+                console.log(err)
+            }
+        }
 
         let UserRef = db.collection("Users").doc(props.mUserDocRef)
         //then start a transaction to update the User
@@ -622,7 +631,7 @@ const UserWidget = (props) => {
                 <Grid item xs></Grid>
                 <Grid item xs > <Typography variant={"h6"} className={classes.userNameHeader} >{props.userName}</Typography></Grid>
                 <Grid item xs ><Box className={classes.accountCircle}><AccountCircleRoundedIcon className={classes.profileIcon} /></Box></Grid>
-                <Grid item xs></Grid>
+                <Grid item xs> </Grid>
                 <Grid item xs>{type}</Grid>
                 <Grid item xs><Typography variant={"body2"} className={classes.UserEmail} >{props.email}</Typography></Grid>
             </Grid>
@@ -1030,7 +1039,8 @@ const UsersPage = (props) => {
         };
         let lowerCaseEmail = state.email.toLowerCase()
 
-        
+        // fancy expensive part which could be offloaded as a cloud function if it sucks on mobile.
+        //we check for duplicate email. then we fetch the auth user or create one if none exists. after that we upload the user to firestore and update their auth claim.
         try {
             let UsersSnapshot = await db.collection("Users").where("email", "==", lowerCaseEmail).get();
             if (UsersSnapshot.empty) {

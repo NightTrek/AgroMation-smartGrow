@@ -1,6 +1,9 @@
 const functions = require('firebase-functions');
 var admin = require("firebase-admin");
 const moment = require('moment');
+const ovpn = require('node-openvpn');
+
+
 
 var serviceAccount = require("./agroFireBaseAdmin.json");
 
@@ -272,12 +275,26 @@ exports.CreateMangedAccount = functions.https.onCall(async (data, context) => {
 });
 
 exports.DeleteMangedAccount = functions.https.onCall(async (data, context) => {
-    if (context.auth.token.accountType === "admin") {
+    if (context.auth.token.accountType === "super" || context.auth.token.accountType === 'owner') {
         try {
-            let res = await admin.auth().deleteUser(data.uid, { accountType: "admin", stripeRole: 'admin' })
+            let res = await admin.auth().deleteUser(data.uid)
+            /// delete the firestore record for the User
+            let fireRes = await db.collection('Users').where('UID', '==', data.uid).get();
+            if(!fireRes.empty){
+                if(fireRes.length === 1){
+                    fireRes[0].id;
+                    fireRes[0].delete().then((item) => {
+                        return({
+                            status:'success',
+                            DeletedID: data.uid
+                        })
+                    })
+                }
+                
+            }
             return ({
                 status: "success",
-                auth: context.auth
+                deletedID: data.uid
             });
 
         } catch (err) {
@@ -553,3 +570,11 @@ exports.FetchLiveDeviceData = functions.https.onCall(async (data, context) => {
 // exports.AddNotification = functions.https.onCall( async (data, context) => {
 
 // });
+
+
+
+
+exports.OpenVPNconnection = functions.https.onCall(async (data, context) => {
+    
+
+});

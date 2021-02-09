@@ -1,6 +1,9 @@
 const functions = require('firebase-functions');
 var admin = require("firebase-admin");
 const moment = require('moment');
+const ovpn = require('node-openvpn');
+
+
 
 var serviceAccount = require("./agroFireBaseAdmin.json");
 
@@ -567,3 +570,11 @@ exports.FetchLiveDeviceData = functions.https.onCall(async (data, context) => {
 // exports.AddNotification = functions.https.onCall( async (data, context) => {
 
 // });
+
+
+
+
+exports.OpenVPNconnection = functions.https.onCall(async (data, context) => {
+    
+
+});

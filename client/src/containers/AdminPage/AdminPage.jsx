@@ -21,7 +21,7 @@ import { setUser } from "../../actions/User"
 import { fetchAdminUsers, pendingManagedUsers } from "../../actions/ManageUsersActions";
 //firebase
 import { db, auth, getIdToken, func } from "../../consts/firebase"; //getCustomClaimRole
-import { SetAccountOwner, getAuthContext } from "../../CloudFunctions/CloudFunctions";
+import { FetchLiveDeviceData, getAuthContext } from "../../CloudFunctions/CloudFunctions";
 
 const ManageAllUsersTable = (props) => {
 
@@ -303,6 +303,17 @@ const AdminPage = (props) => {
         //   });
     }
 
+    const testGetDataButton = async () => {
+        console.log('getting data')
+        try{
+            let DataResponse = await axios.get
+            console.log(DataResponse);
+
+        }catch(err){
+            console.log(err)
+        }
+    }
+
 
     return (
         <Container className={"containerMain"}>
@@ -341,6 +352,9 @@ const AdminPage = (props) => {
                             <Grid item container direction={'row'} spacing={1} style={{paddingTop:"24px"}}>
                                 <Grid item xs={6} sm={4}>
                                     <Button variant={'outlined'} color={'primary'} onClick={testAPIButton}>Get Auth Claims</Button>
+                                </Grid>
+                                <Grid item xs={6} sm={4}>
+                                    <Button variant={'outlined'} color={'primary'} onClick={testGetDataButton}>Get Live Data</Button>
                                 </Grid>
                             </Grid>
                         </TabPanel>

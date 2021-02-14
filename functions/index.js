@@ -1,7 +1,7 @@
 const functions = require('firebase-functions');
 var admin = require("firebase-admin");
 const moment = require('moment');
-const ovpn = require('node-openvpn');
+const axios = require('axios');
 
 
 
@@ -207,11 +207,11 @@ exports.FetchUidByEmail = functions.https.onCall(async (data, context) => {
                 })
             }
         }
-        else{
+        else {
             return ({
                 error: "missing email or accountType",
                 type: context.auth.token.uid,
-                input:data,
+                input: data,
             })
         }
 
@@ -235,7 +235,7 @@ exports.CreateMangedAccount = functions.https.onCall(async (data, context) => {
     if (context.auth.token.accountType === "admin" || context.auth.token.accountType === "owner" || context.auth.token.accountType === "super") {
         //first make sure the email being created exists and it has a base auth claim
         if (data.email) {
-             try {
+            try {
                 let res = await admin.auth().createUser({ email: data.email })
                 //return the new auth user
                 return ({
@@ -251,11 +251,11 @@ exports.CreateMangedAccount = functions.https.onCall(async (data, context) => {
                 })
             }
         }
-        else{
+        else {
             return ({
                 error: "missing email or accountType",
                 type: context.auth.token.uid,
-                input:data,
+                input: data,
             })
         }
 
@@ -274,28 +274,41 @@ exports.CreateMangedAccount = functions.https.onCall(async (data, context) => {
 
 });
 
+
+/// TODO Check and make sure this function still works.
 exports.DeleteMangedAccount = functions.https.onCall(async (data, context) => {
     if (context.auth.token.accountType === "super" || context.auth.token.accountType === 'owner') {
         try {
             let res = await admin.auth().deleteUser(data.uid)
             /// delete the firestore record for the User
-            let fireRes = await db.collection('Users').where('UID', '==', data.uid).get();
-            if(!fireRes.empty){
-                if(fireRes.length === 1){
-                    fireRes[0].id;
-                    fireRes[0].delete().then((item) => {
-                        return({
-                            status:'success',
-                            DeletedID: data.uid
+            try {
+                let fireRes = await db.collection('Users').where('UID', '==', data.uid).get();
+                if (!fireRes.empty) {
+                    if (fireRes.length === 1) {
+                        fireRes[0].id;
+                        fireRes[0].delete().then((item) => {
+                            return ({
+                                status: 'success',
+                                DeletedID: data.uid
+                            })
+                        }).catch((err) => {
+                            return err;
                         })
-                    })
+                    }
+
                 }
-                
+                return ({
+                    status: "success",
+                    deletedID: data.uid
+                });
+            } catch (err) {
+                return ({
+                    error: err,
+                    UID: context.auth.uid,
+                    TargetUID: data.uid
+                });
             }
-            return ({
-                status: "success",
-                deletedID: data.uid
-            });
+
 
         } catch (err) {
             return ({
@@ -460,7 +473,7 @@ exports.SetManagedAccountClaims = functions.https.onCall(async (data, context) =
                             error: err,
                             UID: context.auth.uid,
                             TargetUID: data.uid,
-                            accountType:accountType
+                            accountType: accountType
                         })
                     }
                 } else {
@@ -485,7 +498,7 @@ exports.SetManagedAccountClaims = functions.https.onCall(async (data, context) =
             })
         }
 
-    }else if (context.auth.token.accountType === "super"){
+    } else if (context.auth.token.accountType === "super") {
         if (uid && accountType && stripeRole) {
             //make sure the account type is one of the four valid types
             if (accountType === 'owner' || accountType === 'admin' || accountType === "user" || accountType === "viewer") {
@@ -503,7 +516,7 @@ exports.SetManagedAccountClaims = functions.https.onCall(async (data, context) =
                         error: err,
                         UID: context.auth.uid,
                         TargetUID: data.uid,
-                        accountType:accountType
+                        accountType: accountType
                     })
                 }
             } else {
@@ -532,39 +545,18 @@ exports.SetManagedAccountClaims = functions.https.onCall(async (data, context) =
 
 //This function takes the deviceID and interval and number of records and returns the live data for that controller.
 exports.FetchLiveDeviceData = functions.https.onCall(async (data, context) => {
-    let { numberOfRecords, interval, deviceID } = data;
-    let time = [];
-
-    if (!numberOfRecords) {
-        numberOfRecords = 20;
-    }
-    if (!interval) {
-        interval = 10;
-    }
-    //try and get the live data from Azure or wherever we store it
-    //temp generate time data based on the current time and an interval of ten minutes
-    let now = moment();
-    let Start = now.subtract(numberOfRecords * interval, 'minutes');
-    time.push(Start);
-    for (let i = 1; i <= numberOfRecords; i++) {
-        time.push(Start.add(i * interval, 'minutes'))
+    //let { numberOfRecords, interval, deviceID } = data;
+    try {
+        let res = axios({ url: "10.128.0.7:3000/", method: "get" })
+        functions.logger.info(res)
+        return res;
+    } catch (err) {
+        return err;
     }
 
-    if (deviceID === "AgroOffice") {
-        return ({
-            temp: [73.51, 73.64, 73.59, 73.67, 73.71, 73.78, 73.83, 73.9, 73.92, 73.98, 74.11, 74.15, 74.21, 74.13, 73.99, 73.91, 73.85, 73.79, 73.72, 73.64],
-            humidity: [0.45, 0.45, 0.45, 0.45, 0.44, 0.44, 0.44, 0.44, 0.43, 0.43, 0.43, 0.43, 0.43, 0.43, 0.44, 0.44, 0.44, 0.44, 0.45, 0.45,],
-            CO2: [2999, 2994, 2990, 2996, 2999, 2994, 2990, 2996, 2999, 2994, 2990, 2996, 2999, 2994, 2990, 2996, 2999, 2994, 2990, 2996,],
-            VPD: [1114, 1113, 1112, 1113, 1114, 1113, 1112, 1113, 1114, 1113, 1112, 1113, 1114, 1113, 1112, 1113, 1114, 1113, 1112, 1113,],
-            time: time
-        })
-    }
-    return ({
-        error: "DeviceID not found",
-        data: data,
-    })
 
 });
+
 
 // //function called by the data acquisition device when the 
 // exports.AddNotification = functions.https.onCall( async (data, context) => {
@@ -574,7 +566,8 @@ exports.FetchLiveDeviceData = functions.https.onCall(async (data, context) => {
 
 
 
-exports.OpenVPNconnection = functions.https.onCall(async (data, context) => {
-    
-
+exports.FetchLiveData = functions.https.onRequest((req,res) => {
+    res.set('Access-Control-Allow-Methods', '*');
+    res.set('Access-Control-Allow-Headers', '*');
+    res.send("Hello world")
 });

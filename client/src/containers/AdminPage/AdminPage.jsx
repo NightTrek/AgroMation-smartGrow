@@ -306,7 +306,7 @@ const AdminPage = (props) => {
     const testGetDataButton = async () => {
         console.log('getting data')
         try{
-            let DataResponse = await axios.get
+            let DataResponse = await FetchLiveDeviceData()
             console.log(DataResponse);
 
         }catch(err){

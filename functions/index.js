@@ -2,7 +2,7 @@ const functions = require('firebase-functions');
 var admin = require("firebase-admin");
 const moment = require('moment');
 const axios = require('axios');
-
+const opc = require('./opcClient');
 
 
 var serviceAccount = require("./agroFireBaseAdmin.json");
@@ -547,9 +547,10 @@ exports.SetManagedAccountClaims = functions.https.onCall(async (data, context) =
 exports.FetchLiveDeviceData = functions.https.onCall(async (data, context) => {
     //let { numberOfRecords, interval, deviceID } = data;
     try {
-        let res = axios({ url: "10.128.0.7:3000/", method: "get" })
-        functions.logger.info(res)
-        return res;
+        // let res = axios({ url: "10.128.0.7:3000/", method: "get" })
+        // functions.logger.info(res)
+        let res = await opc.connectAndGetData();
+        return JSON.stringify(res);
     } catch (err) {
         return err;
     }
@@ -566,8 +567,8 @@ exports.FetchLiveDeviceData = functions.https.onCall(async (data, context) => {
 
 
 
-exports.FetchLiveData = functions.https.onRequest((req,res) => {
-    res.set('Access-Control-Allow-Methods', '*');
-    res.set('Access-Control-Allow-Headers', '*');
-    res.send("Hello world")
-});
+// exports.FetchLiveData = functions.https.onRequest((req,res) => {
+//     res.set('Access-Control-Allow-Methods', '*');
+//     res.set('Access-Control-Allow-Headers', '*');
+//     res.send("Hello world")
+// });

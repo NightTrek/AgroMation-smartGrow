@@ -10,22 +10,22 @@ const mqttClientOptions = {
 }
 
 const dataHistory = "dataHistory";
-const dataLive = "live"
+const dataLive = "Live"
 const inputFolder = "config";
 const outputFolder = "data";
 
-const createChannelURLString = (deviceID, folder=outputFolder, item=dataLive) => {
-    if(!deviceID){
+const createChannelURLString = (deviceID, folder = outputFolder, item = dataLive) => {
+    if (!deviceID) {
         console.log("error no deviceID");
-        return {error:"DEVICEID UNDEFINED"};
+        return { error: "DEVICEID UNDEFINED" };
     }
-    return deviceID+"/"+folder+"/"+item
+    return deviceID + "/" + folder + "/" + item
 }
 
-
+//working
 const connectAndGetLiveData = (deviceID) => {
     const subscriptionOptions = {
-        rh:true
+        rh: true
     }
     return new Promise((resolve, reject) => {
         const client = mqtt.connect(mqttURL, mqttClientOptions)
@@ -36,12 +36,10 @@ const connectAndGetLiveData = (deviceID) => {
         })
         //Once the client is connected handle subscriptions
         client.on('connect', function () {
-            console.log(client);
             const subURI = createChannelURLString(deviceID, outputFolder, dataLive);
-            client.subscribe(subURI, subscriptionOptions,  function (err, granted) {
-                if (!err) {
-                    console.log(granted);
-                }else{
+            client.subscribe(subURI, subscriptionOptions, function (err, granted) {
+                if (err) {
+                    //reject if there is an error
                     reject(err);
                 }
             })
@@ -49,9 +47,7 @@ const connectAndGetLiveData = (deviceID) => {
 
         //handle reciving any messages in the broker.
         client.on('message', function (topic, message) {
-            // message is Buffer
-            console.log(message.toString())
-            resolve(message);
+            resolve(JSON.parse(message.toString()));
             client.end()
         })
     })
@@ -72,32 +68,104 @@ const createMqttClient = () => {
     });
 }
 
-const createSub = (client, deviceID, type="live") => {
-    const subscriptionOptions = {
-        rh:true
-    }
-    let subURI;
-    // subscribes client to either live data or data history changes
-    switch (type) {
-        case "live":
-            subURI = createChannelURLString(deviceID, outputFolder, dataLive);
-            break;
-        case "history":
-            subURI = createChannelURLString(deviceID, outputFolder, dataHistory);
-            break
-    }
-    client.subscribe(subURI, subscriptionOptions, (err, granted) => {
-        if(err){
-            reject(err);
-        }else{
-            resolve(granted);
+//Promise based wrapper for creating subscriptions. can take list of device ID's
+//NEEDS testing for multiple subs
+const createSub = (client, deviceID, type = "live") => {
+    return new Promise((resolve, reject) => {
+        const subscriptionOptions = {
+            rh: true
         }
+        let subURIList = []
+        //if deviceID is an array then for each item add URI to list according to type
+        if (typeof deviceID !== 'string' && deviceID.length > 1) {
+            //handle multiple devices being subscribed.
+            deviceID.forEach((item, index) => {
+                // subscribes client to either live data or data history changes
+                switch (type) {
+                    case "live":
+                        subURIList.push(createChannelURLString(item, outputFolder, dataLive));
+                        break;
+                    case "history":
+                        subURIList.push(createChannelURLString(item, outputFolder, dataHistory));
+                        break
+                    case 'both':
+                        subURIList.push(createChannelURLString(item, outputFolder, dataLive));
+                        subURIList.push(createChannelURLString(item, outputFolder, dataHistory));
+                        break;
+                }
+            })
+        }else{
+            //handle one  device being subscribed.
+            let currentDevice;
+            if(typeof deviceID !== 'string'){
+                currentDevice = deviceID[0];
+            }else{
+                currentDevice = deviceID;
+            }
+            //then build the subURIList based on the single device ID
+            switch (type) {
+                case "live":
+                    subURIList.push(createChannelURLString(currentDevice, outputFolder, dataLive));
+                    break;
+                case "history":
+                    subURIList.push(createChannelURLString(currentDevice, outputFolder, dataHistory));
+                    break
+                case 'both':
+                    subURIList.push(createChannelURLString(currentDevice, outputFolder, dataLive));
+                    subURIList.push(createChannelURLString(currentDevice, outputFolder, dataHistory));
+                    break;
+            }
+
+        }
+
+        client.subscribe(subURIList, subscriptionOptions, (err, granted) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(granted);
+            }
+        })
     })
 }
+//promise based wrapper which recives ONE msg 
+const clientMsg = (client) => {
+    return new Promise((resolve, reject) => {
+        //handle reciving any messages in the broker.
+        client.on('error', function (err) {
+            // message is Buffer
+            console.log(err)
+            reject(err);
+        })
+        client.on('message', function (topic, message) {
+            // message is Buffer
+            // console.log(message.toString())
+            resolve({
+                topic: topic,
+                msg: JSON.parse(message.toString())
+            });
+        })
+    })
+}
+//handles converting stream to JSON object.
+const reciveMsg = (topic, message) => {
+    return {
+        topic: topic,
+        msg: JSON.parse(message.toString())
+    };
+}
+
+//
+const clientMsgHandler = (client, callback) => {
+
+}
+
+
 
 module.exports = {
-    connectAndGetHistoricalData: connectAndGetLiveData,
-    createMqttClient:createMqttClient,
-    createSub:createSub,
-    createChannelURLString:createChannelURLString,
+    connectAndGetLiveData: connectAndGetLiveData,
+    createMqttClient: createMqttClient,
+    createSub: createSub,
+    createChannelURLString: createChannelURLString,
+    clientMsg: clientMsg,
+    reciveMsg: reciveMsg
 }

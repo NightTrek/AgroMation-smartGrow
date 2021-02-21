@@ -70,7 +70,7 @@ const createMqttClient = () => {
 
 //Promise based wrapper for creating subscriptions. can take list of device ID's
 //NEEDS testing for multiple subs
-const createSub = (client, deviceID, type = "live") => {
+const createTopicsAndSub = (client, deviceID, type = "live") => {
     return new Promise((resolve, reject) => {
         const subscriptionOptions = {
             rh: true
@@ -122,11 +122,54 @@ const createSub = (client, deviceID, type = "live") => {
             if (err) {
                 reject(err);
             } else {
-                resolve(granted);
+                let outputTopicList = [];
+                granted.forEach((item) => {
+                    outputTopicList.push(item.topic);
+                })
+                resolve(outputTopicList);
             }
         })
     })
 }
+
+const createSub = (client, topicList) => {
+    return new Promise((resolve, reject) => {
+        const subscriptionOptions = {
+            rh: true
+        }
+        if(!client || !topicList){
+            reject({error:"client or topicList undefined"})
+        }
+        
+
+        client.subscribe(topicList, subscriptionOptions, (err, granted) => {
+            if (err) {
+                reject(err);
+            } else {
+                let outputTopicList = [];
+                granted.forEach((item) => {
+                    outputTopicList.push(item.topic);
+                })
+                resolve(outputTopicList);
+            }
+        })
+    })
+}
+
+//Promise based wrapper for removing list of subscriptions.
+const removeSubs = (client, topicList) => {
+    return new Promise ((resolve, reject) => {
+        client.unsubscribe(topicList, (err) => {
+            if(err){
+                reject(err);
+            }else{
+                resolve(topicList)
+            }
+        })
+    })
+}
+
+
 //promise based wrapper which recives ONE msg 
 const clientMsg = (client) => {
     return new Promise((resolve, reject) => {
@@ -156,7 +199,9 @@ const reciveMsg = (topic, message) => {
 
 //
 const clientMsgHandler = (client, callback) => {
-
+    client.on("message", (topic, msg) => {
+        callback(reciveMsg(topic,msg));
+    })
 }
 
 
@@ -165,7 +210,10 @@ module.exports = {
     connectAndGetLiveData: connectAndGetLiveData,
     createMqttClient: createMqttClient,
     createSub: createSub,
+    removeSubs:removeSubs,
     createChannelURLString: createChannelURLString,
     clientMsg: clientMsg,
-    reciveMsg: reciveMsg
+    clientMsgHandler:clientMsgHandler,
+    reciveMsg: reciveMsg,
+
 }

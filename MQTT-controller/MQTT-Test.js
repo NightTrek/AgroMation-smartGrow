@@ -10,21 +10,24 @@ const testGetLiveData = async () => {
 
 }
 
-const testClientAndSub = async () => {
+const testClientAndSub = async (count=0, stopcount=1) => {
     try{
         let client = await mqtt.createMqttClient();
         try{
             //subscribe to the history object.
            let granted = await mqtt.createSub(client, "AgroOffice1", "both");
+           console.log(granted);
            try{
                //once recived send the history object.
-                let msg = await mqtt.clientMsg(client);
-                console.log(msg);
-                if(msg.topic){
-                    console.log('msg recived')
-                    client.end()
-                    return true;
-                }
+                mqtt.clientMsgHandler(client, async (msg) => {
+                    console.log(msg);
+                    if(count>stopcount){
+                        await mqtt.removeSubs(client, granted);
+                        console.log('Removed subscriptions')
+                        client.end()
+                    }
+                    count++;
+                })
            }catch(err){
                 console.log(err)
                 console.log("reciving msg error");
@@ -45,4 +48,10 @@ const testClientAndSub = async () => {
     }
 }
 
-testClientAndSub()
+// testClientAndSub()
+
+const getTime = () => {
+    return Math.floor(Date.now() / 1000)
+}
+
+console.log(getTime())

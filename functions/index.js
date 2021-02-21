@@ -2,7 +2,6 @@ const functions = require('firebase-functions');
 var admin = require("firebase-admin");
 const moment = require('moment');
 const axios = require('axios');
-const opc = require('./opcClient');
 
 
 var serviceAccount = require("./agroFireBaseAdmin.json");

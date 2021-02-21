@@ -20,8 +20,10 @@ export const SetManagedAccountClaims        = func.httpsCallable('SetManagedAcco
 //takes uid and an email. deletes the account does not delete the records in firestore
 export const DeleteMangedAccount            = func.httpsCallable('DeleteMangedAccount');
 
-export const FetchLiveDeviceData            = func.httpsCallable('FetchLiveDeviceData');
+export const startLiveDataSession            = func.httpsCallable('startLiveDataSession');
 
 //returns the current users context.auth objects which includes the auth claims
 export const getAuthContext                 = func.httpsCallable('getAuthContext');
 
+//pings backend service to see if its connected.
+export const pingOTSessionService           = func.httpsCallable('pingOTSessionService');

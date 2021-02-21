@@ -1,12 +1,11 @@
 const express   = require('express');
-const morgan    = require('morgan');
 const cors      = require('cors');
 
 const app = express();
 
 
 // Middlewares setup
-app.use(morgan('combined'));
+// app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors());//
@@ -18,8 +17,8 @@ if(process.env.NODE_ENV === 'production') {
 }
 
 // Routes setup
-const routes = require('./routes');
-app.use(routes);
+// const routes = require('./routes');
+// app.use(routes);
 
 const PORT = process.env.PORT || 3001;
 

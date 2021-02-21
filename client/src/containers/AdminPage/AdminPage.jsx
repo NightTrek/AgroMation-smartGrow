@@ -21,7 +21,7 @@ import { setUser } from "../../actions/User"
 import { fetchAdminUsers, pendingManagedUsers } from "../../actions/ManageUsersActions";
 //firebase
 import { db, auth, getIdToken, func } from "../../consts/firebase"; //getCustomClaimRole
-import { FetchLiveDeviceData, getAuthContext } from "../../CloudFunctions/CloudFunctions";
+import { startLiveDataSession, getAuthContext, pingOTSessionService } from "../../CloudFunctions/CloudFunctions";
 
 const ManageAllUsersTable = (props) => {
 
@@ -195,10 +195,6 @@ const AdminPage = (props) => {
     }
 
 
-
-
-
-
     // console.log(getCustomClaimRole());
 
     const [state, setState] = useState({
@@ -306,8 +302,14 @@ const AdminPage = (props) => {
     const testGetDataButton = async () => {
         console.log('getting data')
         try{
-            let DataResponse = await FetchLiveDeviceData()
-            console.log(DataResponse);
+            // let DataResponse = await startLiveDataSession({
+            //     "UID":"9bVgzHIlpGNqyWhOULNNBf36Gpg1",
+            //     "deviceIDList":[
+            //         "A4fhbNNtES5S5Hnj0qST"
+            //     ]
+            // })
+            let res = await pingOTSessionService();
+            console.log(res);
 
         }catch(err){
             console.log(err)

@@ -2,7 +2,7 @@ const functions = require('firebase-functions');
 var admin = require("firebase-admin");
 const moment = require('moment');
 const axios = require('axios');
-
+const mqtt = require('./mqttClient');
 
 var serviceAccount = require("./agroFireBaseAdmin.json");
 
@@ -447,6 +447,35 @@ exports.onStripeSubChange = functions.firestore.document(`StripeCustomers/{Strip
         }
     });
 
+exports.onRoomAlarmDataChange = functions.firestore.document('Rooms/{RoomId}').onWrite(async (change, context) => {
+    let before = change.before.data();
+    let after = change.before.data();
+    const keyList = {tempMin:'tempMin',tempMax:"tempMax", tempSetPoint:"tempSetPoint",pressureMin:'pressureMin', pressureMax:"pressureMax", pressureSetPoint:"pressureSetPoint",humidityMin:'humidityMin',humidityMax:"humidityMax", humiditySetPoint:"humiditySetPoint",CO2Min:'CO2Min',CO2Max:"CO2Max", CO2SetPoint:"CO2SetPoint"};
+    //check if there was a change to a key in the keylist
+    let alarmDataChange = false;
+    let updateObject = {}
+    for(let key in after){
+        //check if the key  is one of the keys on the keylist
+        if(key === keyList[key]){ // Then we check for lack of equality meaning there is a change.
+            updateObject[key] = after[key];
+            if(before[key] !== after[key]){
+                alarmDataChange=true;
+            }
+        }
+    }
+    if(alarmDataChange){
+        let client = await mqtt.createMqttClient();
+        client.publish(`${after.id}/alarms/MinMax`, updateObject, {retain:true}, (err) => {
+            if(err){
+                functions.logger.error(err);
+            }
+            client.end()
+        });
+
+
+    }
+})
+
 //Takes a uid and accountType and updates the managed user with the correct auth claim.
 exports.SetManagedAccountClaims = functions.https.onCall(async (data, context) => {
     let { uid, accountType, stripeRole } = data;
@@ -542,26 +571,56 @@ exports.SetManagedAccountClaims = functions.https.onCall(async (data, context) =
 
 });
 
-//This function takes the deviceID and interval and number of records and returns the live data for that controller.
-exports.FetchLiveDeviceData = functions.https.onCall(async (data, context) => {
-    //let { numberOfRecords, interval, deviceID } = data;
-    try {
-        // let res = axios({ url: "10.128.0.7:3000/", method: "get" })
-        // functions.logger.info(res)
-        let res = await opc.connectAndGetData();
-        return JSON.stringify(res);
-    } catch (err) {
+
+
+
+exports.startLiveDataSession = functions.https.onCall(async (data, context) => {
+    //check and make sure we are getting this object
+    let test = {
+        "UID":"9bVgzHIlpGNqyWhOULNNBf36Gpg1",
+        "deviceIDList":[
+            "A4fhbNNtES5S5Hnj0qST"
+        ]
+    };
+    let UID = context.auth.uid;
+    if(!UID){
+        functions.logger.error("UID error")
+        return{error:'error UID undefined'}
+    }
+    if(!data.deviceIDList){
+        return{error:'error DeviceIDList missing'}
+    }
+    let sessionConfig = {
+        UID:UID,
+        deviceIDList:data.deviceIDList
+    }
+    try{
+        let res = await axios.post("http://10.128.0.7:1420/api/session", test, {
+            headers:{
+                "content-type":"application/json"
+            }
+        })
+        if(res.status === 200){
+            return res.data;
+        }y
+    }catch(err){
+        functions.logger.error(err)
+        return err
+    }
+    
+
+})
+
+exports.pingOTSessionService = functions.https.onCall(async (data, context) => {
+    try{
+        let res = await axios.get('http://10.128.0.7:1420/ping');
+        functions.logger.warn(res);
+        return res;
+    }catch(err){
+        functions.logger.error(err);
         return err;
     }
-
-
-});
-
-
-// //function called by the data acquisition device when the 
-// exports.AddNotification = functions.https.onCall( async (data, context) => {
-
-// });
+})
 
 
 

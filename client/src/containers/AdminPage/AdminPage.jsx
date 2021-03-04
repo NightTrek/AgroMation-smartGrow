@@ -14,7 +14,6 @@ import {
     withStyles, Tab, AppBar, Tabs
 } from "@material-ui/core";
 import Alert from '@material-ui/lab/Alert';
-import moment from "moment";
 import axios from "axios";
 //User imports
 import { setUser } from "../../actions/User"
@@ -308,7 +307,7 @@ const AdminPage = (props) => {
             //         "A4fhbNNtES5S5Hnj0qST"
             //     ]
             // })
-            let res = await pingOTSessionService();
+            let res = await axios.get('https://us-central1-agromation-grow-room-control.cloudfunctions.net/OTService/pingTest')
             console.log(res);
 
         }catch(err){

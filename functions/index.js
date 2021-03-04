@@ -1,8 +1,8 @@
-const functions = require('firebase-functions');
-var admin = require("firebase-admin");
-const moment = require('moment');
-const axios = require('axios');
-const mqtt = require('./mqttClient');
+const functions =    require('firebase-functions');
+var admin       =    require("firebase-admin");
+const axios     =    require('axios');
+const OT        =    require('./OTExpress')
+const mqtt      =    require('./mqttClient');
 
 var serviceAccount = require("./agroFireBaseAdmin.json");
 
@@ -327,7 +327,7 @@ exports.DeleteMangedAccount = functions.https.onCall(async (data, context) => {
 
 });
 
-exports.getAuthContext = functions.https.onCall(async (data, context) => {
+exports.getAuthContext = functions.https.onCall(async (data, context) => {    
     return ({
         auth: context.auth
     });
@@ -447,6 +447,8 @@ exports.onStripeSubChange = functions.firestore.document(`StripeCustomers/{Strip
         }
     });
 
+
+//VPC FUNCTION REQUIRE a manual configueration to allow VPC FUNCTION 
 exports.onRoomAlarmDataChange = functions.firestore.document('Rooms/{RoomId}').onWrite(async (change, context) => {
     let before = change.before.data();
     let after = change.before.data();
@@ -574,59 +576,8 @@ exports.SetManagedAccountClaims = functions.https.onCall(async (data, context) =
 
 
 
-exports.startLiveDataSession = functions.https.onCall(async (data, context) => {
-    //check and make sure we are getting this object
-    let test = {
-        "UID":"9bVgzHIlpGNqyWhOULNNBf36Gpg1",
-        "deviceIDList":[
-            "A4fhbNNtES5S5Hnj0qST"
-        ]
-    };
-    let UID = context.auth.uid;
-    if(!UID){
-        functions.logger.error("UID error")
-        return{error:'error UID undefined'}
-    }
-    if(!data.deviceIDList){
-        return{error:'error DeviceIDList missing'}
-    }
-    let sessionConfig = {
-        UID:UID,
-        deviceIDList:data.deviceIDList
-    }
-    try{
-        let res = await axios.post("http://10.128.0.7:1420/api/session", test, {
-            headers:{
-                "content-type":"application/json"
-            }
-        })
-        if(res.status === 200){
-            return res.data;
-        }y
-    }catch(err){
-        functions.logger.error(err)
-        return err
-    }
-    
-
-})
-
-exports.pingOTSessionService = functions.https.onCall(async (data, context) => {
-    try{
-        let res = await axios.get('http://10.128.0.7:1420/ping');
-        functions.logger.warn(res);
-        return res;
-    }catch(err){
-        functions.logger.error(err);
-        return err;
-    }
-})
 
 
-
-
-// exports.FetchLiveData = functions.https.onRequest((req,res) => {
-//     res.set('Access-Control-Allow-Methods', '*');
-//     res.set('Access-Control-Allow-Headers', '*');
-//     res.send("Hello world")
-// });
+//VPC FUNCTION REQUIRE a manual configueration to allow VPC FUNCTION 
+//All DMZ OT functions are now handled by the OTExress.js handler application. For more information check out he OTExpress.js doc
+exports.OTService = functions.https.onRequest(OT);

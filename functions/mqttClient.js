@@ -1,7 +1,7 @@
-const mqtt = require('mqtt')
+const mqtt              =   require('mqtt')
+const functions         =   require('firebase-functions');
 
-
-const mqttURL = "mqtt://100.96.1.66";
+const mqttURL = "mqtt://10.128.0.7:1883";
 const mqttClientOptions = {
     username: "",
     password: "",
@@ -29,10 +29,10 @@ const connectAndGetLiveData = (deviceID) => {
         rh: true
     }
     return new Promise((resolve, reject) => {
-        const client = mqtt.connect(mqttURL, mqttClientOptions)
+        const client = mqtt.connect(mqttURL, mqttClientOptions);
         //add error handling
         client.on('error', (error) => {
-            console.log(error)
+            functions.logger.error(error)
             reject(error);
         })
         //Once the client is connected handle subscriptions
@@ -41,6 +41,7 @@ const connectAndGetLiveData = (deviceID) => {
             client.subscribe(subURI, subscriptionOptions, (err, granted) => {
                 if (err) {
                     //reject if there is an error
+                    functions.logger.error(err)
                     reject(err);
                 }
             })
@@ -56,10 +57,11 @@ const connectAndGetLiveData = (deviceID) => {
 
 const createMqttClient = () => {
     return new Promise((resolve, reject) => {
+
         const client = mqtt.connect(mqttURL, mqttClientOptions)
         //add error handling
         client.on('error', (error) => {
-            console.log(error)
+            functions.logger.error(error)
             reject(error);
         })
         //Once the client is connected handle subscriptions

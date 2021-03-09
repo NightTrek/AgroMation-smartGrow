@@ -9,7 +9,8 @@ export const LOGOUT                     = "LOGOUT";
 //custom actions
 export const ADD_GROWROOM               = 'ADD_GROWROOM';
 export const GROWROOM_ERROR             = 'GROWROOM_ERROR';
-
+export const SESSION_START              = 'SESSION_START';
+export const SESSION_ERROR              = 'SESSION_ERROR';
 
 
 export const FETCH_USER                 = 'FETCH_USER';
@@ -23,7 +24,7 @@ export const GET_ROOMS                  = 'GET_ROOMS';
 export const PENDING_ROOMS              = 'PENDING_ROOMS';
 
 export const FETCH_RECENT               = 'FETCH_RECENT';
-export const FETCH_RECENT_PENDING       = 'FETCH_RECENT_PENDING';
+
 
 
 export const FETCH_ZONES                = 'FETCH_ZONES';

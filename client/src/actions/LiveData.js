@@ -1,29 +1,44 @@
 import axios from "axios";
-import {FETCH_RECENT,FETCH_RECENT_PENDING} from "./types"
+import { FETCH_RECENT, SESSION_ERROR, SESSION_START } from "./types"
+import {getIdToken} from "../consts/firebase";
 
 
-const parseEwonLiveData = (rawData) => {
-    const liveData = {}
-    for(let i = 0; i<rawData.length;i++){
-        if(typeof rawData[i] === 'string'){
-            liveData[rawData[i]]= rawData[i+1]
-        }
+
+export const StartSession = (UID, deviceIDList) => async dispatch => {
+    if(!UID || typeof UID !== 'string'){
+        return new Error("start session missing UID");
     }
-    return liveData
-
-}
-
-export const Fetch_Recent =  () => async dispatch => {
-
-    axios.get(`https://m2web.talk2m.com/t2mapi/get/${EwonName}/rcgi.bin/ParamForm?AST_Param=$dtIV$ftT&t2maccount=agro&t2musername=daniel&t2mpassword=${AccountPassword}&t2mdeveloperid=${DeveloperID}&t2mdeviceusername=${EwonUser}&t2mdevicepassword=${EwonPass}`, {})
-        .then((res) => {
-            let data = parseEwonLiveData(res.data.split(";"));
-
-            console.log(data);
-            LiveData.Temp = data.Temperature;
-            LiveData.humidity = data.RH;
-            LiveData.CO2Level = data.CO2;
-        }).catch((err) => {
-           console.log(err); 
-        })
+    if(!deviceIDList || deviceIDList.length < 1){
+        return new Error('start session missing device ID list');
+    }
+    getIdToken().then((token) => {
+        let reqConfig = {
+            headers: {
+                'Authorization': 'Bearer ' + token  //firebase.auth().currentUser.getIdToken()
+            }
+        }
+        let input = {
+            "UID": UID,
+            "deviceIDList": deviceIDList
+        };
+    
+        axios.post(`https://us-central1-agromation-grow-room-control.cloudfunctions.net/OTService/api/session`, input, reqConfig)
+            .then((res) => {
+    
+                if (res.status === 200) {
+                    console.log("success")
+                    console.log(res.data);
+                    dispatch({ type: SESSION_START, payload: res.data })
+                }else{
+                    dispatch({type: SESSION_ERROR, payload: res.data})
+                }
+    
+            }).catch((err) => {
+                console.log(err);
+                dispatch({type: SESSION_ERROR, payload: err})
+            })
+    }).catch((err) => {
+        console.log(err)
+    });
+    
 }

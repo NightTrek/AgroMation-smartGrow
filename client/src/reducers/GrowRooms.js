@@ -1,9 +1,10 @@
-import {ADD_GROWROOM, GROWROOM_ERROR, GET_ROOMS, FETCH_RECENT, SET_ROOM, PENDING_ROOMS } from "../actions/types";
+import {ADD_GROWROOM, GROWROOM_ERROR, GET_ROOMS, FETCH_RECENT, SET_ROOM, PENDING_ROOMS, SESSION_START, SESSION_ERROR } from "../actions/types";
 
 const INITIAL_STATE = {
   rooms: [],
   roomIndex:0,
   Recent:[],
+  session:{},
   pending:false,
   errorMessage: ''
 };
@@ -22,6 +23,10 @@ export default function(state = INITIAL_STATE, action) {
       return {...state, roomIndex: action.payload };
     case FETCH_RECENT:
       return {...state, recent: action.payload };
+    case SESSION_START:
+      return {...state, session: action.payload };
+    case SESSION_ERROR:
+      return {...state, errorMessage: action.payload};
     default:
       return state;
   }

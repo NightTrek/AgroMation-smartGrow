@@ -129,12 +129,12 @@ const LiveDataWidget = (props) => {
     //if liveData is present Set LiveData
     
     if(live && live.live && live.live[rooms[pick].doc] && typeof live.live[rooms[pick].doc].temp === 'number'){
-        console.log(live.live[rooms[pick].doc])
         LiveData['Temp'] = live.live[rooms[pick].doc].temp
         LiveData['humidity'] = live.live[rooms[pick].doc].rh
         LiveData['CO2Level'] = live.live[rooms[pick].doc].co2
         LiveData['PressureLevel'] = live.live[rooms[pick].doc].vpd
-    } else if(!live.live[rooms[pick].doc]){
+    }
+    if(rooms && live.live &&  !live.live[rooms[pick].doc]){
         LiveData = {
             roomName: rooms[pick].name,
             Temp: 0,

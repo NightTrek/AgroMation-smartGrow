@@ -16,8 +16,8 @@ import { sampleTempData, sampleHumidityData, sampleProgressData, sampleCO2Data }
 import './style.css';
 // import VerticalDividerStyled from "../VerticalDivider/VerticalDivider"
 import { getRooms, setRoom, setExampleRooms, pendingRooms } from "../../actions/roomActions";
-import {resetPendingZones, resetZones} from "../../actions/LightZoneActions";
-
+import { resetPendingZones, resetZones } from "../../actions/LightZoneActions";
+import { StartSession, FetchLiveData} from "../../actions/LiveData";
 
 
 
@@ -25,39 +25,39 @@ const useStyles = makeStyles((theme) => ({
     dashboardSummery: {
         background: theme.palette.secondary.main,
         color: theme.palette.text.main,
-        minWidth:"128px",
-        width:"100%",
-        '@media (max-width: 460px)':{
+        minWidth: "128px",
+        width: "100%",
+        '@media (max-width: 460px)': {
             maxWidth: "300px !important",
-            minHeight:"1024px"
-            
+            minHeight: "1024px"
+
         },
-        '@media (max-width: 400px)':{
+        '@media (max-width: 400px)': {
             maxWidth: "256px !important",
-            
+
         },
-        '@media (max-width: 330px)':{
+        '@media (max-width: 330px)': {
             maxWidth: "212px !important",
-            
+
         },
-        '@media (max-width: 280px)':{
+        '@media (max-width: 280px)': {
             maxWidth: "192px !important",
-            marginLeft:'-12px'
-            
+            marginLeft: '-12px'
+
         }
     },
-    Title:{
-        '@media (max-width: 460px)':{
+    Title: {
+        '@media (max-width: 460px)': {
             fontSize: 18,
-            
+
         },
-        '@media (max-width: 400px)':{
+        '@media (max-width: 400px)': {
             fontSize: 14,
-            
+
         },
-        '@media (max-width: 330px)':{
+        '@media (max-width: 330px)': {
             fontSize: 12,
-            
+
         }
     },
     formControl: {
@@ -71,20 +71,20 @@ const useStyles = makeStyles((theme) => ({
     pieChart: {
         width: "160px",
         height: "160px",
-        '@media (max-width: 460px)':{
+        '@media (max-width: 460px)': {
             width: "128px !important",
             height: "128px !important",
         },
-        '@media (max-width: 320px)':{
+        '@media (max-width: 320px)': {
             width: "92px !important",
             height: "92px !important",
-            
+
         }
     },
-    "#bottomPieChart":{
-        '@media (max-width: 330px)':{
-            marginBottom:"256px",
-            
+    "#bottomPieChart": {
+        '@media (max-width: 330px)': {
+            marginBottom: "256px",
+
         }
     },
     legendList: {
@@ -101,12 +101,12 @@ const useStyles = makeStyles((theme) => ({
         paddingBottom: "2px",
 
     },
-    legendText:{
-        '@media (max-width: 460px)':{
-            fontSize:12
+    legendText: {
+        '@media (max-width: 460px)': {
+            fontSize: 12
         },
-        '@media (max-width: 320px)':{
-            fontSize:10
+        '@media (max-width: 320px)': {
+            fontSize: 10
         }
     },
     Divider: {
@@ -116,12 +116,12 @@ const useStyles = makeStyles((theme) => ({
     color: {
         background: theme.palette.roomStatus.veg
     },
-    roomSelect:{
-        '@media (max-width: 460px)':{
-            fontSize:12
+    roomSelect: {
+        '@media (max-width: 460px)': {
+            fontSize: 12
         },
-        '@media (max-width: 320px)':{
-            fontSize:10
+        '@media (max-width: 320px)': {
+            fontSize: 10
         }
     }
 
@@ -136,13 +136,13 @@ const DashboardPieChart = (props) => {
         return item.y
     })
     let ExtraClass = props.ExtraClass;
-if(!ExtraClass){
-    ExtraClass = " "
-}
+    if (!ExtraClass) {
+        ExtraClass = " "
+    }
 
     return (
         // <Grid item xs={3}>
-        <Grid container item direction="column" justify="center" alignItems="center" id={ExtraClass} style={{paddingBottom:"12px"}} spacing={0} xs={12} sm={6} md lg>
+        <Grid container item direction="column" justify="center" alignItems="center" id={ExtraClass} style={{ paddingBottom: "12px" }} spacing={0} xs={12} sm={6} md lg>
             <Grid item xs>
                 <Typography variant="subtitle2" className={classes.chartLabel}>{props.chartName}</Typography>
             </Grid>
@@ -191,15 +191,19 @@ function DashboardSummary(props) {
     const progressColorScale = [theme.palette.roomStatus.clone, theme.palette.roomStatus.veg, theme.palette.roomStatus.flower];
 
 
-    let { rooms, pick, user, pending, locationIndex } = useSelector(state => ({
+    let { rooms, pick, user, pending, locationIndex, session, serror, live } = useSelector(state => ({
         rooms: state.growRooms.rooms,
         pick: state.growRooms.roomIndex,
         user: state.users.user,
-        locationIndex:state.users.activeLocation,
+        locationIndex: state.users.activeLocation,
         pending: state.growRooms.pending,
+        session: state.growRooms.session,
+        serror: state.growRooms.errorMessage,
+        live:   state.growRooms.Live,
 
 
     }), shallowEqual)
+
 
     // When the global state changes decide if we send example data or load db data
     useEffect(() => {
@@ -207,15 +211,60 @@ function DashboardSummary(props) {
         // console.log(user)
         // console.log(rooms)
         if (pending !== true && user !== undefined && rooms[0].name !== undefined) {
-            if(user.example){
+            if (user.example) {
                 props.setExampleRooms()
                 props.pendingRooms()
-            }else if(user.UID !== undefined  && rooms[0].name !== undefined){
+            } else if (user.UID !== undefined && rooms[0].name !== undefined) {
                 // console.log("getting rooms")
                 props.getRooms(user, locationIndex)
                 props.pendingRooms()
             }
         }
+        //check if rooms are present in the state and ensure no session exists
+        if (pending && rooms.length > 0 && rooms[0].name !== "Loading rooms" && rooms[0].name !== undefined && session.sessionID === undefined && !session.message) {
+            console.log('start live data session')
+            //used for managing session
+            let deviceIDList = [];
+            let UID_FOR_SESSION = ""
+            rooms.forEach((item) => {
+                deviceIDList.push(item.doc)
+            })
+            if (user.accountOwner) {
+                UID_FOR_SESSION = user.accountOwner;
+            } else {
+                UID_FOR_SESSION = user.UID;
+            }
+            console.log(deviceIDList)
+            props.StartSession(UID_FOR_SESSION, deviceIDList);
+            // props(UID_FOR_SESSION, deviceIDList);
+        }
+        //if session already exists but might be expired rooms must also be present
+        if (pending && rooms.length > 0 && rooms[0].name !== "Loading rooms" && rooms[0].name !== undefined && session.sessionID && session.expTime && session.expTime < Date.now() / 1000) {
+            console.log('restarting live data session')
+            //used for managing session
+            let deviceIDList = [];
+            let UID_FOR_SESSION = ""
+            rooms.forEach((item) => {
+                deviceIDList.push(item.doc)
+            })
+            if (user.accountOwner) {
+                UID_FOR_SESSION = user.accountOwner;
+            } else {
+                UID_FOR_SESSION = user.UID;
+            }
+            console.log(deviceIDList)
+            props.StartSession(UID_FOR_SESSION, deviceIDList);
+        }
+
+        //if session exists get Live data for every Room
+        if(pending && rooms.length > 0 && rooms[0].name !== "Loading rooms" && rooms[0].name !== undefined && session.sessionID && session.expTime && !live.live){
+            console.log('getting live data')
+            rooms.forEach((item) => {
+                props.FetchLiveData(item.doc, live)
+            })
+            
+        }
+
     })
 
     //check if data has loaded and if not display loading text
@@ -238,10 +287,10 @@ function DashboardSummary(props) {
     }
 
     const generateTempData = () => {
-        
-            return sampleTempData;
-        
-        
+
+        return sampleTempData;
+
+
         // if(user.example){
         //     return sampleTempData;
         // }
@@ -256,7 +305,7 @@ function DashboardSummary(props) {
         //         console.log(i)
         //         nominal++;
         //         continue;
-                
+
         //     }
         //     if(item.tempC>item.tempMax && item.tempC<item.tempMax+10|| item.tempC<item.tempMin && item.tempC>item.tempMin-10){
         //         console.log(i)
@@ -283,40 +332,40 @@ function DashboardSummary(props) {
     return (
         <Grid container direction="row" justify={"center"} spacing={2} className={`${classes.dashboardSummery} `} >
             {/* <Grid container item direction="row" xs style={{maxHeight:"128px"}}> */}
-                <Grid item xs={12} sm={8} md={9} lg={10} style={{ paddingLeft: "24px" }}>
-                    <Typography variant={"h5"} className={classes.Title}>Summary</Typography>
-                </Grid>
-                {/* <Grid item xs={0} sm={4}  md={4}></Grid> */}
-                <Grid item xs={12} sm={4} md={3} lg={2}>
-                    <StandardRoundSelectForm className={classes.formControl} >
+            <Grid item xs={12} sm={8} md={9} lg={10} style={{ paddingLeft: "24px" }}>
+                <Typography variant={"h5"} className={classes.Title}>Summary</Typography>
+            </Grid>
+            {/* <Grid item xs={0} sm={4}  md={4}></Grid> */}
+            <Grid item xs={12} sm={4} md={3} lg={2}>
+                <StandardRoundSelectForm className={classes.formControl} >
 
-                        <Select
-                            value={pick}
-                            onChange={handleChange}
-                            inputProps={{
-                                name: 'pick',
-                                id: 'Room-Name'
-                            }}
-                            defaultValue={0}
-                            className={classes.roomSelect}
-                        >
-                            {rooms.map((Item, Index) => (
-                                <MenuItem key={Index} value={Index} className={classes.roomSelect}>{Item.name}</MenuItem>
-                            ))}
-                        </Select>
-                    </StandardRoundSelectForm>
-                </Grid>
+                    <Select
+                        value={pick}
+                        onChange={handleChange}
+                        inputProps={{
+                            name: 'pick',
+                            id: 'Room-Name'
+                        }}
+                        defaultValue={0}
+                        className={classes.roomSelect}
+                    >
+                        {rooms.map((Item, Index) => (
+                            <MenuItem key={Index} value={Index} className={classes.roomSelect}>{Item.name}</MenuItem>
+                        ))}
+                    </Select>
+                </StandardRoundSelectForm>
+            </Grid>
             {/* </Grid> */}
 
             {/* ========= charts start here =================================*/}
             {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
             <DashboardPieChart chartName={"Temp"} classes={classes} theme={theme} dataSet={generateTempData()} colorScale={defaultColorScale} />
-                {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
-                <DashboardPieChart chartName={"Humidity"} classes={classes} theme={theme} dataSet={sampleHumidityData} colorScale={defaultColorScale} />
-                {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
-                <DashboardPieChart chartName={"CO2"} classes={classes} theme={theme} dataSet={sampleCO2Data} colorScale={defaultColorScale} />
-                {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
-                <DashboardPieChart chartName={"Progress"} classes={classes} theme={theme} dataSet={sampleProgressData} colorScale={progressColorScale} ExtraClass={"#bottomPieChart"}/>
+            {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
+            <DashboardPieChart chartName={"Humidity"} classes={classes} theme={theme} dataSet={sampleHumidityData} colorScale={defaultColorScale} />
+            {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
+            <DashboardPieChart chartName={"CO2"} classes={classes} theme={theme} dataSet={sampleCO2Data} colorScale={defaultColorScale} />
+            {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
+            <DashboardPieChart chartName={"Progress"} classes={classes} theme={theme} dataSet={sampleProgressData} colorScale={progressColorScale} ExtraClass={"#bottomPieChart"} />
             {/* <Grid container item direction="row" xs >
                 
             </Grid>
@@ -331,7 +380,16 @@ DashboardSummary.propTypes = {
 
 }
 
-const dashboardActions = { getRooms: getRooms, setRoom: setRoom, setExampleRooms:setExampleRooms, pendingRooms:pendingRooms, resetPendingZones:resetPendingZones, resetZones:resetZones }
+const dashboardActions = {
+    getRooms: getRooms,
+    setRoom: setRoom,
+    setExampleRooms: setExampleRooms,
+    pendingRooms: pendingRooms,
+    resetPendingZones: resetPendingZones,
+    resetZones: resetZones,
+    StartSession: StartSession,
+    FetchLiveData: FetchLiveData
+}
 
 function mapStateToProps({ state }) {
     return { state };

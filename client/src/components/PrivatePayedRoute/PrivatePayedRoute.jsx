@@ -10,8 +10,8 @@ function PrivatePayedRoute({ component: Component, ...rest }) {
     }), shallowEqual)
     let isAuthenticated = false;
     // console.log(rest);
-    if(Auth !== undefined && Auth !== "" ){
-      if(Auth.stripeRole==="premium" || Auth.stripeRole==="business" || Auth.stripeRole==="admin"){
+    if(Auth && Auth !== "" && Auth.stripeRole){
+      if( Auth.stripeRole==="premium" || Auth.stripeRole==="business" || Auth.stripeRole==="admin"){
         isAuthenticated=true
       }   
     }

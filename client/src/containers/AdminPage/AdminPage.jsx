@@ -281,39 +281,72 @@ const AdminPage = (props) => {
             // let UserResponse = await SetAccountOwner({UID:"abcdefghijklmnop1234"}) 
             let UserResponse = await getAuthContext()
             console.log(UserResponse)
+            try {
+                let token = await getIdToken();
+                console.log(token)
+            } catch (err) {
+                console.log('token error')
+                console.log(err)
+            }
         } catch (err) {
             console.log(err)
         }
-        // getIdToken().then(function(idToken) {
-        //     // Send token to your backend via HTTPS
-        //     axios.post('http://localhost:5001/agromation-grow-room-control/us-central1/widgets/', {UID:"this is the UID", idToken:idToken})
-        //     .then((res) => {
-        //         console.log(res)
-        //     }).catch((err) => {
-        //         console.log(err)
-        //     })
-        //   }).catch(function(error) {
-        //     // Handle error
-        //     console.log(error);
-        //   });
     }
 
-    const testGetDataButton = async () => {
+    const testDataServicePing = async () => {
         console.log('getting data')
-        try{
-            // let DataResponse = await startLiveDataSession({
-            //     "UID":"9bVgzHIlpGNqyWhOULNNBf36Gpg1",
-            //     "deviceIDList":[
-            //         "A4fhbNNtES5S5Hnj0qST"
-            //     ]
-            // })
-            let res = await axios.get('https://us-central1-agromation-grow-room-control.cloudfunctions.net/OTService/pingTest')
-            console.log(res);
+        getIdToken().then((token) => {
+            let reqConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + token  //firebase.auth().currentUser.getIdToken()
+                }
+            }
+            axios.get('https://us-central1-agromation-grow-room-control.cloudfunctions.net/OTService/ping', reqConfig).then((res) => {
+                if(res.status === 200 ){
+                    console.log(res.data)
+                }
+            }).catch((err) => {
+                console.log(err)
+            })
 
-        }catch(err){
+
+
+        }).catch((err) => {
             console.log(err)
-        }
+        })
+
     }
+
+    const startLiveDataSession = async () => {
+        getIdToken().then((token) => {
+            let reqConfig = {
+                headers: {
+                    'Authorization': 'Bearer ' + token  //firebase.auth().currentUser.getIdToken()
+                }
+            }
+            let input = {
+                "UID": "9bVgzHIlpGNqyWhOULNNBf36Gpg1",
+                "deviceIDList": ["A4fhbNNtES5S5Hnj0qST"]
+            };
+
+            axios.post(`https://us-central1-agromation-grow-room-control.cloudfunctions.net/OTService/api/session`, input, reqConfig)
+                .then((res) => {
+
+                    if (res.status === 200) {
+                        console.log("success")
+                        console.log(res.data);
+                    }
+
+                }).catch((err) => {
+                    console.log(err);
+                })
+
+        }).catch((err) => {
+            console.log(err);
+            console.log('unable to get Auth token.')
+        })
+    }
+
 
 
     return (
@@ -350,12 +383,15 @@ const AdminPage = (props) => {
                             Alarms are currently in development. You will be able to set the alert levels for each datapoint monitored.
                         </TabPanel>
                         <TabPanel value={state.pick} index={3} id={`scrollable-auto-tabpanel-${3}`}>
-                            <Grid item container direction={'row'} spacing={1} style={{paddingTop:"24px"}}>
+                            <Grid item container direction={'row'} spacing={1} style={{ paddingTop: "24px" }}>
                                 <Grid item xs={6} sm={4}>
                                     <Button variant={'outlined'} color={'primary'} onClick={testAPIButton}>Get Auth Claims</Button>
                                 </Grid>
                                 <Grid item xs={6} sm={4}>
-                                    <Button variant={'outlined'} color={'primary'} onClick={testGetDataButton}>Get Live Data</Button>
+                                    <Button variant={'outlined'} color={'primary'} onClick={testDataServicePing}>Ping Live Data Service</Button>
+                                </Grid>
+                                <Grid item xs={6} sm={4}>
+                                    <Button variant={'outlined'} color={'primary'} onClick={startLiveDataSession}>Start liveData Session</Button>
                                 </Grid>
                             </Grid>
                         </TabPanel>

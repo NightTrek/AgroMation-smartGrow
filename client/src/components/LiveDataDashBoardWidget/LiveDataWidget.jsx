@@ -84,9 +84,10 @@ const LiveDataWidget = (props) => {
     const classes = useStyles();
     let LiveData = props.LiveData || exampleLiveData;
 
-    let { rooms, pick } = useSelector(state => ({
+    let { rooms, pick, live } = useSelector(state => ({
         rooms: state.growRooms.rooms,
         pick: state.growRooms.roomIndex,
+        live:   state.growRooms.Live,
 
     }), shallowEqual)
 
@@ -119,16 +120,90 @@ const LiveDataWidget = (props) => {
                 CloneTime: 864000,
                 VegTime: 3024000,
                 FlowerTime: 2419200,
+                doc:0,
             },
         ]
         pick = 0;
     }
 
+    //if liveData is present Set LiveData
+    
+    if(live && live.live && live.live[rooms[pick].doc] && typeof live.live[rooms[pick].doc].temp === 'number'){
+        console.log(live.live[rooms[pick].doc])
+        LiveData['Temp'] = live.live[rooms[pick].doc].temp
+        LiveData['humidity'] = live.live[rooms[pick].doc].rh
+        LiveData['CO2Level'] = live.live[rooms[pick].doc].co2
+        LiveData['PressureLevel'] = live.live[rooms[pick].doc].vpd
+    } else if(!live.live[rooms[pick].doc]){
+        LiveData = {
+            roomName: rooms[pick].name,
+            Temp: 0,
+            TempColor: theme.palette.roomStatus.warning,
+            humidity: 0,
+            humidityColor: theme.palette.roomStatus.warning,
+            CO2Level: 0,
+            CO2Color: theme.palette.roomStatus.warning,
+            PressureLevel: 0,
+            PressureColor: theme.palette.roomStatus.warning
+        };
+    }
+
     const handleShowRoom = () => {
         // console.log(props)
         props.history.push("/rooms");
+    
     }
+
+    const GenerateLiveDataColors = () => {
+        if(!LiveData['Temp'] || LiveData['Temp'] > rooms[pick].tempMax || LiveData['Temp'] < rooms[pick].tempMin){
+            LiveData['TempColor'] = theme.palette.roomStatus.warning
+        }
+        //Green state
+        if(LiveData['Temp'] < rooms[pick].tempSetPoint+5 && LiveData['Temp'] > rooms[pick].tempSetPoint-5){
+            LiveData['TempColor'] = theme.palette.roomStatus.veg
+        }
+        if(LiveData['Temp'] > rooms[pick].tempSetPoint+5 && LiveData['Temp'] < rooms[pick].tempSetPoint-5){
+            LiveData['TempColor'] = theme.palette.primary.main
+        }
+        //humidity =============================================================================================
+        if(!LiveData['humidity'] || LiveData['humidity'] > rooms[pick].humidityMax || LiveData['humidity'] < rooms[pick].humidityMin){
+            LiveData['humidityColor'] = theme.palette.roomStatus.warning
+        }
+        //Green state
+        if(LiveData['humidity'] < rooms[pick].humiditySetPoint+5 && LiveData['humidity'] > rooms[pick].humiditySetPoint-5){
+            LiveData['humidityColor'] = theme.palette.roomStatus.veg
+        }
+        if(LiveData['humidity'] > rooms[pick].humiditySetPoint+5 && LiveData['humidity'] < rooms[pick].humiditySetPoint-5){
+            LiveData['humidityColor'] = theme.palette.primary.main
+        }
+        //co2 =============================================================================================
+        if(!LiveData['CO2Level'] || LiveData['CO2Level'] > rooms[pick].CO2Max || LiveData['CO2Level'] < rooms[pick].CO2Min){
+            LiveData['CO2Color'] = theme.palette.roomStatus.warning
+        }
+        //Green state
+        if(LiveData['CO2Level'] < rooms[pick].CO2SetPoint+200 && LiveData['CO2Level'] > rooms[pick].CO2SetPoint-200){
+            LiveData['CO2Color'] = theme.palette.roomStatus.veg
+        }
+        if(LiveData['CO2Level'] > rooms[pick].CO2SetPoint+200 && LiveData['CO2Level'] < rooms[pick].CO2SetPoint-200){
+            LiveData['CO2Color'] = theme.palette.primary.main
+        }
+        //co2 =============================================================================================
+        if(!LiveData['PressureLevel'] || LiveData['PressureLevel'] > rooms[pick].pressureMax || LiveData['PressureLevel'] < rooms[pick].pressureMin){
+            LiveData['PressureColor'] = theme.palette.roomStatus.warning
+        }
+        //Green state
+        if(LiveData['PressureLevel'] < rooms[pick].pressureSetPont+200 && LiveData['PressureLevel'] > rooms[pick].pressureSetPont-200){
+            LiveData['PressureColor'] = theme.palette.roomStatus.veg
+        }
+        if(LiveData['PressureLevel'] > rooms[pick].pressureSetPont+200 && LiveData['PressureLevel'] < rooms[pick].pressureSetPont-200){
+            LiveData['PressureColor'] = theme.palette.primary.main
+        }
+        
+    }
+
+    GenerateLiveDataColors();
     // console.log(LiveData);
+    
 
     return (
         <Grid item container className={classes.LiveDataWidget} direction={"column"}>

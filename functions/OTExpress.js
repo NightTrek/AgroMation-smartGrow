@@ -107,12 +107,6 @@ app.get('/mqttTest', async (req, res) => {
 
 app.post('/api/session', async (req, res) => {
     //check and make sure we are getting this object
-    let test = {
-        "UID": "9bVgzHIlpGNqyWhOULNNBf36Gpg1",
-        "deviceIDList": [
-            "A4fhbNNtES5S5Hnj0qST"
-        ]
-    };
 
     let { UID, deviceIDList } = req.body;
     if (!UID) {
@@ -127,7 +121,7 @@ app.post('/api/session', async (req, res) => {
         deviceIDList: deviceIDList
     }
     try {
-        let response = await axios.post("http://10.128.0.7:1420/api/session", test, {
+        let response = await axios.post("http://10.128.0.7:1420/api/session", sessionConfig, {
             headers: {
                 "content-type": "application/json"
             }

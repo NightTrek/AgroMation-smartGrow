@@ -24,7 +24,7 @@ import {FieldMeterLegend} from "../../components/RoomMeter/RoomMeter";
 //Redux actions
 import { getRooms, setRoom, setExampleRooms, pendingRooms, updateRooms } from "../../actions/roomActions";
 import { resetPendingZones, resetZones } from "../../actions/LightZoneActions";
-
+import { StartSession, FetchLiveData} from "../../actions/LiveData";
 //firebase stuff
 // import { db } from "../../consts/firebase";
 
@@ -329,12 +329,15 @@ function RoomSummery(props) {
         tempUnitString = cLogo;
     }
 
-    let { rooms, pick, user, pending, locationIndex } = useSelector(state => ({
+    let { rooms, pick, user, pending, locationIndex, session, serror, live } = useSelector(state => ({
         rooms: state.growRooms.rooms,
         pick: state.growRooms.roomIndex,
         user: state.users.user,
         pending: state.growRooms.pending,
         locationIndex: state.users.activeLocation,
+        session: state.growRooms.session,
+        serror: state.growRooms.errorMessage,
+        live:   state.growRooms.Live,
 
     }), shallowEqual)
 
@@ -349,6 +352,51 @@ function RoomSummery(props) {
                 props.getRooms(user, locationIndex)
                 props.pendingRooms()
             }
+        }
+
+         //check if rooms are present in the state and ensure no session exists
+         if (pending && rooms.length > 0 && rooms[0].name !== "Loading rooms" && rooms[0].name !== undefined && session.sessionID === undefined && !session.message) {
+            console.log('start live data session')
+            //used for managing session
+            let deviceIDList = [];
+            let UID_FOR_SESSION = ""
+            rooms.forEach((item) => {
+                deviceIDList.push(item.doc)
+            })
+            if (user.accountOwner) {
+                UID_FOR_SESSION = user.accountOwner;
+            } else {
+                UID_FOR_SESSION = user.UID;
+            }
+            console.log(deviceIDList)
+            props.StartSession(UID_FOR_SESSION, deviceIDList);
+            // props(UID_FOR_SESSION, deviceIDList);
+        }
+        //if session already exists but might be expired rooms must also be present
+        if (pending && rooms.length > 0 && rooms[0].name !== "Loading rooms" && rooms[0].name !== undefined && session.sessionID && session.expTime && session.expTime < Date.now() / 1000) {
+            console.log('restarting live data session')
+            //used for managing session
+            let deviceIDList = [];
+            let UID_FOR_SESSION = ""
+            rooms.forEach((item) => {
+                deviceIDList.push(item.doc)
+            })
+            if (user.accountOwner) {
+                UID_FOR_SESSION = user.accountOwner;
+            } else {
+                UID_FOR_SESSION = user.UID;
+            }
+            console.log(deviceIDList)
+            props.StartSession(UID_FOR_SESSION, deviceIDList);
+        }
+
+        //if session exists get Live data for every Room
+        if(pending && rooms.length > 0 && rooms[0].name !== "Loading rooms" && rooms[0].name !== undefined && session.sessionID && session.expTime && !live.live){
+            console.log('getting live data')
+            rooms.forEach((item) => {
+                props.FetchLiveData(item.doc, live)
+            })
+            
         }
     })
     let loading = false;
@@ -449,6 +497,21 @@ function RoomSummery(props) {
     if(smallMeter){
         meterWidth = 192;
     }
+    let LiveData = {};
+    if(rooms && live.live && live.live[rooms[pick].doc]){
+        console.log(live.live[rooms[pick].doc])
+        LiveData["temp"] = live.live[rooms[pick].doc].temp || 0;
+        LiveData["rh"] = live.live[rooms[pick].doc].rh || 0;
+        LiveData["co2"] = live.live[rooms[pick].doc].co2 || 0;
+        LiveData["vpd"] = live.live[rooms[pick].doc].vpd || 0;
+    }
+
+    if(!LiveData['temp'] || !LiveData["rh"] || !LiveData["co2"] || !LiveData["vpd"]){
+        LiveData["temp"] =  0;
+        LiveData["rh"] = 0;
+        LiveData["co2"] = 0;
+        LiveData["vpd"] = 0;
+    }
 
 
     return (
@@ -482,7 +545,7 @@ function RoomSummery(props) {
                     (
                         <Grid item container direction={'row'} xs={12} justify={'center'}>
                             <FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
-                                type={"temp"} userType={user.accountType}
+                                type={"temp"} userType={user.accountType} LiveValue={LiveData.temp}
                                 title={"Temp"}
                                 longTitle={"Temperature"}
                                 setpoint={rooms[pick].tempSetPoint}
@@ -490,12 +553,12 @@ function RoomSummery(props) {
                                 max={rooms[pick].tempMax}
                                 UnitString={tempUnitString} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />
 
-                            <FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
+                            <FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes} LiveValue={LiveData.rh}
                                 type={"humidity"} title={"Humidity"} longTitle={"Humidity"} width={meterWidth} userType={user.accountType}
                                 setpoint={rooms[pick].humiditySetPoint} min={rooms[pick].humidityMin} max={rooms[pick].humidityMax}
                                 UnitString={" %"} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />
 
-                            <FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
+                            <FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes} LiveValue={LiveData.co2}
                                 type={"CO2"} title={"CO2 Level"} longTitle={"CO2 level"} width={meterWidth} userType={user.accountType}
                                 setpoint={rooms[pick].CO2SetPoint} min={rooms[pick].CO2Min} max={rooms[pick].CO2Max}
                                 UnitString={" ppm"} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />
@@ -503,9 +566,9 @@ function RoomSummery(props) {
                             {state.StageMeter ?
                                 (<StageMeter state={state} rooms={rooms} pick={pick} theme={theme} width={meterWidth} classes={classes} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />) :
 
-                                (<FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes}
+                                (<FieldMeter state={state} rooms={rooms} pick={pick} theme={theme} classes={classes} LiveValue={LiveData.vpd}
                                     type={"pressure"} title={"VPD"} longTitle={"Variable Pressure Deficit"} width={meterWidth} userType={user.accountType}
-                                    setpoint={rooms[pick].pressureSetPont} min={rooms[pick].pressureMin} max={rooms[pick].pressureMax}
+                                    setpoint={rooms[pick].pressureSetPoint} min={rooms[pick].pressureMin} max={rooms[pick].pressureMax}
                                     UnitString={" mbar"} handleAlertOpen={handleAlertOpen} setRoom={updateRooms} />
                                 )}
                         </Grid>
@@ -527,7 +590,17 @@ function RoomSummery(props) {
     )
 }
 
-const roomSummeryActions = { getRooms: getRooms, setRoom: setRoom, setExampleRooms: setExampleRooms, pendingRooms: pendingRooms, updateRooms:updateRooms, resetPendingZones: resetPendingZones, resetZones: resetZones }
+const roomSummeryActions = { 
+    getRooms: getRooms,
+    setRoom: setRoom,
+    setExampleRooms: setExampleRooms,
+    pendingRooms: pendingRooms, 
+    updateRooms:updateRooms, 
+    resetPendingZones: resetPendingZones, 
+    resetZones: resetZones ,
+    StartSession:StartSession,
+    FetchLiveData:FetchLiveData
+}
 
 function mapStateToProps({ state }) {
     return { state };

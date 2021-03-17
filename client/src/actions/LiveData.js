@@ -1,5 +1,5 @@
 import axios from "axios";
-import { FETCH_LIVE, SESSION_ERROR, SESSION_START, SESSION_INTERVAL } from "./types"
+import { FETCH_LIVE, SESSION_ERROR, SESSION_START, FETCH_HISTORY } from "./types"
 import { getIdToken, db } from "../consts/firebase";
 
 const expirationInterval = 1 * 60;
@@ -69,7 +69,25 @@ export const FetchLiveData = (deviceID, live) => async dispatch => {
     }, (error) => {
         console.log(error)
     });
-    
+}
 
-    
+
+export const FetchHistoryData = (deviceID, rate='30Min', datahistory) => async dispatch => {
+    if(!deviceID){
+        return new Error("no device id for FetchHistoryData action")
+    }
+    let {data, unsubscribe} = {};
+    unsubscribe = db.collection("Rooms").doc(deviceID).collection("History").doc(rate)
+    .onSnapshot((doc) => {
+        if(doc.exists){
+            data = doc.data()
+            // console.log(data)
+            datahistory[deviceID] = data
+            dispatch({ type: FETCH_HISTORY, payload: {datahistory, unsubscribe} });
+        }else{
+            console.log("doc doesnt exist")
+        }
+    }, (error) => {
+        console.log(error)
+    });
 }

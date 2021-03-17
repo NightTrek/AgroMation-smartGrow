@@ -350,8 +350,8 @@ function FieldMeter(props) {
                         needleTransition="easeElastic"
                         needleHeightRatio={0.7}
                         needleColor={theme.palette.text.main}
-                        value={roomState.liveData[props.type]}
-                        currentValueText={`${roomState.liveData[props.type]} ${props.UnitString}`}
+                        value={props.LiveValue}
+                        currentValueText={`${props.LiveValue} ${props.UnitString}`}
                         minValue={meterState.minMax[0] + TypeData.superMin}
                         maxValue={meterState.minMax[1] + TypeData.superMax}
                         segments={5}

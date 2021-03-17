@@ -17,7 +17,7 @@ import './style.css';
 // import VerticalDividerStyled from "../VerticalDivider/VerticalDivider"
 import { getRooms, setRoom, setExampleRooms, pendingRooms } from "../../actions/roomActions";
 import { resetPendingZones, resetZones } from "../../actions/LightZoneActions";
-import { StartSession, FetchLiveData} from "../../actions/LiveData";
+import { StartSession, FetchLiveData } from "../../actions/LiveData";
 
 
 
@@ -199,7 +199,7 @@ function DashboardSummary(props) {
         pending: state.growRooms.pending,
         session: state.growRooms.session,
         serror: state.growRooms.errorMessage,
-        live:   state.growRooms.Live,
+        live: state.growRooms.Live,
 
 
     }), shallowEqual)
@@ -257,12 +257,12 @@ function DashboardSummary(props) {
         }
 
         //if session exists get Live data for every Room
-        if(pending && rooms.length > 0 && rooms[0].name !== "Loading rooms" && rooms[0].name !== undefined && session.sessionID && session.expTime && !live.live){
+        if (pending && rooms.length > 0 && rooms[0].name !== "Loading rooms" && rooms[0].name !== undefined && session.sessionID && session.expTime && !live.live) {
             console.log('getting live data')
             rooms.forEach((item) => {
                 props.FetchLiveData(item.doc, live)
             })
-            
+
         }
 
     })
@@ -287,40 +287,197 @@ function DashboardSummary(props) {
     }
 
     const generateTempData = () => {
+        const SetPointVariation = 5;
 
-        return sampleTempData;
+        if (user.example) {
+            return sampleTempData;
+        }
+        
+        let nominal = 0;
+        let warning = 0;
+        let fault = 0;
+        if (rooms && rooms[0].name !== "Loading rooms") {
+            for (let i = 0; i < rooms.length; i++) {
+                let item = rooms[i];
+                let liveTemp;
+                //if there is a live value
+                if (live.live && live.live[item.doc]) {
+                    liveTemp = live.live[item.doc].temp
+                    
+                    //if its greater then the max or less then the min thats a fault
+                    if (liveTemp > item.tempMax || liveTemp < item.tempMin) {
+                        fault++
+                        continue;
+                    }
+                    // if the temp is greater then the setpoint b x or less then setpoint by x thats a warning
+                    if (liveTemp > item.tempSetPoint+ SetPointVariation || liveTemp < item.tempSetPoint - SetPointVariation) {
+                        warning++;
+                        continue;
+                    }else{
+                        nominal++;
+                        continue;
+                    }
+                    
+                }else{
+                    fault++
+                    continue;
+                }
+            }
+            return [{ x: "Fault", y: fault, catName: "Fault" },
+            { x: "Warning", y: warning, catName: "Warning" },
+            { x: "Nominal", y: nominal, catName: "Nominal" }];
+        } else {
+            return [{ x: "Fault", y: 1, catName: "Fault" },
+            { x: "Warning", y: 1, catName: "Warning" },
+            { x: "Nominal", y: 1, catName: "Nominal" }];
+        }
 
+    }
 
-        // if(user.example){
-        //     return sampleTempData;
-        // }
-        // console.log("generating Temp data")
-        // let nominal = 0;
-        // let warning = 0;
-        // let fault = 0;
-        // for(let i = 0; i<rooms.length; i++){
-        //     let item = rooms[i];
-        //     console.log(item)
-        //     if(item.tempC<item.tempMax && item.tempC>item.tempMin){
-        //         console.log(i)
-        //         nominal++;
-        //         continue;
+    const generateHumidityData = () => {
+        const SetPointVariation = 5;
 
-        //     }
-        //     if(item.tempC>item.tempMax && item.tempC<item.tempMax+10|| item.tempC<item.tempMin && item.tempC>item.tempMin-10){
-        //         console.log(i)
-        //         warning++;
-        //         continue;
-        //     }
-        //     if(item.tempC>item.tempMax+10 ||item.tempC<item.tempMin-10){
-        //         console.log(i)
-        //         fault++
-        //         continue;
-        //     }
-        // }
-        // return [{ x: "Fault", y: fault, catName: "Fault" },
-        // { x: "Warning", y: warning, catName: "Warning" },
-        // { x: "Nominal", y: nominal, catName: "Nominal" }];
+        if (user.example) {
+            return sampleHumidityData;
+        }
+        
+        let nominal = 0;
+        let warning = 0;
+        let fault = 0;
+        if (rooms && rooms[0].name !== "Loading rooms") {
+            for (let i = 0; i < rooms.length; i++) {
+                let item = rooms[i];
+                let liveRH;
+                //if there is a live value
+                if (live.live && live.live[item.doc]) {
+                    liveRH = live.live[item.doc].rh
+                    
+                    //if its greater then the max or less then the min thats a fault
+                    if (liveRH > item.humidityMax || liveRH < item.humidityMin) {
+                        fault++
+                        continue;
+                    }
+                    // if the temp is greater then the setpoint b x or less then setpoint by x thats a warning
+                    if (liveRH > item.humiditySetPoint+ SetPointVariation || liveRH < item.humiditySetPoint - SetPointVariation) {
+                        warning++;
+                        continue;
+                    }else{
+                        nominal++;
+                        continue;
+                    }
+                    
+                }else{
+                    fault++
+                    continue;
+                }
+            }
+            return [{ x: "Fault", y: fault, catName: "Fault" },
+            { x: "Warning", y: warning, catName: "Warning" },
+            { x: "Nominal", y: nominal, catName: "Nominal" }];
+        } else {
+            return [{ x: "Fault", y: 1, catName: "Fault" },
+            { x: "Warning", y: 1, catName: "Warning" },
+            { x: "Nominal", y: 1, catName: "Nominal" }];
+        }
+
+    }
+
+    const generateCO2Data = () => {
+        const SetPointVariation = 200;
+
+        if (user.example) {
+            return sampleCO2Data;
+        }
+    
+        let nominal = 0;
+        let warning = 0;
+        let fault = 0;
+        if (rooms && rooms[0].name !== "Loading rooms") {
+            for (let i = 0; i < rooms.length; i++) {
+                let item = rooms[i];
+                let liveCO2;
+                //if there is a live value
+                if (live.live && live.live[item.doc]) {
+                    liveCO2 = live.live[item.doc].co2
+                    
+                    //if its greater then the max or less then the min thats a fault
+                    if (liveCO2 > item.CO2Max || liveCO2 < item.CO2Min) {
+                        fault++
+                        continue;
+                    }
+                    // if the temp is greater then the setpoint b x or less then setpoint by x thats a warning
+                    if (liveCO2 > item.CO2SetPoint+ SetPointVariation || liveCO2 < item.CO2SetPoint - SetPointVariation) {
+                        warning++;
+                        continue;
+                    }else{
+                        nominal++;
+                        continue;
+                    }
+                    
+                }else{
+                    fault++
+                    continue;
+                }
+            }
+            return [{ x: "Fault", y: fault, catName: "Fault" },
+            { x: "Warning", y: warning, catName: "Warning" },
+            { x: "Nominal", y: nominal, catName: "Nominal" }];
+        } else {
+            return [{ x: "Fault", y: 1, catName: "Fault" },
+            { x: "Warning", y: 1, catName: "Warning" },
+            { x: "Nominal", y: 1, catName: "Nominal" }];
+        }
+
+    }
+
+    const generateVPDData = () => {
+        const SetPointVariation = 100;
+
+        if (user.example) {
+             return [{ x: "Fault", y: 1, catName: "Fault" },
+            { x: "Warning", y: 1, catName: "Warning" },
+            { x: "Nominal", y: 1, catName: "Nominal" }];;
+        }
+        
+        let nominal = 0;
+        let warning = 0;
+        let fault = 0;
+        if (rooms && rooms[0].name !== "Loading rooms") {
+            for (let i = 0; i < rooms.length; i++) {
+                let item = rooms[i];
+                let liveVPD;
+                //if there is a live value
+                if (live.live && live.live[item.doc]) {
+                    liveVPD = live.live[item.doc].vpd
+                    
+                    //if its greater then the max or less then the min thats a fault
+                    if (liveVPD > item.pressureMax || liveVPD < item.pressureMin) {
+                        fault++
+                        continue;
+                    }
+                    // if the temp is greater then the setpoint b x or less then setpoint by x thats a warning
+                    if (liveVPD > item.pressureSetPoint+ SetPointVariation || liveVPD < item.pressureSetPoint - SetPointVariation) {
+                        warning++;
+                        continue;
+                    }else{
+                        nominal++;
+                        continue;
+                    }
+                    
+                }else{
+                    fault++
+                    continue;
+                }
+            }
+            return [{ x: "Fault", y: fault, catName: "Fault" },
+            { x: "Warning", y: warning, catName: "Warning" },
+            { x: "Nominal", y: nominal, catName: "Nominal" }];
+        } else {
+            return [{ x: "Fault", y: 1, catName: "Fault" },
+            { x: "Warning", y: 1, catName: "Warning" },
+            { x: "Nominal", y: 1, catName: "Nominal" }];
+        }
+
     }
 
     const handleChange = (event) => {
@@ -361,11 +518,12 @@ function DashboardSummary(props) {
             {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
             <DashboardPieChart chartName={"Temp"} classes={classes} theme={theme} dataSet={generateTempData()} colorScale={defaultColorScale} />
             {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
-            <DashboardPieChart chartName={"Humidity"} classes={classes} theme={theme} dataSet={sampleHumidityData} colorScale={defaultColorScale} />
+            <DashboardPieChart chartName={"Humidity"} classes={classes} theme={theme} dataSet={generateHumidityData()} colorScale={defaultColorScale} />
             {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
-            <DashboardPieChart chartName={"CO2"} classes={classes} theme={theme} dataSet={sampleCO2Data} colorScale={defaultColorScale} />
+            <DashboardPieChart chartName={"CO2"} classes={classes} theme={theme} dataSet={generateCO2Data()} colorScale={defaultColorScale} />
             {/* <VerticalDividerStyled orientation={'vertical'} flexItem /> */}
-            <DashboardPieChart chartName={"Progress"} classes={classes} theme={theme} dataSet={sampleProgressData} colorScale={progressColorScale} ExtraClass={"#bottomPieChart"} />
+            <DashboardPieChart chartName={"VPD"} classes={classes} theme={theme} dataSet={generateVPDData()} colorScale={defaultColorScale} ExtraClass={"#bottomPieChart"} />
+            {/* <DashboardPieChart chartName={"Progress"} classes={classes} theme={theme} dataSet={sampleProgressData} colorScale={progressColorScale} ExtraClass={"#bottomPieChart"} /> */}
             {/* <Grid container item direction="row" xs >
                 
             </Grid>

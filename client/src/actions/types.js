@@ -23,8 +23,8 @@ export const SET_ROOM                   = 'SET_ROOM';
 export const GET_ROOMS                  = 'GET_ROOMS';
 export const PENDING_ROOMS              = 'PENDING_ROOMS';
 
-export const FETCH_LIVE               = 'FETCH_LIVE';
-
+export const FETCH_LIVE                 = 'FETCH_LIVE';
+export const FETCH_HISTORY              = 'FETCH_HISTORY';
 
 
 export const FETCH_ZONES                = 'FETCH_ZONES';

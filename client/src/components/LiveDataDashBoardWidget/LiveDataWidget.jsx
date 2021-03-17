@@ -9,6 +9,11 @@ import { withRouter } from "react-router";
 // import axios from "axios";
 
 
+const tempVariation = 5;
+const humidityVariation = 2;
+const co2Variation = 200;
+const pressureVariation = 100;
+
 const useStyles = makeStyles((theme) => ({
     LiveDataWidget: {
         background: theme.palette.secondary.main,
@@ -53,21 +58,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-// const EwonName = "Agro_Office";
-// const EwonUser = "Agro";
-// const EwonPass = "Agro2019!"; 
-
-// const parseEwonLiveData = (rawData) => {
-//     const liveData = {}
-//     for(let i = 0; i<rawData.length;i++){
-//         if(typeof rawData[i] === 'string'){
-//             liveData[rawData[i]]= rawData[i+1]
-//         }
-//     }
-//     return liveData
-
-// }
-
 const LiveDataWidget = (props) => {
     const theme = useTheme();
     const exampleLiveData = {
@@ -91,19 +81,7 @@ const LiveDataWidget = (props) => {
 
     }), shallowEqual)
 
-    useEffect(() => {
-        // axios.get(`https://m2web.talk2m.com/t2mapi/get/${EwonName}/rcgi.bin/ParamForm?AST_Param=$dtIV$ftT&t2maccount=agro&t2musername=daniel&t2mpassword=${AccountPassword}&t2mdeveloperid=${DeveloperID}&t2mdeviceusername=${EwonUser}&t2mdevicepassword=${EwonPass}`, {})
-        // .then((res) => {
-        //     let data = parseEwonLiveData(res.data.split(";"));
-
-        //     console.log(data);
-        //     LiveData.Temp = data.Temperature;
-        //     LiveData.humidity = data.RH;
-        //     LiveData.CO2Level = data.CO2;
-        // }).catch((err) => {
-        //    console.log(err); 
-        // })
-    })
+ 
 
     //check if data has loaded and if not display loading text
     if (rooms === undefined || rooms.length === 0) {
@@ -114,7 +92,7 @@ const LiveDataWidget = (props) => {
                 tempSetPoint: 72,
                 humiditySetPoint: 44,
                 CO2SetPoint: 3000,
-                pressureSetPont: 1114,
+                pressureSetPoint: 1114,
                 stage: "loading",
                 dateStarted: 1597017600,
                 CloneTime: 864000,
@@ -154,50 +132,110 @@ const LiveDataWidget = (props) => {
     
     }
 
+    const tempColor = () => {
+        // console.log(`pressure fault value ${LiveData['Temp']} SP: ${rooms[pick].tempSetPoint} min: ${rooms[pick].tempMin} Max: ${rooms[pick].tempMax}`)
+        if (LiveData['Temp']) {
+            let item = rooms[pick];
+            //if its greater then the max or less then the min thats a fault
+            if (LiveData['Temp'] > item.tempMax || LiveData['Temp'] < item.tempMin) {
+                return theme.palette.roomStatus.warning;
+                
+            }
+            // if the temp is greater then the setpoint b x or less then setpoint by x thats a warning
+            if (LiveData['Temp'] > item.tempSetPoint+ tempVariation || LiveData['Temp'] < item.tempSetPoint - tempVariation) {
+                return theme.palette.primary.main
+                
+            }else{
+                return theme.palette.roomStatus.veg
+                
+            }
+            
+        }else{
+            return theme.palette.roomStatus.warning;
+            
+        }
+        
+    }
+
+    const humidityColor = () => {
+        // console.log(`pressure fault value ${LiveData['Temp']} SP: ${rooms[pick].tempSetPoint} min: ${rooms[pick].tempMin} Max: ${rooms[pick].tempMax}`)
+        if (LiveData['humidity']) {
+            let item = rooms[pick];
+            //if its greater then the max or less then the min thats a fault
+            if (LiveData['humidity'] > item.humidityMax || LiveData['humidity'] < item.humidityMin) {
+                return theme.palette.roomStatus.warning;
+                
+            }
+            // if the temp is greater then the setpoint b x or less then setpoint by x thats a warning
+            if (LiveData['humidity'] > item.humiditySetPoint+ humidityVariation || LiveData['humidity'] < item.humiditySetPoint - humidityVariation) {
+                return theme.palette.primary.main
+                
+            }else{
+                return theme.palette.roomStatus.veg
+                
+            }
+            
+        }else{
+            return theme.palette.roomStatus.warning;
+            
+        }
+        
+    }
+    const co2Color = () => {
+        // console.log(`pressure fault value ${LiveData['Temp']} SP: ${rooms[pick].tempSetPoint} min: ${rooms[pick].tempMin} Max: ${rooms[pick].tempMax}`)
+        if (LiveData['CO2Level']) {
+            let item = rooms[pick];
+            //if its greater then the max or less then the min thats a fault
+            if (LiveData['CO2Level'] > item.CO2Max || LiveData['CO2Level'] < item.CO2Min) {
+                return theme.palette.roomStatus.warning;
+                
+            }
+            // if the temp is greater then the setpoint b x or less then setpoint by x thats a warning
+            if (LiveData['CO2Level'] > item.CO2SetPoint+ co2Variation || LiveData['CO2Level'] < item.CO2SetPoint - co2Variation) {
+                return theme.palette.primary.main
+                
+            }else{
+                return theme.palette.roomStatus.veg
+                
+            }
+            
+        }else{
+            return theme.palette.roomStatus.warning;
+            
+        }
+        
+    }
+    const vpdColor = () => {
+        // console.log(`pressure fault value ${LiveData['Temp']} SP: ${rooms[pick].tempSetPoint} min: ${rooms[pick].tempMin} Max: ${rooms[pick].tempMax}`)
+        if (LiveData['PressureLevel']) {
+            let item = rooms[pick];
+            //if its greater then the max or less then the min thats a fault
+            if (LiveData['PressureLevel'] > item.pressureMax || LiveData['PressureLevel'] < item.pressureMin) {
+                return theme.palette.roomStatus.warning;
+                
+            }
+            // if the temp is greater then the setpoint b x or less then setpoint by x thats a warning
+            if (LiveData['PressureLevel'] > item.pressureSetPoint+ pressureVariation || LiveData['PressureLevel'] < item.pressureSetPoint - pressureVariation) {
+                return theme.palette.primary.main
+                
+            }else{
+                return theme.palette.roomStatus.veg
+                
+            }
+            
+        }else{
+            return theme.palette.roomStatus.warning;
+            
+        }
+        
+    }
+
     const GenerateLiveDataColors = () => {
-        if(!LiveData['Temp'] || LiveData['Temp'] > rooms[pick].tempMax || LiveData['Temp'] < rooms[pick].tempMin){
-            LiveData['TempColor'] = theme.palette.roomStatus.warning
-        }
-        //Green state
-        if(LiveData['Temp'] < rooms[pick].tempSetPoint+5 && LiveData['Temp'] > rooms[pick].tempSetPoint-5){
-            LiveData['TempColor'] = theme.palette.roomStatus.veg
-        }
-        if(LiveData['Temp'] > rooms[pick].tempSetPoint+5 && LiveData['Temp'] < rooms[pick].tempSetPoint-5){
-            LiveData['TempColor'] = theme.palette.primary.main
-        }
-        //humidity =============================================================================================
-        if(!LiveData['humidity'] || LiveData['humidity'] > rooms[pick].humidityMax || LiveData['humidity'] < rooms[pick].humidityMin){
-            LiveData['humidityColor'] = theme.palette.roomStatus.warning
-        }
-        //Green state
-        if(LiveData['humidity'] < rooms[pick].humiditySetPoint+5 && LiveData['humidity'] > rooms[pick].humiditySetPoint-5){
-            LiveData['humidityColor'] = theme.palette.roomStatus.veg
-        }
-        if(LiveData['humidity'] > rooms[pick].humiditySetPoint+5 && LiveData['humidity'] < rooms[pick].humiditySetPoint-5){
-            LiveData['humidityColor'] = theme.palette.primary.main
-        }
-        //co2 =============================================================================================
-        if(!LiveData['CO2Level'] || LiveData['CO2Level'] > rooms[pick].CO2Max || LiveData['CO2Level'] < rooms[pick].CO2Min){
-            LiveData['CO2Color'] = theme.palette.roomStatus.warning
-        }
-        //Green state
-        if(LiveData['CO2Level'] < rooms[pick].CO2SetPoint+200 && LiveData['CO2Level'] > rooms[pick].CO2SetPoint-200){
-            LiveData['CO2Color'] = theme.palette.roomStatus.veg
-        }
-        if(LiveData['CO2Level'] > rooms[pick].CO2SetPoint+200 && LiveData['CO2Level'] < rooms[pick].CO2SetPoint-200){
-            LiveData['CO2Color'] = theme.palette.primary.main
-        }
-        //co2 =============================================================================================
-        if(!LiveData['PressureLevel'] || LiveData['PressureLevel'] > rooms[pick].pressureMax || LiveData['PressureLevel'] < rooms[pick].pressureMin){
-            LiveData['PressureColor'] = theme.palette.roomStatus.warning
-        }
-        //Green state
-        if(LiveData['PressureLevel'] < rooms[pick].pressureSetPont+200 && LiveData['PressureLevel'] > rooms[pick].pressureSetPont-200){
-            LiveData['PressureColor'] = theme.palette.roomStatus.veg
-        }
-        if(LiveData['PressureLevel'] > rooms[pick].pressureSetPont+200 && LiveData['PressureLevel'] < rooms[pick].pressureSetPont-200){
-            LiveData['PressureColor'] = theme.palette.primary.main
-        }
+        LiveData['TempColor']       = tempColor();
+        LiveData['humidityColor']   = humidityColor();
+        LiveData['CO2Color']        = co2Color()
+        LiveData['PressureColor']   = vpdColor()
+        
         
     }
 

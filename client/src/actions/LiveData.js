@@ -72,7 +72,27 @@ export const FetchLiveData = (deviceID, live) => async dispatch => {
 }
 
 
-export const FetchHistoryData = (deviceID, rate='30Min', datahistory) => async dispatch => {
+export const FetchHistoryData = (deviceID, datahistory, rate='30Min') => async dispatch => {
+    if(!deviceID){
+        return new Error("no device id for FetchHistoryData action")
+    }
+    let {data, unsubscribe} = {};
+    unsubscribe = db.collection("Rooms").doc(deviceID).collection("History").doc(rate)
+    .onSnapshot((doc) => {
+        if(doc.exists){
+            data = doc.data()
+            // console.log(data)
+            datahistory[deviceID] = data
+            dispatch({ type: FETCH_HISTORY, payload: {datahistory, unsubscribe} });
+        }else{
+            console.log("doc doesnt exist")
+        }
+    }, (error) => {
+        console.log(error)
+    });
+}
+
+export const FetchAlarms = (deviceID, datahistory, rate='30Min') => async dispatch => {
     if(!deviceID){
         return new Error("no device id for FetchHistoryData action")
     }

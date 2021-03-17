@@ -89,8 +89,8 @@ function FieldMeter(props) {
             case "temp":
                 return {
                     superMin: -30,
-                    min: -2,
-                    max: 2,
+                    min: -5,
+                    max: 5,
                     superMax: 30,
                     sliderMin: 0,
                     sliderMax: 110,
@@ -131,10 +131,10 @@ function FieldMeter(props) {
                 };
             case "pressure":
                 return {
-                    superMin: -500,
-                    min: -25,
-                    max: 25,
-                    superMax: 500,
+                    superMin: -900,
+                    min: -100,
+                    max: 100,
+                    superMax: 900,
                     sliderMin: 0,
                     sliderMax: 1500,
                     output: {

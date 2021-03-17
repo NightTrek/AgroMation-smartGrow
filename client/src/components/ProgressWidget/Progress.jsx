@@ -160,7 +160,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const HighestProgress = (props) => {
+const Progress = (props) => {
 
     const classes = useStyles();
     const Progress = props.Progress || exampleProgressData;
@@ -208,10 +208,10 @@ const HighestProgress = (props) => {
         <Grid item container className={classes.ProgressWidget} direction={"row"}>
             {/* widget Top bar menu */}
             {/* <Grid container item xs direction={"row"} className={classes.TopBar} wrap={"nowrap"}> */}
-            <Grid container item xs={10} sm={8} md={7}>
-                <Typography variant={"h5"} className={classes.title} style={{ paddingLeft: "12px" }}>Highest Progress</Typography>
+            <Grid container item xs={10} sm={10} md={10}>
+                <Typography variant={"h5"} className={classes.title} style={{ paddingLeft: "12px" }}>Room Progress</Typography>
             </Grid>
-            <Grid container item xs={2} sm={4} md={5}>
+            <Grid container item xs={2} sm={2} md={2}>
                 <IconButton aria-label="Widget Settings" color="primary" className={classes.iconButton}><MoreVertIcon /></IconButton>
             </Grid>
             {/* </Grid> */}
@@ -270,6 +270,6 @@ function mapStateToProps({ state }) {
 
 const formedComponent = compose(
     connect(mapStateToProps, { getRooms: getRooms, setRoom: setRoom })
-)(HighestProgress);
+)(Progress);
 
 export default withRouter(formedComponent);

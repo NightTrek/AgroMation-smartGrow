@@ -8,7 +8,7 @@ import React from 'react';
 import { Container, Grid } from "@material-ui/core";
 import DashboardSummery from "../../components/DashboardSummery/DashboardSummry";
 import { SystemNotifications } from '../SystemNotificationWidget/SystemNotifications';
-import HighestProgress from '../../components/HighestProgressWidget/HighestProgress';
+import Progress from '../../components/ProgressWidget/Progress';
 import LiveDataWidget from '../../components/LiveDataDashBoardWidget/LiveDataWidget';
 
 
@@ -50,7 +50,7 @@ const Dashboard2 = (props) => {
                 <Grid container item direction="row"
                     xs={12} sm={4} >
 
-                    <HighestProgress roomName={state.rooms[state.roomIndex]} />
+                    <Progress roomName={state.rooms[state.roomIndex]} />
                 </Grid>
                 <Grid container item direction="row"
                     xs={12} >

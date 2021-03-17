@@ -18,28 +18,19 @@ export default function(state = INITIAL_STATE, action) {
     case GROWROOM_ERROR:
       return {...state, errorMessage: action.payload };
     case GET_ROOMS:
-      console.log("get rooms");
-      console.log(action.payload);
       return {...state, rooms: action.payload };
     case PENDING_ROOMS:
       return {...state, pending: action.payload};
     case SET_ROOM:
-      console.log("Set rooms");
-      console.log(action.payload);
+      
       return {...state, roomIndex: action.payload };
     case FETCH_LIVE:
-      console.log("Fetch Live");
-      console.log(action.payload);
       return {...state, Live: action.payload };
     case FETCH_HISTORY:
       return {...state, History: action.payload}
     case SESSION_START:
-      console.log('Session start')
-      console.log(action.payload)
       return {...state, session: action.payload };
     case SESSION_ERROR:
-      console.log('Session ERROR')
-      console.log(action.payload)
       return {...state, errorMessage: action.payload};
     default:
       return state;

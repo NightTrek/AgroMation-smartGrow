@@ -1,8 +1,11 @@
-import React, { useLayoutEffect, useState } from 'react'
-import { connect } from 'react-redux'
-import { Grid, Button, Typography } from '@material-ui/core'
+import React, { useLayoutEffect, useState, useEffect } from 'react'
+import { connect, shallowEqual, useSelector } from 'react-redux'
+import {compose} from 'redux'
+import { Grid, Button, Typography, OutlinedInput,  } from '@material-ui/core'
 import { makeStyles, useTheme } from '@material-ui/core/styles'; //useTheme
 import { VictoryChart, VictoryLine, VictoryAxis, VictoryVoronoiContainer,VictoryTooltip } from 'victory';
+import {FetchHistoryData} from '../../actions/LiveData';
+
 
 const exampleTempData = [
     { x: 1300, y: 74 , sp: 74 },
@@ -219,7 +222,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export const PrimaryLineChart = (props) => {
+const PrimaryLineChart = (props) => {
     const classes = useStyles();
     const theme = useTheme();
     const tempData = props.tempData || exampleTempData;
@@ -231,12 +234,37 @@ export const PrimaryLineChart = (props) => {
     const co2Domain = [2000,4000];
     const pressureData = props.pressureData || examplePressureData;
     const pressureDomain = [950, 1200]
+    let { rooms, pick, pending, History, session } = useSelector(state => ({
+        rooms: state.growRooms.rooms,
+        pick: state.growRooms.roomIndex,
+        pending: state.growRooms.pending,
+        History: state.growRooms.History,
+        session: state.growRooms.session
+
+
+    }), shallowEqual)
+
     const [state, setState] = useState({
         dataSet: tempData,
         dataType:"Temperature",
         domain:tempDomain,
         unit:" °F",
     });
+    // When the global state changes decide if we send example data or load db data
+    useEffect(() => {
+     
+
+        //if session exists get Live data for every Room
+
+        if (pending && rooms.length > 0 && rooms[0].name !== "Loading rooms" && rooms[0].name !== undefined && session && session.sessionID && !History.datahistory) {
+            console.log('getting Historical data')
+            rooms.forEach((item) => {
+                props.FetchHistoryData(item.doc, History.datahistory)
+            })
+
+        }
+
+    })
     // console.log(state.dataSet);
     //react media queries that decide if the chart is responsive or static using a custom hook to get window size
     /// sorry about these javascript if statement based media queries not getting paid by the hour apparently despite it being in the contract
@@ -305,6 +333,36 @@ export const PrimaryLineChart = (props) => {
     }
 
     
+    const builtDataSetForRoom = () => {
+        if(rooms && History.datahistory && History.datahistory[rooms[pick].doc]){
+            let currentData = History.datahistory[rooms[pick].doc].data;
+            let output = {
+                Temperature:[],
+                Humidity:[],
+                "CO2 Level":[],
+                "Variable Pressure deficit":[]
+            }
+            currentData.forEach((item) => {
+                let dateTime = new Date(item.unixTime)
+                output.Temperature.push({x: dateTime.toDateString() , y: item.temp, sp: rooms[pick].tempSetPoint});
+                output.Humidity.push({x: dateTime.toDateString() , y: item.rl, sp: rooms[pick].humiditySetPoint});
+                output["CO2 Level"].push({x: dateTime.toDateString() , y: item.co2, sp: rooms[pick].CO2SetPoint});
+                output["Variable Pressure deficit"].push({x: dateTime.toDateString() , y: item.vpd, sp: rooms[pick].pressureSetPoint});
+            })
+            return output
+        }else{
+            //Historical data not found handle error
+            return {
+                Temperature:tempData,
+                Humidity:humidityData,
+                "CO2 Level":co2Data,
+                "Variable Pressure deficit":pressureData
+            }
+        }
+
+    }
+    let dataSets = builtDataSetForRoom()
+    console.log(dataSets)
     return (
         <Grid container item direction={"column"}>
             <Grid container item direction={"row"} xs style={{marginLeft:"24px", marginTop:"12px"}}>
@@ -313,8 +371,8 @@ export const PrimaryLineChart = (props) => {
             <Grid container item direction={"row"} xs className={classes.ChartContainer}>
                     <VictoryChart
                         {...chartInputProps}
-                       >
-                        <VictoryAxis
+                        >
+                         <VictoryAxis
                             dependentAxis
                             domain={state.domain}
                             offsetY={200}
@@ -327,10 +385,11 @@ export const PrimaryLineChart = (props) => {
                             }}
                         />
                         <VictoryAxis
-                            domain={[1300, 1500]}
+                            // domain={[1300, 1500]}
                             offsetX={200}
                             orientation="top"
                             standalone={false}
+                            fixLabelOverlap={true}
                             style={{
                                 axis: { stroke: theme.palette.secondary.dark, color: "#ffffff" },
                                 axisLabel: { fontSize: 20, padding: 30, color: "#ffffff" },
@@ -347,7 +406,7 @@ export const PrimaryLineChart = (props) => {
                             labels: {
                                 color: "white"
                             }
-                        }} data={state.dataSet} interpolation="monotoneX" width={512} labels={({ datum }) => `${datum.y}${state.unit}`} labelComponent={<VictoryTooltip/>} />
+                        }} data={dataSets[state.dataType]} interpolation="monotoneX" width={512} labels={({ datum }) => `${datum.y}${state.unit}`} labelComponent={<VictoryTooltip/>} />
                         <VictoryLine style={{
                             data: { stroke: theme.palette.roomStatus.veg },
                             parent: {
@@ -357,7 +416,7 @@ export const PrimaryLineChart = (props) => {
                             labels: {
                                 color: "white"
                             }
-                        }} data={state.dataSet.map((item) => {
+                        }} data={dataSets[state.dataType].map((item) => {
                             
                             return({x:item.x,y:item.sp})
                             })} interpolation="monotoneX" labels={({ datum }) => `SetPoint ${datum.y}`} labelComponent={<VictoryTooltip/>}/>
@@ -387,12 +446,17 @@ export const PrimaryLineChart = (props) => {
     )
 }
 
-const mapStateToProps = (state) => ({
 
-})
-
-const mapDispatchToProps = {
-
+const LineChartActions = {
+    FetchHistoryData:FetchHistoryData
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PrimaryLineChart)
+function mapStateToProps({ state }) {
+    return { state };
+}
+
+const formedComponent = compose(
+    connect(mapStateToProps, LineChartActions )
+)(PrimaryLineChart);
+
+export default formedComponent;

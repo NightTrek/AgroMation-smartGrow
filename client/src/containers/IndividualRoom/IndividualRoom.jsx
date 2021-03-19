@@ -2,7 +2,7 @@ import React from 'react'
 // import PropTypes from 'prop-types'
 import { Container, Grid, makeStyles, withStyles, Tab, Tabs, AppBar, useMediaQuery, Menu, MenuItem, IconButton, Typography } from '@material-ui/core'
 import RoomSummery from '../RoomSummery/RoomSummery'
-import { PrimaryLineChart } from '../PrimaryLineChart/PrimaryLineChart';
+import PrimaryLineChart from '../PrimaryLineChart/PrimaryLineChart';
 import LightingController from '../LightingController/LightingController';
 import MenuIcon from '@material-ui/icons/Menu';
 

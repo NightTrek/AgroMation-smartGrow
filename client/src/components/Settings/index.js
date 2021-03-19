@@ -142,7 +142,7 @@ const Settings = (props) => {
         invalidAlert: false,
       })
     }
-    if(user.subscription.status){
+    if(user.subscription && user.subscription.status){
       if(user.subscription.status === "trailing" || user.subscription.status === "premium" || user.subscription.status === "business"){
         if(Auth.stripeRole === null){
           props.UpdateClaimsInAuthState(Auth);

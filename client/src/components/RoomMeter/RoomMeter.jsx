@@ -104,8 +104,8 @@ function FieldMeter(props) {
             case "humidity":
                 return {
                     superMin: -30,
-                    min: -5,
-                    max: 5,
+                    min: -2,
+                    max: 2,
                     superMax: 30,
                     sliderMin: 0,
                     sliderMax: 100,

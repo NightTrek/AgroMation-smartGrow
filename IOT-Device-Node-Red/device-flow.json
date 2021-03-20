@@ -1,0 +1,855 @@
+[
+    {
+        "id": "9f89f8df.074778",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "2383a954.da3f06",
+        "type": "http in",
+        "z": "9f89f8df.074778",
+        "name": "/ping",
+        "url": "/ping",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 150,
+        "y": 240,
+        "wires": [
+            [
+                "f4a22414.d49028"
+            ]
+        ]
+    },
+    {
+        "id": "dd456b3b.686f08",
+        "type": "http response",
+        "z": "9f89f8df.074778",
+        "name": "ping response",
+        "statusCode": "200",
+        "headers": {
+            "device": "AgroOffice1"
+        },
+        "x": 680,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "f4a22414.d49028",
+        "type": "http request",
+        "z": "9f89f8df.074778",
+        "name": "Get current LA time",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": false,
+        "url": "http://worldtimeapi.org/api/timezone/America/Los_Angeles",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 290,
+        "y": 180,
+        "wires": [
+            [
+                "311b6432.c7643c"
+            ]
+        ]
+    },
+    {
+        "id": "311b6432.c7643c",
+        "type": "json",
+        "z": "9f89f8df.074778",
+        "name": "convert LA time to js Object",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 400,
+        "y": 240,
+        "wires": [
+            [
+                "3ccf95f3.b09e6a"
+            ]
+        ]
+    },
+    {
+        "id": "3ccf95f3.b09e6a",
+        "type": "template",
+        "z": "9f89f8df.074778",
+        "name": "format respose",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\"unixTime\": \"{{payload.unixtime}}\", \"name\": \"AgroOffice\"}",
+        "output": "str",
+        "x": 540,
+        "y": 180,
+        "wires": [
+            [
+                "dd456b3b.686f08"
+            ]
+        ]
+    },
+    {
+        "id": "618544d9.41e2ac",
+        "type": "http in",
+        "z": "9f89f8df.074778",
+        "name": "/getHistoryExample",
+        "url": "/getAllHistory",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 190,
+        "y": 320,
+        "wires": [
+            [
+                "9b36e01f.db8ec"
+            ]
+        ]
+    },
+    {
+        "id": "4d803622.481328",
+        "type": "http response",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 690,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "2e2625e.cb2afda",
+        "type": "function",
+        "z": "9f89f8df.074778",
+        "name": "Generate-Fake-Data",
+        "func": "msg.payload = {\n    main:{\n        temp:70+Math.floor(Math.random()*5),\n        humidity:40+Math.floor(Math.random()*5),\n        pressure:700+Math.floor(Math.random()*1000),\n        co2:2000+Math.floor(Math.random()*2000)\n    }\n}\nreturn msg\n\n\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 720,
+        "y": 780,
+        "wires": [
+            [
+                "ce968c31.38861",
+                "9d77e0e3.c60d3",
+                "d42f63af.94b46",
+                "b6f803f3.7de87"
+            ]
+        ]
+    },
+    {
+        "id": "b6f803f3.7de87",
+        "type": "mqtt out",
+        "z": "9f89f8df.074778",
+        "name": "SendLiveData",
+        "topic": "A4fhbNNtES5S5Hnj0qST/data/Live",
+        "qos": "",
+        "retain": "true",
+        "broker": "e9193505.113bc8",
+        "x": 1280,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "d42f63af.94b46",
+        "type": "debug",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 950,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "374dd1f5.14dc7e",
+        "type": "change",
+        "z": "9f89f8df.074778",
+        "name": "Add unixtime to flow variables.",
+        "rules": [
+            {
+                "t": "set",
+                "p": "unixTimeStarted",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 370,
+        "y": 780,
+        "wires": [
+            [
+                "2e2625e.cb2afda"
+            ]
+        ]
+    },
+    {
+        "id": "9892a4f8.483b78",
+        "type": "mqtt out",
+        "z": "9f89f8df.074778",
+        "name": "update history object",
+        "topic": "A4fhbNNtES5S5Hnj0qST/data/History",
+        "qos": "",
+        "retain": "true",
+        "broker": "e9193505.113bc8",
+        "x": 2380,
+        "y": 1140,
+        "wires": []
+    },
+    {
+        "id": "db64b6e9.9bc388",
+        "type": "inject",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "30",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 150,
+        "y": 780,
+        "wires": [
+            [
+                "374dd1f5.14dc7e"
+            ]
+        ]
+    },
+    {
+        "id": "37a2e2e9.71ff8e",
+        "type": "sqlite",
+        "z": "9f89f8df.074778",
+        "mydb": "6364382c.8638c8",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "Add live data",
+        "x": 1730,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9d77e0e3.c60d3",
+        "type": "function",
+        "z": "9f89f8df.074778",
+        "name": "set msg.topic to insert data into table",
+        "func": "\n\nmsg.topic=`INSERT INTO dataHistory VALUES (${msg.payload.main.temp}, ${msg.payload.main.humidity}, ${msg.payload.main.pressure}, ${msg.payload.main.pressure+Math.floor(2000*Math.random())}, ${msg.unixTimeStarted});`\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1350,
+        "y": 780,
+        "wires": [
+            [
+                "37a2e2e9.71ff8e"
+            ]
+        ]
+    },
+    {
+        "id": "1bafe963.d9cc57",
+        "type": "inject",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 120,
+        "y": 1820,
+        "wires": [
+            [
+                "5a1331ba.3ce37"
+            ]
+        ]
+    },
+    {
+        "id": "5a1331ba.3ce37",
+        "type": "sqlite",
+        "z": "9f89f8df.074778",
+        "mydb": "6364382c.8638c8",
+        "sqlquery": "fixed",
+        "sql": "CREATE TABLE dataHistory(\n    temp INTEGER,\n    rl INTEGER,\n    vpd INTEGER,\n    co2 INTEGER,\n    unixTime INTEGER,\n    primary key(unixTime)\n);",
+        "name": "CreateTable",
+        "x": 330,
+        "y": 1820,
+        "wires": [
+            [
+                "9edb4833.a82ac8"
+            ]
+        ]
+    },
+    {
+        "id": "9b821fb4.e24d2",
+        "type": "inject",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 200,
+        "y": 460,
+        "wires": [
+            [
+                "440d290b.f4c2a8"
+            ]
+        ]
+    },
+    {
+        "id": "440d290b.f4c2a8",
+        "type": "sqlite",
+        "z": "9f89f8df.074778",
+        "mydb": "6364382c.8638c8",
+        "sqlquery": "fixed",
+        "sql": "SELECT * FROM dataHistory ORDER BY unixTime desc LIMIT 1000;",
+        "name": "Select * in dataHistory",
+        "x": 420,
+        "y": 460,
+        "wires": [
+            [
+                "e12f267d.5fcef8"
+            ]
+        ]
+    },
+    {
+        "id": "e12f267d.5fcef8",
+        "type": "debug",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 700,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "b0c5162c.1dd2c8",
+        "type": "inject",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "1800",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 150,
+        "y": 1140,
+        "wires": [
+            [
+                "f2deed46.770ca"
+            ]
+        ]
+    },
+    {
+        "id": "f2deed46.770ca",
+        "type": "sqlite",
+        "z": "9f89f8df.074778",
+        "mydb": "6364382c.8638c8",
+        "sqlquery": "fixed",
+        "sql": "SELECT * FROM dataHistory ORDER BY unixTime desc LIMIT 2880;",
+        "name": "Select * in dataHistory",
+        "x": 380,
+        "y": 1140,
+        "wires": [
+            [
+                "393a2ef7.0aaf22"
+            ]
+        ]
+    },
+    {
+        "id": "393a2ef7.0aaf22",
+        "type": "function",
+        "z": "9f89f8df.074778",
+        "name": "Sample historical data and convert to JSON.data format",
+        "func": "let payload = {\n    data:[]\n}\n\n\n//for each data item check and see if the index is evenly divisiable by 5 and if so add to payload.data\nmsg.payload.shift();\nfor (let i = 0; i< msg.payload.length;i++){\n    if(i%60 ===0){\n        payload.data.push( msg.payload[i] );       \n    }\n}\n\nmsg.payload = payload;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 830,
+        "y": 1140,
+        "wires": [
+            [
+                "35dcf1fd.3ad26e",
+                "9892a4f8.483b78"
+            ]
+        ]
+    },
+    {
+        "id": "35dcf1fd.3ad26e",
+        "type": "debug",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 1130,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "a151395b.ce6f18",
+        "type": "comment",
+        "z": "9f89f8df.074778",
+        "name": "This flow below gets fake data from openWeatherMapAPI  and sends historical data",
+        "info": "",
+        "x": 350,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "9b36e01f.db8ec",
+        "type": "sqlite",
+        "z": "9f89f8df.074778",
+        "mydb": "6364382c.8638c8",
+        "sqlquery": "fixed",
+        "sql": "SELECT * FROM dataHistory;",
+        "name": "Select * in dataHistory",
+        "x": 440,
+        "y": 320,
+        "wires": [
+            [
+                "4d803622.481328"
+            ]
+        ]
+    },
+    {
+        "id": "49048ee7.7d90d",
+        "type": "inject",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 120,
+        "y": 2180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "abf002f3.d81a",
+        "type": "sqlite",
+        "z": "9f89f8df.074778",
+        "mydb": "6364382c.8638c8",
+        "sqlquery": "fixed",
+        "sql": "DROP TABLE dataHistory;",
+        "name": "DeleteTable dataHistory",
+        "x": 330,
+        "y": 2180,
+        "wires": [
+            [
+                "c6863de.2cd4cc"
+            ]
+        ]
+    },
+    {
+        "id": "c6863de.2cd4cc",
+        "type": "debug",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 620,
+        "y": 2180,
+        "wires": []
+    },
+    {
+        "id": "11989d6c.efc673",
+        "type": "mqtt in",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "topic": "A4fhbNNtES5S5Hnj0qST/alarms/MinMax",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "e9193505.113bc8",
+        "x": 220,
+        "y": 1420,
+        "wires": [
+            [
+                "401bb1e0.7e9ca"
+            ]
+        ]
+    },
+    {
+        "id": "c3cc81bc.b5176",
+        "type": "function",
+        "z": "9f89f8df.074778",
+        "name": "add insert into MinMAx with new values",
+        "func": "msg.topic=`INSERT INTO MinMax VALUES (${msg.payload.tempMin}, ${msg.payload.tempMax}, ${msg.payload.tempSP}, ${msg.payload.rhMin}, ${msg.payload.rhMax}, ${msg.payload.rhSP}, ${msg.payload.vpdMin}, ${msg.payload.vpdMax}, ${msg.payload.vpdSP}, ${msg.payload.co2Min}, ${msg.payload.co2Max}, ${msg.payload.co2SP}, ${Math.floor(Date.now() / 1000)});`\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1060,
+        "y": 1420,
+        "wires": [
+            [
+                "44b4092e.7c45b8"
+            ]
+        ]
+    },
+    {
+        "id": "44b4092e.7c45b8",
+        "type": "sqlite",
+        "z": "9f89f8df.074778",
+        "mydb": "6364382c.8638c8",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "setMinMaxData",
+        "x": 1360,
+        "y": 1420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9edb4833.a82ac8",
+        "type": "sqlite",
+        "z": "9f89f8df.074778",
+        "mydb": "6364382c.8638c8",
+        "sqlquery": "fixed",
+        "sql": "CREATE TABLE MinMax(\n    tempMin INTEGER,\n    tempMax INTEGER,\n    tempSP INTEGER,\n    rhMin INTEGER,\n    rhMax INTEGER,\n    rhSP INTEGER,\n    vpdMin INTEGER,\n    vpdMax INTEGER,\n    vpdSP INTEGER,\n    co2Min INTEGER,\n    co2Max INTEGER,\n    co2SP INTEGER,\n    unixTime INTEGER,\n    primary key(unixTime)\n);",
+        "name": "CreateMinMaxTable",
+        "x": 560,
+        "y": 1820,
+        "wires": [
+            [
+                "3014d9b.1825326"
+            ]
+        ]
+    },
+    {
+        "id": "7e8e394a.439c48",
+        "type": "sqlite",
+        "z": "9f89f8df.074778",
+        "mydb": "6364382c.8638c8",
+        "sqlquery": "fixed",
+        "sql": "Select * FROM MinMax ORDER by unixTime desc;",
+        "name": "getCurrentMinMax",
+        "x": 1270,
+        "y": 700,
+        "wires": [
+            [
+                "3b3c3c8.c9d14c4"
+            ]
+        ]
+    },
+    {
+        "id": "3b3c3c8.c9d14c4",
+        "type": "function",
+        "z": "9f89f8df.074778",
+        "name": "set msg.MinMax to last MinMax record",
+        "func": "if(msg.payload.length>0){\n    msg.MinMax = msg.payload[0];\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1550,
+        "y": 700,
+        "wires": [
+            [
+                "aeec2fa7.f4eb3"
+            ]
+        ]
+    },
+    {
+        "id": "aeec2fa7.f4eb3",
+        "type": "function",
+        "z": "9f89f8df.074778",
+        "name": "set msg.alarms based on msg.minMax and msg.payload",
+        "func": "let alarms = [];\n\nconst convertKelvin = function(K){\n    return (9/5*(K - 273) + 32);\n}\n\nlet cv = {\n    temp:msg.liveData.main.temp,\n    rh:msg.liveData.main.humidity,\n    vpd:msg.liveData.main.pressure,\n    co2:msg.liveData.main.pressure+Math.floor(Math.random()*2000)\n};\nconst tempRange = 5;\nconst rhRange = 5;\nconst vpdRange = 250;\nconst co2Range = 500;\nconst now = Math.floor(Date.now()/1000);\n\nfor(let key in msg.MinMax){\n    let item = msg.MinMax[key];\n    let type = key.split('');\n    //if type is SP\n    if(type[type.length-1]===\"P\"){\n        //for temp\n        switch(type[0]){\n            case \"t\":\n                if(cv.temp>item+tempRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.temp, msg:`Temperature warning current value of ${cv.temp} is over ${tempRange} of its Set Point`})\n                }\n                if(cv.temp<item-tempRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.temp, msg:`Temperature warning current value of ${cv.temp} is under ${tempRange} of its Set Point`})\n                }\n                break;\n            case \"r\":\n                if(cv.rh>item+rhRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.rh, msg:`Humidity warning current value of ${cv.rh} is over ${rhRange} of its Set Point`})\n                }\n                if(cv.rh<item-rhRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.rh, msg:`Humidity warning current value of ${cv.rh} is under ${rhRange} of its Set Point`})\n                }\n                break;\n            case \"v\":\n                if(cv.vpd>item+vpdRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.vpd, msg:`VPD warning current value of ${cv.vpd} is over ${vpdRange} of its Set Point`})\n                }\n                if(cv.vpd<item-vpdRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.vpd, msg:`VPD warning current value of ${cv.vpd} is under ${vpdRange} of its Set Point`})\n                }\n                break;\n            case \"c\":\n                if(cv.co2>item+co2Range){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.co2, msg:`CO2 level warning current value of ${cv.co2} is over ${co2Range} of its Set Point`})\n                }\n                if(cv.co2<item-co2Range){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.co2, msg:`CO2 level warning current value of ${cv.co2} is under ${co2Range} of its Set Point`})\n                }\n                break;\n        }\n        //end of setpoint handler\n    }\n    //if type is min\n    if(type[type.length-1]===\"n\"){\n        switch(type[0]){\n            case \"t\":\n                if(cv.temp<=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.temp, msg:`Temperature ALARM current value of ${cv.temp} is under ${item}`})\n                }\n                break;\n            case \"r\":\n                if(cv.rh<=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.rh, msg:`Humidity warning current value of ${cv.rh} is under ${item}`})\n                }\n                break;\n            case \"v\":\n                if(cv.vpd<=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.vpd, msg:`VPD warning current value of ${cv.vpd} is under ${item}`})\n                }\n                break;\n            case \"c\":\n                if(cv.co2<=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.co2, msg:`CO2 level warning current value of ${cv.co2} is under ${item}`})\n                }\n                break;\n        }\n    }\n    /// if type is max\n    if(type[type.length-1]===\"x\"){\n     switch(type[0]){\n            case \"t\":\n                if(cv.temp>=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.temp, msg:`Temperature ALARM current value of ${cv.temp} is over ${item}`})\n                }\n                break;\n            case \"r\":\n                if(cv.rh>=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.rh, msg:`Humidity warning current value of ${cv.rh} is over ${item}`})\n                }\n                break;\n            case \"v\":\n                if(cv.vpd>=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.vpd, msg:`VPD warning current value of ${cv.vpd} is over ${item}`})\n                }\n                break;\n            case \"c\":\n                if(cv.co2>=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.co2, msg:`CO2 level warning current value of ${cv.co2} is over ${item}`})\n                }\n                break;\n        }   \n    }\n}\n//only set msg.alarms if there are alarms.\nif(alarms.length>0){\n    msg.alarms = alarms;\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1970,
+        "y": 700,
+        "wires": [
+            [
+                "39212fdf.2fc6b",
+                "3bc06f2e.03eb2"
+            ]
+        ]
+    },
+    {
+        "id": "3bc06f2e.03eb2",
+        "type": "switch",
+        "z": "9f89f8df.074778",
+        "name": "if msg.alarms has a value send the msg",
+        "property": "alarms",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nempty"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 2940,
+        "y": 700,
+        "wires": [
+            [
+                "9a35ef.5b419a1"
+            ]
+        ]
+    },
+    {
+        "id": "1cac3d13.e3c1c3",
+        "type": "mqtt out",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "topic": "A4fhbNNtES5S5Hnj0qST/alarms/alarm",
+        "qos": "",
+        "retain": "true",
+        "broker": "e9193505.113bc8",
+        "x": 3580,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "b3688728.5624b8",
+        "type": "sqlite",
+        "z": "9f89f8df.074778",
+        "mydb": "6364382c.8638c8",
+        "sqlquery": "fixed",
+        "sql": "Drop Table MinMax;",
+        "name": "delete table minMax",
+        "x": 330,
+        "y": 2280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "401bb1e0.7e9ca",
+        "type": "json",
+        "z": "9f89f8df.074778",
+        "name": "convert from string to JSON",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 650,
+        "y": 1420,
+        "wires": [
+            [
+                "c3cc81bc.b5176"
+            ]
+        ]
+    },
+    {
+        "id": "c5de746d.9497e8",
+        "type": "inject",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 200,
+        "y": 540,
+        "wires": [
+            [
+                "d50ff6a1.bfd388"
+            ]
+        ]
+    },
+    {
+        "id": "d50ff6a1.bfd388",
+        "type": "sqlite",
+        "z": "9f89f8df.074778",
+        "mydb": "6364382c.8638c8",
+        "sqlquery": "fixed",
+        "sql": "SELECT * FROM MinMax;",
+        "name": "Select * in minMax",
+        "x": 410,
+        "y": 540,
+        "wires": [
+            [
+                "62acdae5.97f404"
+            ]
+        ]
+    },
+    {
+        "id": "62acdae5.97f404",
+        "type": "debug",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 700,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "8abeae7a.b0f53",
+        "type": "comment",
+        "z": "9f89f8df.074778",
+        "name": "When msg comes in from broker set Alarm values",
+        "info": "",
+        "x": 240,
+        "y": 1380,
+        "wires": []
+    },
+    {
+        "id": "392171a3.2dc0ae",
+        "type": "comment",
+        "z": "9f89f8df.074778",
+        "name": "send history object every interval.",
+        "info": "",
+        "x": 190,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "ef3446b9.684cf8",
+        "type": "inject",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 140,
+        "y": 700,
+        "wires": [
+            [
+                "7e8e394a.439c48"
+            ]
+        ]
+    },
+    {
+        "id": "39212fdf.2fc6b",
+        "type": "debug",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "alarms",
+        "targetType": "msg",
+        "x": 2330,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "ce968c31.38861",
+        "type": "change",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "liveData",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1000,
+        "y": 720,
+        "wires": [
+            [
+                "7e8e394a.439c48"
+            ]
+        ]
+    },
+    {
+        "id": "9a35ef.5b419a1",
+        "type": "function",
+        "z": "9f89f8df.074778",
+        "name": "set alarms as msg.payload.",
+        "func": "msg.payload = msg.alarms;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 3260,
+        "y": 700,
+        "wires": [
+            [
+                "1cac3d13.e3c1c3"
+            ]
+        ]
+    },
+    {
+        "id": "3014d9b.1825326",
+        "type": "sqlite",
+        "z": "9f89f8df.074778",
+        "mydb": "6364382c.8638c8",
+        "sqlquery": "fixed",
+        "sql": "CREATE TABLE Alarms(\n    alarmType VARCHAR,\n    item VARCHAR,\n    val INTEGER,\n    msg VARCHAR,\n    unixTime INTEGER,\n    primary key(unixTime)\n);",
+        "name": "createAlarmsTable",
+        "x": 790,
+        "y": 1820,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e9193505.113bc8",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "DMZ-broker",
+        "broker": "100.96.1.66",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "6364382c.8638c8",
+        "type": "sqlitedb",
+        "z": "",
+        "db": "/sqlite",
+        "mode": "RWC"
+    }
+]

@@ -234,6 +234,9 @@ const PrimaryLineChart = (props) => {
     const co2Domain = [2000,4000];
     const pressureData = props.pressureData || examplePressureData;
     const pressureDomain = [950, 1200]
+    const now = new Date()/1000
+    console.log(now)
+    const xDomain = [];
     let { rooms, pick, pending, History, session } = useSelector(state => ({
         rooms: state.growRooms.rooms,
         pick: state.growRooms.roomIndex,
@@ -344,10 +347,10 @@ const PrimaryLineChart = (props) => {
             }
             currentData.forEach((item) => {
                 let dateTime = new Date(item.unixTime)
-                output.Temperature.push({x: dateTime.toDateString() , y: item.temp, sp: rooms[pick].tempSetPoint});
-                output.Humidity.push({x: dateTime.toDateString() , y: item.rl, sp: rooms[pick].humiditySetPoint});
-                output["CO2 Level"].push({x: dateTime.toDateString() , y: item.co2, sp: rooms[pick].CO2SetPoint});
-                output["Variable Pressure deficit"].push({x: dateTime.toDateString() , y: item.vpd, sp: rooms[pick].pressureSetPoint});
+                output.Temperature.push({x: dateTime.toLocaleString() , y: item.temp, sp: rooms[pick].tempSetPoint});
+                output.Humidity.push({x: dateTime.toLocaleString() , y: item.rl, sp: rooms[pick].humiditySetPoint});
+                output["CO2 Level"].push({x: dateTime.toLocaleString() , y: item.co2, sp: rooms[pick].CO2SetPoint});
+                output["Variable Pressure deficit"].push({x: dateTime.toLocaleString() , y: item.vpd, sp: rooms[pick].pressureSetPoint});
             })
             return output
         }else{
@@ -385,7 +388,7 @@ const PrimaryLineChart = (props) => {
                             }}
                         />
                         <VictoryAxis
-                            // domain={[1300, 1500]}
+                            // domain={[1300, new Date()/1000 ]}
                             offsetX={200}
                             orientation="top"
                             standalone={false}

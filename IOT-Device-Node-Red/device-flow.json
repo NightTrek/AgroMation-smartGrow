@@ -7,6 +7,66 @@
         "info": ""
     },
     {
+        "id": "625a73bc.01e67c",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "DMZ-broker",
+        "broker": "100.96.1.66",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "e9193505.113bc8",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "DMZ-broker",
+        "broker": "100.96.1.66",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "6364382c.8638c8",
+        "type": "sqlitedb",
+        "z": "",
+        "db": "/sqlite",
+        "mode": "RWC"
+    },
+    {
+        "id": "9c6e98bc.d89ca8",
+        "type": "OpcUa-Endpoint",
+        "z": 0,
+        "endpoint": "opc.tcp://192.168.10.11:4840",
+        "secpol": "None",
+        "secmode": "None",
+        "login": false
+    },
+    {
         "id": "2383a954.da3f06",
         "type": "http in",
         "z": "9f89f8df.074778",
@@ -234,10 +294,12 @@
         "sqlquery": "msg.topic",
         "sql": "",
         "name": "Add live data",
-        "x": 1730,
+        "x": 1630,
         "y": 780,
         "wires": [
-            []
+            [
+                "1c68f22c.0bef8e"
+            ]
         ]
     },
     {
@@ -583,15 +645,15 @@
         "type": "function",
         "z": "9f89f8df.074778",
         "name": "set msg.alarms based on msg.minMax and msg.payload",
-        "func": "let alarms = [];\n\nconst convertKelvin = function(K){\n    return (9/5*(K - 273) + 32);\n}\n\nlet cv = {\n    temp:msg.liveData.main.temp,\n    rh:msg.liveData.main.humidity,\n    vpd:msg.liveData.main.pressure,\n    co2:msg.liveData.main.pressure+Math.floor(Math.random()*2000)\n};\nconst tempRange = 5;\nconst rhRange = 5;\nconst vpdRange = 250;\nconst co2Range = 500;\nconst now = Math.floor(Date.now()/1000);\n\nfor(let key in msg.MinMax){\n    let item = msg.MinMax[key];\n    let type = key.split('');\n    //if type is SP\n    if(type[type.length-1]===\"P\"){\n        //for temp\n        switch(type[0]){\n            case \"t\":\n                if(cv.temp>item+tempRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.temp, msg:`Temperature warning current value of ${cv.temp} is over ${tempRange} of its Set Point`})\n                }\n                if(cv.temp<item-tempRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.temp, msg:`Temperature warning current value of ${cv.temp} is under ${tempRange} of its Set Point`})\n                }\n                break;\n            case \"r\":\n                if(cv.rh>item+rhRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.rh, msg:`Humidity warning current value of ${cv.rh} is over ${rhRange} of its Set Point`})\n                }\n                if(cv.rh<item-rhRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.rh, msg:`Humidity warning current value of ${cv.rh} is under ${rhRange} of its Set Point`})\n                }\n                break;\n            case \"v\":\n                if(cv.vpd>item+vpdRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.vpd, msg:`VPD warning current value of ${cv.vpd} is over ${vpdRange} of its Set Point`})\n                }\n                if(cv.vpd<item-vpdRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.vpd, msg:`VPD warning current value of ${cv.vpd} is under ${vpdRange} of its Set Point`})\n                }\n                break;\n            case \"c\":\n                if(cv.co2>item+co2Range){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.co2, msg:`CO2 level warning current value of ${cv.co2} is over ${co2Range} of its Set Point`})\n                }\n                if(cv.co2<item-co2Range){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.co2, msg:`CO2 level warning current value of ${cv.co2} is under ${co2Range} of its Set Point`})\n                }\n                break;\n        }\n        //end of setpoint handler\n    }\n    //if type is min\n    if(type[type.length-1]===\"n\"){\n        switch(type[0]){\n            case \"t\":\n                if(cv.temp<=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.temp, msg:`Temperature ALARM current value of ${cv.temp} is under ${item}`})\n                }\n                break;\n            case \"r\":\n                if(cv.rh<=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.rh, msg:`Humidity warning current value of ${cv.rh} is under ${item}`})\n                }\n                break;\n            case \"v\":\n                if(cv.vpd<=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.vpd, msg:`VPD warning current value of ${cv.vpd} is under ${item}`})\n                }\n                break;\n            case \"c\":\n                if(cv.co2<=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.co2, msg:`CO2 level warning current value of ${cv.co2} is under ${item}`})\n                }\n                break;\n        }\n    }\n    /// if type is max\n    if(type[type.length-1]===\"x\"){\n     switch(type[0]){\n            case \"t\":\n                if(cv.temp>=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.temp, msg:`Temperature ALARM current value of ${cv.temp} is over ${item}`})\n                }\n                break;\n            case \"r\":\n                if(cv.rh>=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.rh, msg:`Humidity warning current value of ${cv.rh} is over ${item}`})\n                }\n                break;\n            case \"v\":\n                if(cv.vpd>=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.vpd, msg:`VPD warning current value of ${cv.vpd} is over ${item}`})\n                }\n                break;\n            case \"c\":\n                if(cv.co2>=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.co2, msg:`CO2 level warning current value of ${cv.co2} is over ${item}`})\n                }\n                break;\n        }   \n    }\n}\n//only set msg.alarms if there are alarms.\nif(alarms.length>0){\n    msg.alarms = alarms;\n}\nreturn msg;",
+        "func": "let alarms = [];\nlet alert = global.get('AlarmAlert')\n\nif(!alert){\n    alert = false\n}\nconst convertKelvin = function(K){\n    return (9/5*(K - 273) + 32);\n}\n\nlet cv = {\n    temp:msg.liveData.main.temp,\n    rh:msg.liveData.main.humidity,\n    vpd:msg.liveData.main.pressure,\n    co2:msg.liveData.main.pressure+Math.floor(Math.random()*2000)\n};\nconst tempRange = 5;\nconst rhRange = 5;\nconst vpdRange = 200;\nconst co2Range = 200;\nconst now = Math.floor(Date.now()/1000);\n//loop through minmax variables and set alarms\nfor(let key in msg.MinMax){\n    let item = msg.MinMax[key];\n    let type = key.split('');\n    //if type is SP\n    if(type[type.length-1]===\"P\"){\n        //for temp\n        switch(type[0]){\n            case \"t\":\n                if(cv.temp>item+tempRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.temp, msg:`Temperature warning current value of ${cv.temp} is over ${tempRange} of its Set Point`})\n                }\n                if(cv.temp<item-tempRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.temp, msg:`Temperature warning current value of ${cv.temp} is under ${tempRange} of its Set Point`})\n                }\n                break;\n            case \"r\":\n                if(cv.rh>item+rhRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.rh, msg:`Humidity warning current value of ${cv.rh} is over ${rhRange} of its Set Point`})\n                }\n                if(cv.rh<item-rhRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.rh, msg:`Humidity warning current value of ${cv.rh} is under ${rhRange} of its Set Point`})\n                }\n                break;\n            case \"v\":\n                if(cv.vpd>item+vpdRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.vpd, msg:`VPD warning current value of ${cv.vpd} is over ${vpdRange} of its Set Point`})\n                }\n                if(cv.vpd<item-vpdRange){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.vpd, msg:`VPD warning current value of ${cv.vpd} is under ${vpdRange} of its Set Point`})\n                }\n                break;\n            case \"c\":\n                if(cv.co2>item+co2Range){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.co2, msg:`CO2 level warning current value of ${cv.co2} is over ${co2Range} of its Set Point`})\n                }\n                if(cv.co2<item-co2Range){\n                    alarms.push({type:\"warning\", unixTime:now, item:key, val:cv.co2, msg:`CO2 level warning current value of ${cv.co2} is under ${co2Range} of its Set Point`})\n                }\n                break;\n        }\n        //end of setpoint handler\n    }\n    //if type is min\n    if(type[type.length-1]===\"n\"){\n        switch(type[0]){\n            case \"t\":\n                if(cv.temp<=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.temp, msg:`Temperature ALARM current value of ${cv.temp} is under ${item}`})\n                }\n                break;\n            case \"r\":\n                if(cv.rh<=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.rh, msg:`Humidity warning current value of ${cv.rh} is under ${item}`})\n                }\n                break;\n            case \"v\":\n                if(cv.vpd<=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.vpd, msg:`VPD warning current value of ${cv.vpd} is under ${item}`})\n                }\n                break;\n            case \"c\":\n                if(cv.co2<=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.co2, msg:`CO2 level warning current value of ${cv.co2} is under ${item}`})\n                }\n                break;\n        }\n    }\n    /// if type is max\n    if(type[type.length-1]===\"x\"){\n     switch(type[0]){\n            case \"t\":\n                if(cv.temp>=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.temp, msg:`Temperature ALARM current value of ${cv.temp} is over ${item}`})\n                }\n                break;\n            case \"r\":\n                if(cv.rh>=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.rh, msg:`Humidity warning current value of ${cv.rh} is over ${item}`})\n                }\n                break;\n            case \"v\":\n                if(cv.vpd>=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.vpd, msg:`VPD warning current value of ${cv.vpd} is over ${item}`})\n                }\n                break;\n            case \"c\":\n                if(cv.co2>=item){\n                    alarms.push({type:\"alarm\", unixTime:now, item:key, val:cv.co2, msg:`CO2 level warning current value of ${cv.co2} is over ${item}`})\n                }\n                break;\n        }   \n    }\n}\n\n// if there are more then 0 alarms and they Alarm Alert is false send Alert\nif(alarms.length>0 ){\n    msg.alarms = alarms;\n    //if alert is false then set it to true so that the alert is sent via email and MQTT\n    if(!alert){\n        alert = true;\n        global.set('AlarmAlert', true);\n        msg.sendEmail = true;\n    }\n}else{\n    if(alert){\n        global.set('AlarmAlert', false);\n    }\n}\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 1970,
         "y": 700,
         "wires": [
             [
-                "39212fdf.2fc6b",
-                "3bc06f2e.03eb2"
+                "3bc06f2e.03eb2",
+                "adc508bb.844eb8"
             ]
         ]
     },
@@ -610,11 +672,11 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 2940,
+        "x": 2720,
         "y": 700,
         "wires": [
             [
-                "9a35ef.5b419a1"
+                "7dc5e347.4f755c"
             ]
         ]
     },
@@ -752,21 +814,6 @@
         ]
     },
     {
-        "id": "39212fdf.2fc6b",
-        "type": "debug",
-        "z": "9f89f8df.074778",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "alarms",
-        "targetType": "msg",
-        "x": 2330,
-        "y": 600,
-        "wires": []
-    },
-    {
         "id": "ce968c31.38861",
         "type": "change",
         "z": "9f89f8df.074778",
@@ -805,7 +852,8 @@
         "y": 700,
         "wires": [
             [
-                "1cac3d13.e3c1c3"
+                "1cac3d13.e3c1c3",
+                "1300c173.ddebbf"
             ]
         ]
     },
@@ -824,32 +872,148 @@
         ]
     },
     {
-        "id": "e9193505.113bc8",
-        "type": "mqtt-broker",
-        "z": "",
-        "name": "DMZ-broker",
-        "broker": "100.96.1.66",
-        "port": "1883",
-        "clientid": "",
-        "usetls": false,
-        "compatmode": false,
-        "keepalive": "60",
-        "cleansession": true,
-        "birthTopic": "",
-        "birthQos": "0",
-        "birthPayload": "",
-        "closeTopic": "",
-        "closeQos": "0",
-        "closePayload": "",
-        "willTopic": "",
-        "willQos": "0",
-        "willPayload": ""
+        "id": "adc508bb.844eb8",
+        "type": "switch",
+        "z": "9f89f8df.074778",
+        "name": "if AlarmAlert is True",
+        "property": "sendEmail",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 2630,
+        "y": 780,
+        "wires": [
+            [
+                "4984d659.a97328"
+            ]
+        ]
     },
     {
-        "id": "6364382c.8638c8",
-        "type": "sqlitedb",
-        "z": "",
-        "db": "/sqlite",
-        "mode": "RWC"
+        "id": "4984d659.a97328",
+        "type": "function",
+        "z": "9f89f8df.074778",
+        "name": "create Email",
+        "func": "msg.payload = {\"A4fhbNNtES5S5Hnj0qST\":true}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 2890,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "68adaefe.9f04a",
+        "type": "mqtt in",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "topic": "A4fhbNNtES5S5Hnj0qST/alarms/emails",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "625a73bc.01e67c",
+        "x": 210,
+        "y": 1520,
+        "wires": [
+            [
+                "89e7fa46.e9b728"
+            ]
+        ]
+    },
+    {
+        "id": "89e7fa46.e9b728",
+        "type": "json",
+        "z": "9f89f8df.074778",
+        "name": "convert email list to array",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 630,
+        "y": 1520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9f545293.6ff3a",
+        "type": "function",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "func": "msg.topic=`INSERT INTO EMAILS VALUES (${msg.payload.email}, ${msg.payload.tempMax}, ${msg.payload.tempSP}, ${msg.payload.rhMin}, ${msg.payload.rhMax}, ${msg.payload.rhSP}, ${msg.payload.vpdMin}, ${msg.payload.vpdMax}, ${msg.payload.vpdSP}, ${msg.payload.co2Min}, ${msg.payload.co2Max}, ${msg.payload.co2SP}, ${Math.floor(Date.now() / 1000)});`\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 940,
+        "y": 1520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "bab413cc.3f61f",
+        "type": "sqlite",
+        "z": "9f89f8df.074778",
+        "mydb": "6364382c.8638c8",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "Delete data older then x days",
+        "x": 2240,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1c68f22c.0bef8e",
+        "type": "function",
+        "z": "9f89f8df.074778",
+        "name": "create Delete old historical data older that 90 days",
+        "func": "msg.topic = `DELETE FROM dataHistory WHERE unixTime < ${new Date()/1000-7776000}`\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1910,
+        "y": 780,
+        "wires": [
+            [
+                "bab413cc.3f61f"
+            ]
+        ]
+    },
+    {
+        "id": "7dc5e347.4f755c",
+        "type": "rbe",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "property": "payload",
+        "x": 3010,
+        "y": 700,
+        "wires": [
+            [
+                "9a35ef.5b419a1"
+            ]
+        ]
+    },
+    {
+        "id": "1300c173.ddebbf",
+        "type": "debug",
+        "z": "9f89f8df.074778",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 3460,
+        "y": 640,
+        "wires": []
     }
 ]

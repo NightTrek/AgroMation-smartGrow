@@ -452,7 +452,7 @@ exports.onStripeSubChange = functions.firestore.document(`StripeCustomers/{Strip
 exports.onRoomAlarmDataChange = functions.firestore.document('Rooms/{RoomId}').onWrite(async (change, context) => {
     let before = change.before.data();
     let after = change.before.data();
-    const keyList = {tempMin:'tempMin',tempMax:"tempMax", tempSetPoint:"tempSetPoint",pressureMin:'pressureMin', pressureMax:"pressureMax", pressureSetPoint:"pressureSetPoint",humidityMin:'humidityMin',humidityMax:"humidityMax", humiditySetPoint:"humiditySetPoint",CO2Min:'CO2Min',CO2Max:"CO2Max", CO2SetPoint:"CO2SetPoint"};
+    const keyList = {tempMin:'tempMin',tempMax:"tempMax", tempSetPoint:"tempSetPoint",pressureMin:'pressureMin', pressureMax:"pressureMax", pressureSetPoint:"pressureSetPoint",humidityMin:'humidityMin',humidityMax:"humidityMax", humiditySetPoint:"humiditySetPoint",CO2Min:'CO2Min',CO2Max:"CO2Max", CO2SetPoint:"CO2SetPoint", ownerID:'ownerID'};
     //check if there was a change to a key in the keylist
     let alarmDataChange = false;
     let updateObject = {}

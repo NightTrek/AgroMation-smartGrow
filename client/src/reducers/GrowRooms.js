@@ -1,4 +1,4 @@
-import {ADD_GROWROOM, GROWROOM_ERROR, GET_ROOMS, FETCH_LIVE, FETCH_HISTORY, SET_ROOM, PENDING_ROOMS, SESSION_START, SESSION_ERROR } from "../actions/types";
+import {ADD_GROWROOM, GROWROOM_ERROR, GET_ROOMS, FETCH_LIVE, FETCH_HISTORY, SET_ROOM, PENDING_ROOMS, SESSION_START, SESSION_ERROR, FETCH_ALARMS } from "../actions/types";
 
 const INITIAL_STATE = {
   rooms: [],
@@ -6,7 +6,7 @@ const INITIAL_STATE = {
   Live:{},
   History:{},
   session:{},
-  interval:{},
+  Alarms:{},
   pending:false,
   errorMessage: ''
 };
@@ -27,7 +27,9 @@ export default function(state = INITIAL_STATE, action) {
     case FETCH_LIVE:
       return {...state, Live: action.payload };
     case FETCH_HISTORY:
-      return {...state, History: action.payload}
+      return {...state, History: action.payload};
+    case FETCH_ALARMS:
+      return {...state, Alarms: action.payload};
     case SESSION_START:
       return {...state, session: action.payload };
     case SESSION_ERROR:

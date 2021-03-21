@@ -7,7 +7,7 @@ import React from 'react';
 //import components
 import { Container, Grid } from "@material-ui/core";
 import DashboardSummery from "../../components/DashboardSummery/DashboardSummry";
-import { SystemNotifications } from '../SystemNotificationWidget/SystemNotifications';
+import SystemNotifications from '../SystemNotificationWidget/SystemNotifications';
 import Progress from '../../components/ProgressWidget/Progress';
 import LiveDataWidget from '../../components/LiveDataDashBoardWidget/LiveDataWidget';
 

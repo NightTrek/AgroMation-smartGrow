@@ -1,5 +1,5 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
+import { connect, useSelector, shallowEqual } from "react-redux";
 import { compose } from "redux";
 import { Grid, Typography, Menu, MenuItem } from '@material-ui/core';
 import { makeStyles, } from '@material-ui/core/styles'; //useTheme
@@ -15,7 +15,7 @@ import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 // import { addGrowRoom, fetchUserGrowRoomsAndStatus } from "../../actions";
 
 import { sampleNotifications } from "../../exampleDataTypes/clientExamlpeDataTypes";
-
+import {FetchAlarms} from '../../actions/LiveData';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; //
 
 
@@ -244,9 +244,24 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export const SystemNotifications = () => {
+const SystemNotifications = (props) => {
     const classes = useStyles();
     // const theme = useTheme();
+    let { alarms,  user} = useSelector(state => ({
+        alarms: state.growRooms.Alarms,
+        user: state.users.user,
+    }), shallowEqual);
+
+    useEffect(() => {
+        if(user && user.firstName && !alarms.alarmList){
+            if(user.ownerID){
+            
+                props.FetchAlarms(user.ownerID, alarms);
+            }else{
+                props.FetchAlarms(user.UID, alarms);
+            }
+        }
+    });
     const [state, setState] = React.useState({ //setState
         allnotifications: sampleNotifications,
         notifications: sampleNotifications,
@@ -256,6 +271,8 @@ export const SystemNotifications = () => {
         'Warning',
         'FAULT',
         'All'];
+
+
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -335,6 +352,13 @@ export const SystemNotifications = () => {
         gridApi.onFilterChanged();
 
     }
+    let alarmDisplayList = [];
+    if(!alarms || !alarms.alarmList ||alarms.alarmList.length === 0){
+        alarmDisplayList = sampleNotifications;
+    }
+    if(alarms && alarms.alarmList && alarms.alarmList.length > 0){
+        alarmDisplayList = alarms.alarmList;
+    }
 
     return (
         <Grid container item className={classes.notificationsWidget} xs justify={"center"} spacing={1} direction={"row"}>
@@ -379,7 +403,7 @@ export const SystemNotifications = () => {
                 </List> */}
                 <div style={{ minHeight: '300px', minWidth: '200px', width: "98%" }} className="ag-theme-alpine-dark" >
                     <AgGridReact
-                        rowData={state.notifications}
+                        rowData={alarmDisplayList}
                         animateRows={true}
                         defaultColDef={{
                             
@@ -406,7 +430,7 @@ export const SystemNotifications = () => {
                             maxWidth={24} cellRenderer={"notificationType"}></AgGridColumn>
                         <AgGridColumn field="room" sortable={true} filter={true} ></AgGridColumn>
                         <AgGridColumn flex={1}  headerName={"Message"} field="msg" sortable={true}></AgGridColumn>
-                        <AgGridColumn  field="timeStamp" sortable={true} cellRenderer={"timeStamp"}></AgGridColumn>
+                        <AgGridColumn  field="unixTime" sortable={true} cellRenderer={"timeStamp"}></AgGridColumn>
 
                     </AgGridReact>
                 </div>
@@ -424,6 +448,10 @@ function mapStateToProps({ state }) {
     return { state };
 }
 
-const formedComponent = compose(connect(mapStateToProps, {}))(SystemNotifications);
+const alarmActions = {
+    FetchAlarms:FetchAlarms
+}
+
+const formedComponent = compose(connect(mapStateToProps, alarmActions))(SystemNotifications);
 
 export default formedComponent;

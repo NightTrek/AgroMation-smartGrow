@@ -1,5 +1,5 @@
 import axios from "axios";
-import { FETCH_LIVE, SESSION_ERROR, SESSION_START, FETCH_HISTORY } from "./types"
+import { FETCH_LIVE, SESSION_ERROR, SESSION_START, FETCH_HISTORY, FETCH_ALARMS } from "./types"
 import { getIdToken, db } from "../consts/firebase";
 
 const expirationInterval = 1 * 60;
@@ -53,7 +53,7 @@ export const FetchLiveData = (deviceID, live) => async dispatch => {
     if (!deviceID) {
         return new Error('no device id  for FetchliveData Action');
     }
-    console.log('fetching Live data for Room ' + deviceID)
+    // console.log('fetching Live data for Room ' + deviceID)
     
     let {data, unsubscribe} = {};
      unsubscribe = db.collection("Rooms").doc(deviceID).collection("Live").doc("LiveData")
@@ -64,7 +64,7 @@ export const FetchLiveData = (deviceID, live) => async dispatch => {
             live[deviceID] = data
             dispatch({ type: FETCH_LIVE, payload: {live, unsubscribe} });
         }else{
-            console.log("doc doesnt exist")
+            // console.log("doc doesnt exist")
         }
     }, (error) => {
         console.log(error)
@@ -95,21 +95,30 @@ export const FetchHistoryData = (deviceID, datahistory, rate='30Min') => async d
     });
 }
 
-export const FetchAlarms = (deviceID, datahistory, rate='30Min') => async dispatch => {
-    if(!deviceID){
-        return new Error("no device id for FetchHistoryData action")
+export const FetchAlarms = (accountID, currentAlarms, ) => async dispatch => {
+    if(!accountID){
+        return new Error("no account id for FetchAlarms action")
+    }
+    if(!currentAlarms){
+        currentAlarms = {}
     }
     let {data, unsubscribe} = {};
-    unsubscribe = db.collection("Rooms").doc(deviceID).collection("History").doc(rate)
+    let alarmList = [];
+    console.log('fetching Alarms')
+    unsubscribe = db.collection("Alarms").where('active', '==', true).where('ownerID', '==', accountID)
     .onSnapshot((doc) => {
-        if(doc.exists){
-            data = doc.data()
-            // console.log(data)
-            datahistory[deviceID] = data
-            dispatch({ type: FETCH_HISTORY, payload: {datahistory, unsubscribe} });
-        }else{
-            console.log("doc doesnt exist")
-        }
+        doc.forEach((doc)=> {
+            if(doc.exists){
+                data = doc.data()
+                // console.log(data)
+                alarmList.push(data)
+                
+            }else{
+                console.log("doc doesnt exist")
+            }
+        });
+        dispatch({ type: FETCH_ALARMS, payload: {alarmList:alarmList, unsubscribe} });
+        
     }, (error) => {
         console.log(error)
     });

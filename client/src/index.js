@@ -17,7 +17,7 @@ import Wrapper from "./containers/Wrapper";
 import Settings from "./components/Settings";
 // import Dashboard from "./components/Dashboard";
 import Welcome from "./components/Welcome";
-import IndividualRoom from "./containers/IndividualRoom/IndividualRoom";
+import IndividualRoom from "./containers/IndividualRoomPage/IndividualRoom";
 import UsersPage from "./containers/UsersPage/UsersPage";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import PrivatePayedRoute from "./components/PrivatePayedRoute/PrivatePayedRoute";

@@ -335,7 +335,7 @@ function DashboardSummary(props) {
     }
 
     const generateHumidityData = () => {
-        const SetPointVariation = 5;
+        const SetPointVariation = 2;
 
         if (user.example) {
             return sampleHumidityData;
@@ -383,7 +383,7 @@ function DashboardSummary(props) {
     }
 
     const generateCO2Data = () => {
-        const SetPointVariation = 200;
+        const SetPointVariation = 100;
 
         if (user.example) {
             return sampleCO2Data;
@@ -431,7 +431,7 @@ function DashboardSummary(props) {
     }
 
     const generateVPDData = () => {
-        const SetPointVariation = 100;
+        const SetPointVariation = 0.2;
 
         if (user.example) {
              return [{ x: "Fault", y: 1, catName: "Fault" },

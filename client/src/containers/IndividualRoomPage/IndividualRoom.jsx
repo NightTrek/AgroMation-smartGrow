@@ -186,8 +186,13 @@ const IndividualRoom = () => {
                             scrollButtons="auto"
                         >
                             {state.Tabs.map((item, index) => {
+                                if(item === "Analytics" ){
+                                    return (
+                                        <StyledTab label={item} key={index} id={`scrollable-auto-tab-${index}`}
+                                            aria-controls={`scrollable-auto-tabpanel-${index}`} />);
+                                }
                                 return (
-                                    <StyledTab label={item} key={index} id={`scrollable-auto-tab-${index}`}
+                                    <StyledTab disabled  label={item} key={index} id={`scrollable-auto-tab-${index}`}
                                         aria-controls={`scrollable-auto-tabpanel-${index}`} />);
                             })}
                         </Tabs>)}

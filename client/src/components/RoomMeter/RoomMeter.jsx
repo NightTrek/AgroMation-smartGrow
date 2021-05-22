@@ -48,7 +48,7 @@ function DiagnosticColorBar(props) {
         }}>
             <ListItem key={1}>
                 <ListItemText variant={"button"} style={{ paddingRight: "12px" }}>SetPoint:</ListItemText>
-                <Button variant="outlined" color={"primary"} onClick={props.handleOpen} style={{ marginLeft: "12px" }}>
+                <Button variant="outlined" disabled color={"primary"} onClick={props.handleOpen} style={{ marginLeft: "12px" }}>
 
                     {props.setPoint}
                 </Button>
@@ -88,10 +88,10 @@ function FieldMeter(props) {
         switch (props.type) {
             case "temp":
                 return {
-                    superMin: -30,
+                    superMin: 0,
                     min: -5,
                     max: 5,
-                    superMax: 30,
+                    superMax: 110,
                     sliderMin: 0,
                     sliderMax: 110,
                     output: {
@@ -103,10 +103,10 @@ function FieldMeter(props) {
 
             case "humidity":
                 return {
-                    superMin: -30,
+                    superMin: 0,
                     min: -2,
                     max: 2,
-                    superMax: 30,
+                    superMax: 100,
                     sliderMin: 0,
                     sliderMax: 100,
                     output: {
@@ -117,10 +117,10 @@ function FieldMeter(props) {
                 };
             case "CO2":
                 return {
-                    superMin: -1000,
+                    superMin: 0,
                     min: -100,
                     max: 100,
-                    superMax: 1000,
+                    superMax: 3000,
                     sliderMin: 0,
                     sliderMax: 6000,
                     output: {
@@ -131,12 +131,12 @@ function FieldMeter(props) {
                 };
             case "pressure":
                 return {
-                    superMin: -900,
-                    min: -100,
-                    max: 100,
-                    superMax: 900,
+                    superMin: 0,
+                    min: -0.5,
+                    max: 0.5,
+                    superMax: 12.5,
                     sliderMin: 0,
-                    sliderMax: 1500,
+                    sliderMax: 12.5,
                     output: {
                         pressureSetPoint: props.setPoint,
                         pressureMin: props.min,
@@ -145,7 +145,7 @@ function FieldMeter(props) {
                 };
             default:
                 return {
-                    superMin: -500,
+                    superMin: 0,
                     min: -25,
                     max: 25,
                     superMax: 500,
@@ -219,7 +219,7 @@ function FieldMeter(props) {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => {
         if(props.userType !== "Viewer"){
-            setOpen(true);
+            setOpen(false);
         }else{
             props.handleAlertOpen("You do not have permission to edit the set values")
         }
@@ -337,6 +337,11 @@ function FieldMeter(props) {
 
 
     }
+    // console.log(props.type);
+    // console.log(props.LiveValue);
+    // console.log([meterState.minMax[0] + TypeData.superMin,
+    //     meterState.minMax[0], meterState.setPoint + TypeData.min, meterState.setPoint + TypeData.max,
+    //     meterState.minMax[1], meterState.minMax[1] + TypeData.superMax]);
 
     return (
         <Grid container item sm={12} md={6} lg={3} direction={'column'} justify={'center'} style={{ paddingBottom: "24px", minWidth: "192px", maxWidth: "320px" }}>
@@ -352,12 +357,15 @@ function FieldMeter(props) {
                         needleColor={theme.palette.text.main}
                         value={props.LiveValue}
                         currentValueText={`${props.LiveValue} ${props.UnitString}`}
-                        minValue={meterState.minMax[0] + TypeData.superMin}
-                        maxValue={meterState.minMax[1] + TypeData.superMax}
+                        minValue={TypeData.superMin}
+                        maxValue={TypeData.superMax}
                         segments={5}
-                        customSegmentStops={[meterState.minMax[0] + TypeData.superMin,
-                        meterState.minMax[0], meterState.setPoint + TypeData.min, meterState.setPoint + TypeData.max,
-                        meterState.minMax[1], meterState.minMax[1] + TypeData.superMax]}
+                        customSegmentStops={[TypeData.superMin,
+                        meterState.minMax[0], 
+                        meterState.setPoint + TypeData.min,
+                         meterState.setPoint + TypeData.max,
+                        meterState.minMax[1],
+                         TypeData.superMax]}
                         segmentColors={[theme.palette.roomStatus.warning, theme.palette.primary.main, theme.palette.roomStatus.nominal, theme.palette.primary.main,
                         theme.palette.roomStatus.warning]}
                         customSegmentLabels={Labels}

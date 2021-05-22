@@ -427,7 +427,7 @@ function RoomSummery(props) {
             CO2: 2988,
             pressure: 1114
         },
-        StageMeter: true,
+        StageMeter: false,
         errorMsg: "",
         invalidAlert: false,
         alertType: "error"

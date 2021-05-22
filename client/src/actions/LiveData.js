@@ -60,7 +60,7 @@ export const FetchLiveData = (deviceID, live) => async dispatch => {
     .onSnapshot((doc) => {
         if(doc.exists){
             data = doc.data()
-            // console.log(data)
+            console.log(data)
             live[deviceID] = data
             dispatch({ type: FETCH_LIVE, payload: {live, unsubscribe} });
         }else{
